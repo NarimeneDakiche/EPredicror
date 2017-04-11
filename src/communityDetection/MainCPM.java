@@ -49,19 +49,18 @@ public class MainCPM {
         graph.setAutoCreate(true);
         // graph.display();
 
-                
         //g.display();
         CPM cpm = new CPM();
         Graph g = cpm.readCommunityFile("etc/co-authorship_graph_cond-mat_small.txt");
         System.out.println(g.getNodeCount());
         LinkedList<Graph> linkedList = cpm.execute(g, 3);
         System.out.println(linkedList.size() + " communities detected.");
-        for (Graph x: linkedList){
-            System.out.println(x.getNodeCount()+" "+ x.getEdgeCount());
-            Iterator<Node> it= x.getNodeIterator();
-            while (it.hasNext()){
-                Node n1= it.next();
-                System.out.print(n1.getId()+", ");
+        for (Graph x : linkedList) {
+            System.out.println(x.getNodeCount() + " " + x.getEdgeCount());
+            Iterator<Node> it = x.getNodeIterator();
+            while (it.hasNext()) {
+                Node n1 = it.next();
+                System.out.print(n1.getId() + ", ");
             }
             System.out.println("");
         }

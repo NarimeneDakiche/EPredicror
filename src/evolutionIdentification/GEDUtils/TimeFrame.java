@@ -19,8 +19,7 @@ public class TimeFrame {
         this.timGraph = timGraph;
         this.communities = null;
     }
-    
-    
+
     public TimeFrame(LinkedList<Graph> communities) {
         setCommunities(communities);
         this.timGraph.setStrict(false);
@@ -46,8 +45,6 @@ public class TimeFrame {
     public Graph getTimGraph() {
         return timGraph;
     }
-    
-    
 
     public List<Graph> getCommunities() {
         return communities;
