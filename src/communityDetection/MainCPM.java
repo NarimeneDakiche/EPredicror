@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 
 /**
@@ -47,18 +49,21 @@ public class MainCPM {
         graph.setAutoCreate(true);
         // graph.display();
 
-        graph.addEdge("A;B", "A", "B");
-        graph.addEdge("B;C", "B", "C");
-        graph.addEdge("C;A", "C", "A");
-        graph.addEdge("A;D", "A", "D");
-        graph.addEdge("D;E", "D", "E");
-        graph.addEdge("D;F", "D", "F");
-        graph.addEdge("E;F", "E", "F");
-        graph.display();
+                
+        //g.display();
         CPM cpm = new CPM();
-        LinkedList<Graph> linkedList = cpm.execute(graph,3);
-        for (Graph gTmp : linkedList) {
-            gTmp.display();
+        Graph g = cpm.readCommunityFile("etc/co-authorship_graph_cond-mat_small.txt");
+        System.out.println(g.getNodeCount());
+        LinkedList<Graph> linkedList = cpm.execute(g, 3);
+        System.out.println(linkedList.size() + " communities detected.");
+        for (Graph x: linkedList){
+            System.out.println(x.getNodeCount()+" "+ x.getEdgeCount());
+            Iterator<Node> it= x.getNodeIterator();
+            while (it.hasNext()){
+                Node n1= it.next();
+                System.out.print(n1.getId()+", ");
+            }
+            System.out.println("");
         }
 
     }

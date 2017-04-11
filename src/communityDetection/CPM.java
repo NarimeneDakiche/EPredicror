@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 // last modif 11/04/2017
 package communityDetection;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -29,6 +30,23 @@ public class CPM {
     private int k = 3;
     GenQueue<TreeSet<Node>> bk = new GenQueue<TreeSet<Node>>();
     private Set<Set<Node>> cliques = new HashSet<Set<Node>>();
+
+    public static Graph readCommunityFile(String file) {
+        Graph g = new SingleGraph("");
+        g.setStrict(false);
+        g.setAutoCreate(true);
+        String sCurrentLine;
+        String[] splitContent;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            while ((sCurrentLine = br.readLine()) != null) {
+                splitContent = sCurrentLine.split(" ");
+                g.addEdge(splitContent[0] + ";" + splitContent[1], splitContent[0], splitContent[1]);
+            }
+        } catch (Exception e) {
+
+        }
+        return g;
+    }
 
     public LinkedList<Graph> execute(Graph g, int k) {
         System.out.println("CPM");
@@ -107,7 +125,7 @@ public class CPM {
             for (Node vj : newGraph.getNodeSet()) {
                 if ((!vi.getId().equals(vj.getId())) && (getSharedNodes(vi, vj) == k - 1)) {
                     if (newGraph.getEdge(vj.getId() + ";" + vi.getId()) == null) { // care
-                       // System.out.println(vi.getId() + " " + vj.getId());
+                        // System.out.println(vi.getId() + " " + vj.getId());
                         newGraph.addEdge(vi.getId() + ";" + vj.getId(), vi.getId(), vj.getId());
                     }
                 }
@@ -126,7 +144,7 @@ public class CPM {
 
         // Add to each node of the second graph its attribute
         for (Node n2 : newGraph.getEachNode()) {
-           // System.out.println(n2.getAttribute(tscc.getSCCIndexAttribute()).toString());
+            // System.out.println(n2.getAttribute(tscc.getSCCIndexAttribute()).toString());
             //n2.addAttribute("group", n2.getAttribute(tscc.getSCCIndexAttribute().toString()));
             n2.setAttribute("group", n2.getAttribute(tscc.getSCCIndexAttribute()).toString());
         }
