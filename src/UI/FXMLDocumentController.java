@@ -5,7 +5,7 @@
  */
 package UI;
 
-import SnapshotsPrep.SnapshotsPrep11;
+import SnapshotsPrep.SnapshotsPrep;
 import communityDetection.CPM;
 import evolutionIdentification.GEDUtils.TimeFrame;
 import java.awt.Dimension;
@@ -237,7 +237,7 @@ public class FXMLDocumentController implements Initializable {
              s.setContent(view);*/
         } else {
             try {
-                SnapshotsPrep11 snapp = new SnapshotsPrep11();
+                SnapshotsPrep snapp = new SnapshotsPrep();
                 if (file != null && spinnerNBClusters.getValue() > 0 && comboStructDonnees.getValue() != null) {
                     dynamicNetwork = snapp.getSplitSnapshots(file.getAbsolutePath(),
                             null, comboStructDonnees.getValue(), " ", spinnerNBClusters.getValue(), "export", false, false, "");

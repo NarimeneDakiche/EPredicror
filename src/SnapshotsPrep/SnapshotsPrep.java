@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class SnapshotsPrep11 {
+public class SnapshotsPrep {
 
     private static List<String> readFile(String file)
             throws FileNotFoundException, IOException {
