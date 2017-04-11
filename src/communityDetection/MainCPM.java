@@ -5,12 +5,14 @@
  */
 package communityDetection;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -51,18 +53,28 @@ public class MainCPM {
 
         //g.display();
         CPM cpm = new CPM();
-        Graph g = cpm.readCommunityFile("etc/co-authorship_graph_cond-mat_small.txt");
+        String fileName = "co-authorship_graph_cond-mat_large.txt";
+        Graph g = cpm.readCommunityFile("etc/" + fileName);
         System.out.println(g.getNodeCount());
-        LinkedList<Graph> linkedList = cpm.execute(g, 3);
+        LinkedList<Graph> linkedList = cpm.execute(g, 7);
         System.out.println(linkedList.size() + " communities detected.");
-        for (Graph x : linkedList) {
-            System.out.println(x.getNodeCount() + " " + x.getEdgeCount());
-            Iterator<Node> it = x.getNodeIterator();
-            while (it.hasNext()) {
-                Node n1 = it.next();
-                System.out.print(n1.getId() + ", ");
+
+        boolean exportResults = true;
+
+        if (exportResults) {
+            String dir = "CPM";
+            File myOutputDir = new File(dir);
+            if (!myOutputDir.exists()) {
+                myOutputDir.mkdir();
             }
-            System.out.println("");
+            BufferedWriter out = new BufferedWriter(new FileWriter(dir + "\\" + fileName));
+            for (Graph gTmp : linkedList) {
+                for (Node n : gTmp.getEachNode()) {
+                    out.write(n.getId().toString() + " ");
+                }
+                out.write("\n");
+            }
+            out.close();
         }
 
     }

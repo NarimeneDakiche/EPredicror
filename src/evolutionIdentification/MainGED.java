@@ -56,7 +56,7 @@ public class MainGED {
         LinkedList<TimeFrame> network = new LinkedList<TimeFrame>();
         List<LinkedList<Graph>> communities = new ArrayList<LinkedList<Graph>>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader("etc/All_Data.txt"))) {
+        try     (BufferedReader br = new BufferedReader(new FileReader("etc/All_Data.txt"))) {
             LinkedList comms = new LinkedList();
             String line = br.readLine();
             while ((line = br.readLine()) != null) {
@@ -79,21 +79,21 @@ public class MainGED {
                 communities.get(num_timeframe).get(group_id).getNode(splitContent[1]).setAttribute("Cb", myNumber);
 
             }
-            int cpm=0;
+            int cpt=0;
             for (int i = 0; i < communities.size(); i++) {
                 network.add(new TimeFrame(communities.get(i)));
-                cpm+=communities.get(i).size();
+                cpt+=communities.get(i).size();
                 /*System.out.println(network.size()+" "+network.get(i).getCommunities().size());
                 for (Graph g: communities.get(i)){
                     cpm+= g.getNodeCount();
                 }*/
 
             }
-            System.out.println(cpm+ " groups");
+            System.out.println(cpt+ " groups");
            // System.out.println(cpm);
         }
 
-        GED ged1 = new GED();
+        GED1 ged1 = new GED1();
         ged1.excuteGED(network);
 
     }

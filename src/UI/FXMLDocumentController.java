@@ -326,15 +326,14 @@ public class FXMLDocumentController implements Initializable {
             //gsGraph.setAutoCreate(true);
 
             //Create three nodes
-            for (org.gephi.graph.api.Node n: graphModel.getUndirectedGraph().getNodes()){
+            for (org.gephi.graph.api.Node n : graphModel.getUndirectedGraph().getNodes()) {
                 gsGraph.addNode(n.getId().toString());
             }
-            for (org.gephi.graph.api.Edge e: graphModel.getUndirectedGraph().getEdges()){
-                try{
-                    gsGraph.addEdge(e.getSource().getId().toString()+";"+e.getTarget().toString(),e.getSource().getId().toString(), e.getTarget().getId().toString());
-                }
-                catch(Exception exp){
-                    
+            for (org.gephi.graph.api.Edge e : graphModel.getUndirectedGraph().getEdges()) {
+                try {
+                    gsGraph.addEdge(e.getSource().getId().toString() + ";" + e.getTarget().toString(), e.getSource().getId().toString(), e.getTarget().getId().toString());
+                } catch (Exception exp) {
+
                 }
             }
             gsGraph.display();
@@ -344,7 +343,7 @@ public class FXMLDocumentController implements Initializable {
 
             LinkedList<Graph> communities = cpm.execute(gsGraph, 3);//executeD(workspace, 2);
             //if (communities.size() > 0) {
-                dynamicNetwork1.add(new TimeFrame(communities));
+            dynamicNetwork1.add(new TimeFrame(communities));
             //}
             //System.out.println(communities.size());
             //louvain.executeD(workspace, 50);
