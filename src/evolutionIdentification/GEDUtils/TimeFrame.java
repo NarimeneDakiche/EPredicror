@@ -43,6 +43,12 @@ public class TimeFrame {
         }
     }
 
+    public Graph getTimGraph() {
+        return timGraph;
+    }
+    
+    
+
     public List<Graph> getCommunities() {
         return communities;
     }
