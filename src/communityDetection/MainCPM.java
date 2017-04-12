@@ -13,7 +13,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Iterator;
 import java.util.LinkedList;
+import org.graphstream.algorithm.APSP;
+import org.graphstream.algorithm.BetweennessCentrality;
+import org.graphstream.algorithm.Centroid;
+import org.graphstream.algorithm.Toolkit;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -77,5 +82,57 @@ public class MainCPM {
             out.close();
         }
 
+        System.out.println(linkedList.size() + " communities detected.");
+        for (Graph x : linkedList) {
+            /*System.out.println(x.getNodeCount() + " " + x.getEdgeCount());
+             Iterator<Node> it = x.getNodeIterator();
+             while (it.hasNext()) {
+             Node n1 = it.next();
+             System.out.print(n1.getId() + ", ");
+             }
+             System.out.println("");*/
+            calculateAttributes(x);
+            Iterator<Node> it = x.getNodeIterator();
+            String cb = "", centroid = "";
+            while (it.hasNext()) {
+                Node n1 = it.next();
+                cb += n1.getAttribute("Cb") + " ";
+                centroid += n1.getAttribute("centroid") + " ";
+            }
+            System.out.println(cb);
+            System.out.println(centroid);
+            //System.out.println(x.getAttribute("Cb").toString());
+            System.out.println("");
+        }
+    }
+
+    private static void calculateAttributes(Graph x) {
+        x.addAttribute("averageDegree", Toolkit.averageDegree(x));
+        x.addAttribute("averageClusteringCoefficient", Toolkit.averageClusteringCoefficient(x));
+        x.addAttribute("averageClusteringCoefficients", Toolkit.clusteringCoefficients(x));
+        x.addAttribute("degreeAverageDeviation", Toolkit.degreeAverageDeviation(x));
+        x.addAttribute("degreeDistribution", Toolkit.degreeDistribution(x));
+        x.addAttribute("density", Toolkit.density(x));
+        x.addAttribute("diameter", Toolkit.diameter(x));
+
+        BetweennessCentrality bcb = new BetweennessCentrality();
+        //bcb.setWeightAttributeName("weight");
+        bcb.init(x);
+        bcb.compute();
+        // Creates an attribute = "Cb"
+
+        APSP apsp = new APSP();
+        apsp.init(x);
+        apsp.compute();
+        Centroid centroid = new Centroid();
+        centroid.init(x);
+        centroid.compute();
+        // Creates an attribute = "centroid"
+
+        /**
+         * Can be added: ==> Shortest path algorithms (Dijkstra, A* Shortest
+         * path algorithm, Betweenness Centrality **
+         *
+         */
     }
 }
