@@ -21,9 +21,12 @@ public class testPrediction {
         String tabname="GED";
         int nbtimeframe=44;
         
-        EvolutionUtils.writeEvolutionChain(BDpath, BDfilename, tabname,nbtimeframe/**nbre timeframes**/);
+        //EvolutionUtils.writeEvolutionChain(BDpath, BDfilename, tabname,nbtimeframe/**nbre timeframes**/);
         
         //PredictionUtils.createClassifierJ48(filePath+filename+extension,10);
         
+        //PredictionUtils.createArff(filePath, filename,BDpath,BDfilename,nbtimeframe, "", "");
+        
+        PredictionUtils.createArff(filePath, filename,BDpath,BDfilename,nbtimeframe, "", "",4);
     }
 }
