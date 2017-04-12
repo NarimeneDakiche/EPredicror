@@ -16,11 +16,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
+import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 
@@ -43,9 +46,29 @@ public class SLPA extends CommunityMiner{
     private int exitVal;
     String jarFilePath="\".\\LibDetection\\SLPA\\GANXiSw.jar\"";
 
-    public LinkedList<Graph> findCommunities(String filePath,String filename) {
+
+    @Override
+    public String getName() {
+        return "SLPA";
+    }
+
+    @Override
+    public String getShortName() {
+        return "SLPA";
+    }
+
+    
+    public static String getfileName(String string) {
+        Path p = Paths.get(string);
+        String fileName = p.getFileName().toString();
+        return (fileName.indexOf(".")>=0)? fileName.substring(0, fileName.indexOf(".")) : fileName;
+    }
+
+    @Override
+    public LinkedList<Graph> findCommunities(String filePath) {
         // Create run arguments for the
         //LinkedList<Community> communities = null;
+        String filename=SLPA.getfileName(filePath);
         LinkedList<Graph> communities=new LinkedList<>();
         System.out.println("entered");
         final List<String> actualArgs = new ArrayList<>();
@@ -70,7 +93,7 @@ public class SLPA extends CommunityMiner{
             if (this.exitVal != 0) {
                 throw new IOException("Failed to execure jar, " + this.getExecutionLog());
             }else{
-                System.out.println("Execution Competed1");
+                System.out.println("Execution Completed1");
                 //*Read resulted files and construct Communities**/
                 //File file = new File("filePath");
                 //System.out.println("------"+file.getPath());
@@ -95,9 +118,38 @@ public class SLPA extends CommunityMiner{
                         nbcomm++;
                         //communities.add(new Community(new LinkedList(Arrays.asList(nodes)),null));
                 }
-                //add the edges for each community
                 br.close();
                 f.delete();
+                
+                //add the edges for each community
+                f = new File(filePath);
+                fis = new FileInputStream(f);
+                //Construct BufferedReader from InputStreamReader
+                br = new BufferedReader(new InputStreamReader(fis));
+
+                line = null;
+                //Read the file line by line and affect the edge to the community
+                while ((line = br.readLine()) != null) {
+                    System.out.println("line: == "+line);
+                    String[] nodes = line./*split(" +");*/replaceAll("(^\\s+|\\s+$)", "").split("\\s+");
+                    System.out.println("The number of nodes is: " + nodes.length);
+                    String nodeId0=new String(nodes[0]);
+                    String nodeId1=new String(nodes[1]);
+                        
+                    //Search for the community that contains it
+                    for (Graph com : communities) {
+                        if(((com.getNode(nodeId0))!=null) && ((com.getNode(nodeId1))!=null)){
+                            try{
+                                System.out.println("node affected=="+nodeId0+";"+nodeId1);
+                                com.addEdge(nodeId0+";"+nodeId1, nodeId0, nodeId1);
+                            }catch(EdgeRejectedException e){
+                                System.out.println("node affected=="+nodeId0+";"+nodeId1+"rejected");
+                            }
+                        }
+                    }
+                }
+                //add the edges for each community
+                br.close();
             }
 
         } catch (final IOException | InterruptedException e) {
@@ -108,43 +160,28 @@ public class SLPA extends CommunityMiner{
     }
     
     
-public String getExecutionLog() {
-    String error = "";
-    String line;
-    try {
-        while((line = this.error.readLine()) != null) {
-            error = error + "\n" + line;
+    public String getExecutionLog() {
+        String error = "";
+        String line;
+        try {
+            while((line = this.error.readLine()) != null) {
+                error = error + "\n" + line;
+            }
+        } catch (final IOException e) {
         }
-    } catch (final IOException e) {
-    }
-    String output = "";
-    try {
-        while((line = this.op.readLine()) != null) {
-            output = output + "\n" + line;
+        String output = "";
+        try {
+            while((line = this.op.readLine()) != null) {
+                output = output + "\n" + line;
+            }
+        } catch (final IOException e) {
         }
-    } catch (final IOException e) {
-    }
-    try {
-        this.error.close();
-        this.op.close();
-    } catch (final IOException e) {
-    }
-    return "exitVal: " + this.exitVal + ", error: " + error + ", output: " + output;
-}
-
-    @Override
-    public String getName() {
-        return "SLPA";
-    }
-
-    @Override
-    public String getShortName() {
-        return "SLPA";
-    }
-
-    @Override
-    public LinkedList<Community> findCommunities(String filePath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            this.error.close();
+            this.op.close();
+        } catch (final IOException e) {
+        }
+        return "exitVal: " + this.exitVal + ", error: " + error + ", output: " + output;
     }
 }
 
