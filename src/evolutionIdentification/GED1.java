@@ -136,7 +136,7 @@ public class GED1 {
         }
     }
 
-    public void excuteGED(LinkedList<TimeFrame> dynamicNetwork) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
+    public void excuteGED(LinkedList<TimeFrame> dynamicNetwork, int alpha, int beta) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
 
         /**
          * 1. Calculer Mesure d'importance et ordre en selon (e.g. degree
@@ -151,29 +151,6 @@ public class GED1 {
          * shrinking SET continue when size is the same
          *
          */
-        String fileName = "GED";
-        File myOutputDir = new File(fileName);
-        if (!myOutputDir.exists()) {
-            myOutputDir.mkdir();
-        }
-        fileName = "GED\\text1.db";
-        createNewTable(fileName);
-        this.conn = DriverManager.getConnection(url);
-        this.pstmt = this.conn.prepareStatement(sqlInsert);
-        this.pstmt1 = this.conn.prepareStatement("UPDATE GED_evolution "
-                + "SET event_type = ? "
-                + "WHERE threshold = ? AND group1 = ? AND timeframe1 = ? AND event_type = ?;");
-        this.pstmt2 = this.conn.prepareStatement("UPDATE GED_evolution "
-                + "SET event_type = ? "
-                + "WHERE threshold = ? AND group2 = ? AND timeframe2 = ? AND event_type = ?;");
-        this.pstmt3 = this.conn.prepareStatement("UPDATE GED_evolution "
-                + "SET event_type = ? "
-                + "WHERE threshold = ? AND group1 = ? AND timeframe1 = ? AND group2 = ? AND timeframe2 = ? AND event_type = ?;");
-        /*String sql = "PRAGMA synchronous=OFF";
-         Statement st = conn.createStatement();
-         st.execute(sql);*/
-        conn.setAutoCommit(false);
-
         int group1 = 0;
         int group2 = 0;
         int g1g2 = 0;
@@ -192,9 +169,9 @@ public class GED1 {
 
         int fd_tres = 10;
 
-        int a_tres_tmp = 50;
+        int a_tres_tmp = alpha;
         int a_tres = a_tres_tmp;
-        int b_tres_tmp = 50;
+        int b_tres_tmp = beta;
         int b_tres = b_tres_tmp;
 
         String tres = new String();
@@ -207,6 +184,29 @@ public class GED1 {
          while (b_tres < 110) {*/
 
         tres = a_tres + "_" + b_tres;
+
+        String fileName = "GED";
+        File myOutputDir = new File(fileName);
+        if (!myOutputDir.exists()) {
+            myOutputDir.mkdir();
+        }
+        fileName = "GED\\test_"+tres+".db";
+        createNewTable(fileName);
+        this.conn = DriverManager.getConnection(url);
+        this.pstmt = this.conn.prepareStatement(sqlInsert);
+        this.pstmt1 = this.conn.prepareStatement("UPDATE GED_evolution "
+                + "SET event_type = ? "
+                + "WHERE threshold = ? AND group1 = ? AND timeframe1 = ? AND event_type = ?;");
+        this.pstmt2 = this.conn.prepareStatement("UPDATE GED_evolution "
+                + "SET event_type = ? "
+                + "WHERE threshold = ? AND group2 = ? AND timeframe2 = ? AND event_type = ?;");
+        this.pstmt3 = this.conn.prepareStatement("UPDATE GED_evolution "
+                + "SET event_type = ? "
+                + "WHERE threshold = ? AND group1 = ? AND timeframe1 = ? AND group2 = ? AND timeframe2 = ? AND event_type = ?;");
+        /*String sql = "PRAGMA synchronous=OFF";
+         Statement st = conn.createStatement();
+         st.execute(sql);*/
+        conn.setAutoCommit(false);
 
         while (i_timeFrame < dynamicNetwork.size() - 1) {
             //t1_no : nb de groupes dans timeframe actuel
