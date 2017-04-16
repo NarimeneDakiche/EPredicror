@@ -14,8 +14,9 @@ public class testMiners {
         // TODO code application logic here
         //SLPA j=new SLPA();
         
-        (new SLPA()).findCommunities(".\\LibDetection\\SLPA\\test.ipairs");
-        //(new GN()).findCommunities(".\\LibDetection\\CONGA\\dolphins-edges.txt");
-        //(new CONGA()).findCommunities(".\\LibDetection\\CONGA\\export0.txt");
+        //(new SLPA()).findCommunities(".\\LibDetection\\SLPA\\test.ipairs");
+        //(new GN()).findCommunities2(".\\LibDetection\\CONGA\\export0.txt",6);
+        //(new CONGA()).findCommunities2(".\\LibDetection\\CONGA\\export0.txt",6);
+        (new CONCLUDE()).findCommunities2(".\\LibDetection\\CONCLUDE\\export0.txt");
     }
 }

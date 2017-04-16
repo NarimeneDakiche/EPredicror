@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.TreeSet;
 import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.implementations.SingleGraph;
 
 /**
@@ -142,7 +143,7 @@ public class SLPA extends CommunityMiner{
                             try{
                                 System.out.println("node affected=="+nodeId0+";"+nodeId1);
                                 com.addEdge(nodeId0+";"+nodeId1, nodeId0, nodeId1);
-                            }catch(EdgeRejectedException e){
+                            }catch(EdgeRejectedException | IdAlreadyInUseException e){
                                 System.out.println("node affected=="+nodeId0+";"+nodeId1+"rejected");
                             }
                         }
