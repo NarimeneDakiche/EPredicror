@@ -5,7 +5,6 @@
  */
 package communityDetection;
 
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -102,6 +101,5 @@ public class MainCPM_1 {
             //System.out.println("cohesion");
         }
     }
-
 
 }

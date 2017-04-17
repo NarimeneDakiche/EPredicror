@@ -23,132 +23,128 @@ import org.graphstream.graph.implementations.SingleGraph;
  *
  * @author HADJER
  */
-public class GN extends CommunityMiner{
-    
+public class GN extends CommunityMiner {
+
     private BufferedReader error;
     private BufferedReader op;
     private int exitVal;
-    String jarFilePath="\".\\LibDetection\\CONGA\\conga.jar\"";
-        
-     
-    public LinkedList<Community> findCommunities2(String filePath,int nbclusters) {  
+    String jarFilePath = "\".\\LibDetection\\CONGA\\conga.jar\"";
+
+    public LinkedList<Community> findCommunities2(String filePath, int nbclusters) {
         // Arguments
 
-        String filename=DetectionUtils.getfileName(filePath);
-        LinkedList<Graph> communities=new LinkedList<>();
-        
-	    final List<String> actualArgs = new ArrayList<String>();
-	    actualArgs.add(0, "java");
-	    actualArgs.add(1, "-cp");
-	    actualArgs.add(2, jarFilePath);
-            actualArgs.add(3, "CONGA");
-            actualArgs.add(4, "\""+filePath+"\"");
-            actualArgs.add(5, "-e");
-            actualArgs.add(6, "-r");
-            actualArgs.add(7, "-GN");
-            actualArgs.add(8, "-mem");
-            actualArgs.add(9, "-n");
-            actualArgs.add(10, ""+nbclusters);
-            
-	    //actualArgs.addAll(args);
-            try {
-                String line;
-                Process p = Runtime.getRuntime().exec(actualArgs.toArray(new String[0]));
-                BufferedReader bri = new BufferedReader
-                  (new InputStreamReader(p.getInputStream()));
-                BufferedReader bre = new BufferedReader
-                  (new InputStreamReader(p.getErrorStream()));
-                while ((line = bri.readLine()) != null) {
-                  //System.out.println(line);
-                }
-                bri.close();
-                while ((line = bre.readLine()) != null) {
-                  //System.out.println(line);
-                }
-                bre.close();
-                p.waitFor();
-                this.exitVal = p.exitValue();
-                if (this.exitVal != 0) {
-                    throw new IOException("Failed to execure jar, " + this.getExecutionLog());
-                }else{
-                    System.out.println("Done.");
-                    
-                    File f = new File("clusters-"+filename+".txt");
-                    FileInputStream fis = new FileInputStream(f);
-                    //Construct BufferedReader from InputStreamReader
-                    BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+        String filename = DetectionUtils.getfileName(filePath);
+        LinkedList<Graph> communities = new LinkedList<>();
 
-                    communities=new LinkedList<>();
-                    line = null;
-                    int nbcomm=0;
-                    while ((line = br.readLine()) != null) {
-                            System.out.println("comm:"+ nbcomm + " == "+line);
-                            String[] nodes = line.split(" ");
-                            System.out.println("The number of nodes is: " + nodes.length);
-                            communities.add(new SingleGraph(""));
-                            for (String nodeId : nodes) {
-                                if((communities.get(nbcomm).getNode(nodeId))==null){
-                                    communities.get(nbcomm).addNode(nodeId);
-                                }
-                            }
-                            nbcomm++;
-                            //communities.add(new Community(new LinkedList(Arrays.asList(nodes)),null));
+        final List<String> actualArgs = new ArrayList<String>();
+        actualArgs.add(0, "java");
+        actualArgs.add(1, "-cp");
+        actualArgs.add(2, jarFilePath);
+        actualArgs.add(3, "CONGA");
+        actualArgs.add(4, "\"" + filePath + "\"");
+        actualArgs.add(5, "-e");
+        actualArgs.add(6, "-r");
+        actualArgs.add(7, "-GN");
+        actualArgs.add(8, "-mem");
+        actualArgs.add(9, "-n");
+        actualArgs.add(10, "" + nbclusters);
+
+        //actualArgs.addAll(args);
+        try {
+            String line;
+            Process p = Runtime.getRuntime().exec(actualArgs.toArray(new String[0]));
+            BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            while ((line = bri.readLine()) != null) {
+                //System.out.println(line);
+            }
+            bri.close();
+            while ((line = bre.readLine()) != null) {
+                //System.out.println(line);
+            }
+            bre.close();
+            p.waitFor();
+            this.exitVal = p.exitValue();
+            if (this.exitVal != 0) {
+                throw new IOException("Failed to execure jar, " + this.getExecutionLog());
+            } else {
+                System.out.println("Done.");
+
+                File f = new File("clusters-" + filename + ".txt");
+                FileInputStream fis = new FileInputStream(f);
+                //Construct BufferedReader from InputStreamReader
+                BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+
+                communities = new LinkedList<>();
+                line = null;
+                int nbcomm = 0;
+                while ((line = br.readLine()) != null) {
+                    System.out.println("comm:" + nbcomm + " == " + line);
+                    String[] nodes = line.split(" ");
+                    System.out.println("The number of nodes is: " + nodes.length);
+                    communities.add(new SingleGraph(""));
+                    for (String nodeId : nodes) {
+                        if ((communities.get(nbcomm).getNode(nodeId)) == null) {
+                            communities.get(nbcomm).addNode(nodeId);
+                        }
                     }
-                    br.close();
-                    f.delete();
+                    nbcomm++;
+                    //communities.add(new Community(new LinkedList(Arrays.asList(nodes)),null));
+                }
+                br.close();
+                f.delete();
 
-                    //add the edges for each community
-                    f = new File(filePath);
-                    fis = new FileInputStream(f);
-                    //Construct BufferedReader from InputStreamReader
-                    br = new BufferedReader(new InputStreamReader(fis));
+                //add the edges for each community
+                f = new File(filePath);
+                fis = new FileInputStream(f);
+                //Construct BufferedReader from InputStreamReader
+                br = new BufferedReader(new InputStreamReader(fis));
 
-                    line = null;
-                    //Read the file line by line and affect the edge to the community
-                    while ((line = br.readLine()) != null) {
-                        System.out.println("line: == "+line);
-                        String[] nodes = line./*split(" +");*/replaceAll("(^\\s+|\\s+$)", "").split("\\s+");
-                        System.out.println("The number of nodes is: " + nodes.length);
-                        String nodeId0=new String(nodes[0]);
-                        String nodeId1=new String(nodes[1]);
+                line = null;
+                //Read the file line by line and affect the edge to the community
+                while ((line = br.readLine()) != null) {
+                    System.out.println("line: == " + line);
+                    String[] nodes = line./*split(" +");*/replaceAll("(^\\s+|\\s+$)", "").split("\\s+");
+                    System.out.println("The number of nodes is: " + nodes.length);
+                    String nodeId0 = new String(nodes[0]);
+                    String nodeId1 = new String(nodes[1]);
 
-                        //Search for the community that contains it
-                        for (Graph com : communities) {
-                            if(((com.getNode(nodeId0))!=null) && ((com.getNode(nodeId1))!=null)){
-                                try{
-                                    System.out.println("node affected=="+nodeId0+";"+nodeId1);
-                                    com.addEdge(nodeId0+";"+nodeId1, nodeId0, nodeId1);
-                                }catch(EdgeRejectedException | IdAlreadyInUseException e){
-                                    System.out.println("node affected=="+nodeId0+";"+nodeId1+"rejected");
-                                }
+                    //Search for the community that contains it
+                    for (Graph com : communities) {
+                        if (((com.getNode(nodeId0)) != null) && ((com.getNode(nodeId1)) != null)) {
+                            try {
+                                System.out.println("node affected==" + nodeId0 + ";" + nodeId1);
+                                com.addEdge(nodeId0 + ";" + nodeId1, nodeId0, nodeId1);
+                            } catch (EdgeRejectedException | IdAlreadyInUseException e) {
+                                System.out.println("node affected==" + nodeId0 + ";" + nodeId1 + "rejected");
                             }
                         }
                     }
-                    //add the edges for each community
-                    br.close();
                 }
-                
-              }
-              catch (Exception err) {
-                err.printStackTrace();
-              }
+                //add the edges for each community
+                br.close();
+            }
+
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
         //Read the file and extract communities
-        
-        return null;        
+
+        return null;
     }
-    
+
     public String getExecutionLog() {
         String error = "";
         String line;
         try {
-            while((line = this.error.readLine()) != null) {
+            while ((line = this.error.readLine()) != null) {
                 error = error + "\n" + line;
             }
         } catch (final IOException e) {
         }
         String output = "";
         try {
-            while((line = this.op.readLine()) != null) {
+            while ((line = this.op.readLine()) != null) {
                 output = output + "\n" + line;
             }
         } catch (final IOException e) {

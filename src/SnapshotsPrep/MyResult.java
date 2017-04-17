@@ -15,7 +15,7 @@ import java.util.Date;
 
 public class MyResult {
 
-        // etc
+    // etc
         /*public MyResult(int minTS, int maxTS) {
      this.minTS = minTS;
      this.maxTS = maxTS;

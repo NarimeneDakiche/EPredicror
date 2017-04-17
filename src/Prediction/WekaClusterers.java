@@ -9,4 +9,7 @@ package Prediction;
  *
  * @author programcreek
  */
-public enum WekaClusterers {kmeans, farthestFirst, densityBased, em, filteredClusterer, hierarchicalClusterer}
+public enum WekaClusterers {
+
+    kmeans, farthestFirst, densityBased, em, filteredClusterer, hierarchicalClusterer
+}

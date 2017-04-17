@@ -10,10 +10,11 @@ package communityDetection.ExternMethods;
  * @author HADJER
  */
 public class testMiners {
+
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
         //SLPA j=new SLPA();
-        
+
         //(new SLPA()).findCommunities(".\\LibDetection\\SLPA\\test.ipairs");
         //(new GN()).findCommunities2(".\\LibDetection\\CONGA\\export0.txt",6);
         //(new CONGA()).findCommunities2(".\\LibDetection\\CONGA\\export0.txt",6);

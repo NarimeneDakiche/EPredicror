@@ -16,218 +16,220 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UI.FXMLDocumentController">
 
 
-   <children>
-      <SplitPane dividerPositions="0.3182957393483709" layoutX="205.0" layoutY="132.0" prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <items>
-          <AnchorPane maxWidth="400.0" minHeight="0.0" minWidth="200.0">
-               <children>
-                  <SplitPane dividerPositions="0.18791946308724833" layoutX="47.0" layoutY="88.0" orientation="VERTICAL" prefHeight="598.0" prefWidth="187.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <items>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
-                      <AnchorPane minHeight="200.0" minWidth="200.0" prefHeight="100.0" prefWidth="160.0">
-                           <children>
-                              <Accordion fx:id="accordion1" prefHeight="481.0" prefWidth="252.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <panes>
-                                    <TitledPane fx:id="titledpane1" animated="false" prefHeight="385.0" prefWidth="283.0" text="Fractionnenement des Snapshots">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="394.0" prefWidth="263.0">
-                                             <children>
-                                                <HBox layoutX="44.0" layoutY="38.0" />
-                                                <VBox layoutX="6.0" layoutY="107.0" AnchorPane.bottomAnchor="168.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="97.39999999999998">
-                                                   <children>
-                                                      <HBox>
-                                                         <children>
-                                                            <Label alignment="CENTER" prefHeight="13.0" prefWidth="112.0" text="Format du temp:">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </Label>
-                                                            <ComboBox fx:id="comboFormatTemp" prefHeight="25.0" prefWidth="112.0">
-                                                               <HBox.margin>
-                                                                  <Insets left="10.0" />
-                                                               </HBox.margin>
-                                                            </ComboBox>
-                                                         </children>
-                                                      </HBox>
-                                                      <HBox>
-                                                         <children>
-                                                            <HBox>
-                                                               <children>
-                                                                  <Label alignment="CENTER" prefHeight="25.0" prefWidth="112.0" text="Nombre de clusters:">
-                                                                     <font>
-                                                                        <Font size="11.0" />
-                                                                     </font></Label>
-                                                                  <Spinner fx:id="spinnerNBClusters" editable="true" prefHeight="25.0" prefWidth="112.0">
-                                                                     <HBox.margin>
-                                                                        <Insets left="10.0" />
-                                                                     </HBox.margin>
-                                                                  </Spinner>
-                                                               </children>
-                                                               <HBox.margin>
-                                                                  <Insets bottom="15.0" top="15.0" />
-                                                               </HBox.margin>
-                                                            </HBox>
-                                                         </children>
-                                                      </HBox>
-                                                      <HBox>
-                                                         <children>
-                                                            <Label alignment="CENTER" prefHeight="24.0" prefWidth="121.0" text="Structure de données:">
-                                                               <font>
-                                                                  <Font size="11.0" />
-                                                               </font></Label>
-                                                            <ComboBox fx:id="comboStructDonnees" prefHeight="25.0" prefWidth="112.0">
-                                                               <HBox.margin>
-                                                                  <Insets />
-                                                               </HBox.margin>
-                                                            </ComboBox>
-                                                         </children>
-                                                         <opaqueInsets>
-                                                            <Insets bottom="15.0" top="15.0" />
-                                                         </opaqueInsets>
-                                                      </HBox>
-                                                   </children>
-                                                   <opaqueInsets>
-                                                      <Insets />
-                                                   </opaqueInsets>
-                                                </VBox>
-                                                <HBox layoutX="46.0" layoutY="42.0" prefHeight="25.0" prefWidth="190.0" AnchorPane.bottomAnchor="303.4" AnchorPane.leftAnchor="46.0" AnchorPane.rightAnchor="33.19999999999999" AnchorPane.topAnchor="42.0">
-                                                   <children>
-                                                      <Label alignment="CENTER" prefHeight="26.0" prefWidth="52.0" text="Fichier:">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Button fx:id="browserButton" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="25.0" prefWidth="73.0" text="Parcourir">
-                                                         <HBox.margin>
-                                                            <Insets left="20.0" />
-                                                         </HBox.margin>
-                                                      </Button>
-                                                   </children>
-                                                </HBox>
-                                                <Label alignment="CENTER" layoutX="27.0" layoutY="302.0" prefHeight="28.0" prefWidth="226.0" textAlignment="CENTER" />
-                                                <HBox layoutX="40.0" layoutY="281.0" prefHeight="31.0" prefWidth="171.0">
-                                                   <children>
-                                                      <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="77.0" text="Start">
-                                                         <font>
-                                                            <Font size="15.0" />
-                                                         </font>
-                                                      </Button>
-                                                      <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="75.0" text="Annuler">
-                                                         <font>
-                                                            <Font size="15.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets left="20.0" />
-                                                         </HBox.margin>
-                                                      </Button>
-                                                   </children>
-                                                </HBox>
-                                             </children>
-                                          </AnchorPane>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane fx:id="titledpane2" animated="false" prefHeight="425.0" prefWidth="341.0" text="Détection des communautés">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <HBox layoutX="5.0" layoutY="62.0" />
-                                                <VBox alignment="CENTER" layoutX="19.0" layoutY="33.0" prefHeight="45.0" prefWidth="210.0" AnchorPane.bottomAnchor="292.0" AnchorPane.leftAnchor="9.400000000000006" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="23.399999999999977">
-                                                   <children>
-                                                      <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Méthode de détection">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <VBox.margin>
-                                                            <Insets bottom="10.0" />
-                                                         </VBox.margin>
-                                                      </Label>
-                                                      <ComboBox fx:id="comboFormatTemp1" prefHeight="25.0" prefWidth="211.0" />
-                                                   </children>
-                                                </VBox>
-                                                <HBox layoutX="40.0" layoutY="187.0" prefHeight="58.0" prefWidth="176.0" AnchorPane.bottomAnchor="154.20000000000005" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="43.19999999999999" AnchorPane.topAnchor="196.0" />
-                                                <HBox layoutX="32.0" layoutY="148.0" prefHeight="31.0" prefWidth="171.0">
-                                                   <children>
-                                                      <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="77.0" text="Start">
-                                                         <font>
-                                                            <Font size="15.0" />
-                                                         </font>
-                                                      </Button>
-                                                      <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="75.0" text="Annuler">
-                                                         <font>
-                                                            <Font size="15.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets left="20.0" />
-                                                         </HBox.margin>
-                                                      </Button>
-                                                   </children>
-                                                </HBox>
-                                             </children>
-                                          </AnchorPane>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane fx:id="titledpane3" animated="false" text="Identification de l'évolution des communuautés">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <VBox alignment="CENTER" layoutX="19.0" layoutY="80.0" prefHeight="45.0" prefWidth="210.0">
-                                                   <children>
-                                                      <Label alignment="CENTER" prefHeight="15.0" prefWidth="214.0" text="Méthode de d'identification de l'évolution">
-                                                         <font>
-                                                            <Font size="11.0" />
-                                                         </font>
-                                                         <VBox.margin>
-                                                            <Insets bottom="10.0" />
-                                                         </VBox.margin>
-                                                      </Label>
-                                                      <ComboBox fx:id="comboFormatTemp11" prefHeight="25.0" prefWidth="213.0" />
-                                                   </children>
-                                                </VBox>
-                                                <HBox layoutX="39.0" layoutY="175.0" prefHeight="31.0" prefWidth="171.0">
-                                                   <children>
-                                                      <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="77.0" text="Start">
-                                                         <font>
-                                                            <Font size="15.0" />
-                                                         </font>
-                                                      </Button>
-                                                      <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="75.0" text="Annuler">
-                                                         <font>
-                                                            <Font size="15.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets left="20.0" />
-                                                         </HBox.margin>
-                                                      </Button>
-                                                   </children>
-                                                </HBox>
-                                             </children>
-                                          </AnchorPane>
-                                       </content>
-                                    </TitledPane>
-                                    <TitledPane fx:id="titledpane4" animated="false" prefHeight="436.0" prefWidth="228.0" text="Prédiction">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="449.0" prefWidth="226.0" />
-                                       </content>
-                                    </TitledPane>
-                                 </panes>
-                              </Accordion>
-                           </children>
-                        </AnchorPane>
-                    </items>
-                  </SplitPane>
-               </children>
-            </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="598.0" prefWidth="456.0">
-               <children>
-                  <SplitPane dividerPositions="0.2902684563758389" layoutX="150.0" layoutY="146.0" orientation="VERTICAL" prefHeight="598.0" prefWidth="538.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <items>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
-                    </items>
-                  </SplitPane>
-               </children>
-            </AnchorPane>
-        </items>
-      </SplitPane>
-   </children>
+    <children>
+        <SplitPane dividerPositions="0.3182957393483709" layoutX="205.0" layoutY="132.0" prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <items>
+                <AnchorPane maxWidth="400.0" minHeight="0.0" minWidth="200.0">
+                    <children>
+                        <SplitPane dividerPositions="0.18791946308724833" layoutX="47.0" layoutY="88.0" orientation="VERTICAL" prefHeight="598.0" prefWidth="187.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <items>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                                <AnchorPane minHeight="200.0" minWidth="200.0" prefHeight="100.0" prefWidth="160.0">
+                                    <children>
+                                        <Accordion fx:id="accordion1" prefHeight="481.0" prefWidth="252.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <panes>
+                                                <TitledPane fx:id="titledpane1" animated="false" prefHeight="385.0" prefWidth="283.0" text="Fractionnenement des Snapshots">
+                                                    <content>
+                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="394.0" prefWidth="263.0">
+                                                            <children>
+                                                                <HBox layoutX="44.0" layoutY="38.0" />
+                                                                <VBox layoutX="6.0" layoutY="107.0" AnchorPane.bottomAnchor="168.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="97.39999999999998">
+                                                                    <children>
+                                                                        <HBox>
+                                                                            <children>
+                                                                                <Label alignment="CENTER" prefHeight="13.0" prefWidth="112.0" text="Format du temp:">
+                                                                                    <font>
+                                                                                        <Font size="14.0" />
+                                                                                    </font>
+                                                                                </Label>
+                                                                                <ComboBox fx:id="comboFormatTemp" prefHeight="25.0" prefWidth="112.0">
+                                                                                    <HBox.margin>
+                                                                                        <Insets left="10.0" />
+                                                                                    </HBox.margin>
+                                                                                </ComboBox>
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <HBox>
+                                                                            <children>
+                                                                                <HBox>
+                                                                                    <children>
+                                                                                        <Label alignment="CENTER" prefHeight="25.0" prefWidth="112.0" text="Nombre de clusters:">
+                                                                                            <font>
+                                                                                                <Font size="11.0" />
+                                                                                            </font>
+                                                                                        </Label>
+                                                                                        <Spinner fx:id="spinnerNBClusters" editable="true" prefHeight="25.0" prefWidth="112.0">
+                                                                                            <HBox.margin>
+                                                                                                <Insets left="10.0" />
+                                                                                            </HBox.margin>
+                                                                                        </Spinner>
+                                                                                    </children>
+                                                                                    <HBox.margin>
+                                                                                        <Insets bottom="15.0" top="15.0" />
+                                                                                    </HBox.margin>
+                                                                                </HBox>
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <HBox>
+                                                                            <children>
+                                                                                <Label alignment="CENTER" prefHeight="24.0" prefWidth="121.0" text="Structure de données:">
+                                                                                    <font>
+                                                                                        <Font size="11.0" />
+                                                                                    </font>
+                                                                                </Label>
+                                                                                <ComboBox fx:id="comboStructDonnees" prefHeight="25.0" prefWidth="112.0">
+                                                                                    <HBox.margin>
+                                                                                        <Insets />
+                                                                                    </HBox.margin>
+                                                                                </ComboBox>
+                                                                            </children>
+                                                                            <opaqueInsets>
+                                                                                <Insets bottom="15.0" top="15.0" />
+                                                                            </opaqueInsets>
+                                                                        </HBox>
+                                                                    </children>
+                                                                    <opaqueInsets>
+                                                                        <Insets />
+                                                                    </opaqueInsets>
+                                                                </VBox>
+                                                                <HBox layoutX="46.0" layoutY="42.0" prefHeight="25.0" prefWidth="190.0" AnchorPane.bottomAnchor="303.4" AnchorPane.leftAnchor="46.0" AnchorPane.rightAnchor="33.19999999999999" AnchorPane.topAnchor="42.0">
+                                                                    <children>
+                                                                        <Label alignment="CENTER" prefHeight="26.0" prefWidth="52.0" text="Fichier:">
+                                                                            <font>
+                                                                                <Font size="16.0" />
+                                                                            </font>
+                                                                        </Label>
+                                                                        <Button fx:id="browserButton" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="25.0" prefWidth="73.0" text="Parcourir">
+                                                                            <HBox.margin>
+                                                                                <Insets left="20.0" />
+                                                                            </HBox.margin>
+                                                                        </Button>
+                                                                    </children>
+                                                                </HBox>
+                                                                <Label alignment="CENTER" layoutX="27.0" layoutY="302.0" prefHeight="28.0" prefWidth="226.0" textAlignment="CENTER" />
+                                                                <HBox layoutX="40.0" layoutY="281.0" prefHeight="31.0" prefWidth="171.0">
+                                                                    <children>
+                                                                        <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="77.0" text="Start">
+                                                                            <font>
+                                                                                <Font size="15.0" />
+                                                                            </font>
+                                                                        </Button>
+                                                                        <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="75.0" text="Annuler">
+                                                                            <font>
+                                                                                <Font size="15.0" />
+                                                                            </font>
+                                                                            <HBox.margin>
+                                                                                <Insets left="20.0" />
+                                                                            </HBox.margin>
+                                                                        </Button>
+                                                                    </children>
+                                                                </HBox>
+                                                            </children>
+                                                        </AnchorPane>
+                                                    </content>
+                                                </TitledPane>
+                                                <TitledPane fx:id="titledpane2" animated="false" prefHeight="425.0" prefWidth="341.0" text="Détection des communautés">
+                                                    <content>
+                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                            <children>
+                                                                <HBox layoutX="5.0" layoutY="62.0" />
+                                                                <VBox alignment="CENTER" layoutX="19.0" layoutY="33.0" prefHeight="45.0" prefWidth="210.0" AnchorPane.bottomAnchor="292.0" AnchorPane.leftAnchor="9.400000000000006" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="23.399999999999977">
+                                                                    <children>
+                                                                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Méthode de détection">
+                                                                            <font>
+                                                                                <Font size="14.0" />
+                                                                            </font>
+                                                                            <VBox.margin>
+                                                                                <Insets bottom="10.0" />
+                                                                            </VBox.margin>
+                                                                        </Label>
+                                                                        <ComboBox fx:id="comboFormatTemp1" prefHeight="25.0" prefWidth="211.0" />
+                                                                    </children>
+                                                                </VBox>
+                                                                <HBox layoutX="40.0" layoutY="187.0" prefHeight="58.0" prefWidth="176.0" AnchorPane.bottomAnchor="154.20000000000005" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="43.19999999999999" AnchorPane.topAnchor="196.0" />
+                                                                <HBox layoutX="32.0" layoutY="148.0" prefHeight="31.0" prefWidth="171.0">
+                                                                    <children>
+                                                                        <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="77.0" text="Start">
+                                                                            <font>
+                                                                                <Font size="15.0" />
+                                                                            </font>
+                                                                        </Button>
+                                                                        <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="75.0" text="Annuler">
+                                                                            <font>
+                                                                                <Font size="15.0" />
+                                                                            </font>
+                                                                            <HBox.margin>
+                                                                                <Insets left="20.0" />
+                                                                            </HBox.margin>
+                                                                        </Button>
+                                                                    </children>
+                                                                </HBox>
+                                                            </children>
+                                                        </AnchorPane>
+                                                    </content>
+                                                </TitledPane>
+                                                <TitledPane fx:id="titledpane3" animated="false" text="Identification de l'évolution des communuautés">
+                                                    <content>
+                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                            <children>
+                                                                <VBox alignment="CENTER" layoutX="19.0" layoutY="80.0" prefHeight="45.0" prefWidth="210.0">
+                                                                    <children>
+                                                                        <Label alignment="CENTER" prefHeight="15.0" prefWidth="214.0" text="Méthode de d'identification de l'évolution">
+                                                                            <font>
+                                                                                <Font size="11.0" />
+                                                                            </font>
+                                                                            <VBox.margin>
+                                                                                <Insets bottom="10.0" />
+                                                                            </VBox.margin>
+                                                                        </Label>
+                                                                        <ComboBox fx:id="comboFormatTemp11" prefHeight="25.0" prefWidth="213.0" />
+                                                                    </children>
+                                                                </VBox>
+                                                                <HBox layoutX="39.0" layoutY="175.0" prefHeight="31.0" prefWidth="171.0">
+                                                                    <children>
+                                                                        <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="77.0" text="Start">
+                                                                            <font>
+                                                                                <Font size="15.0" />
+                                                                            </font>
+                                                                        </Button>
+                                                                        <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="75.0" text="Annuler">
+                                                                            <font>
+                                                                                <Font size="15.0" />
+                                                                            </font>
+                                                                            <HBox.margin>
+                                                                                <Insets left="20.0" />
+                                                                            </HBox.margin>
+                                                                        </Button>
+                                                                    </children>
+                                                                </HBox>
+                                                            </children>
+                                                        </AnchorPane>
+                                                    </content>
+                                                </TitledPane>
+                                                <TitledPane fx:id="titledpane4" animated="false" prefHeight="436.0" prefWidth="228.0" text="Prédiction">
+                                                    <content>
+                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="449.0" prefWidth="226.0" />
+                                                    </content>
+                                                </TitledPane>
+                                            </panes>
+                                        </Accordion>
+                                    </children>
+                                </AnchorPane>
+                            </items>
+                        </SplitPane>
+                    </children>
+                </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="598.0" prefWidth="456.0">
+                    <children>
+                        <SplitPane dividerPositions="0.2902684563758389" layoutX="150.0" layoutY="146.0" orientation="VERTICAL" prefHeight="598.0" prefWidth="538.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <items>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                            </items>
+                        </SplitPane>
+                    </children>
+                </AnchorPane>
+            </items>
+        </SplitPane>
+    </children>
 </AnchorPane>

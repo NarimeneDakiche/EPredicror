@@ -9,7 +9,6 @@ package communityDetection.ExternMethods;
  *
  * @author HADJER
  */
-
 import graphclasses1.Community;
 import java.util.LinkedList;
 import org.graphstream.graph.Graph;
@@ -18,14 +17,15 @@ import org.graphstream.graph.Graph;
  *
  * @author HADJER
  */
-public abstract class CommunityMiner{
-	
-	
-	public abstract LinkedList<Graph> findCommunities(String filePath);
-	
-	public abstract String getName();
-	public abstract String getShortName();
-	public String toString(){
-		return getName();
-	}
+public abstract class CommunityMiner {
+
+    public abstract LinkedList<Graph> findCommunities(String filePath);
+
+    public abstract String getName();
+
+    public abstract String getShortName();
+
+    public String toString() {
+        return getName();
+    }
 }

@@ -13,10 +13,13 @@ import java.nio.file.Paths;
  * @author HADJER
  */
 public class DetectionUtils {
-    /**Extract the filename from a path**/
+
+    /**
+     * Extract the filename from a path*
+     */
     public static String getfileName(String string) {
         Path p = Paths.get(string);
         String fileName = p.getFileName().toString();
-        return (fileName.indexOf(".")>=0)? fileName.substring(0, fileName.indexOf(".")) : fileName;
+        return (fileName.indexOf(".") >= 0) ? fileName.substring(0, fileName.indexOf(".")) : fileName;
     }
 }

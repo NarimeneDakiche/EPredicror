@@ -190,7 +190,7 @@ public class GED1 {
         if (!myOutputDir.exists()) {
             myOutputDir.mkdir();
         }
-        fileName = "GED\\test_"+tres+".db";
+        fileName = "GED\\test_" + tres + ".db";
         createNewTable(fileName);
         this.conn = DriverManager.getConnection(url);
         this.pstmt = this.conn.prepareStatement(sqlInsert);

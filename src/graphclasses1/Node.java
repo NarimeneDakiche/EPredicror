@@ -10,6 +10,7 @@ package graphclasses1;
  * @author ado_k
  */
 public class Node {
+
     String id;
 
     public Node(String node) {
@@ -23,6 +24,5 @@ public class Node {
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
 }

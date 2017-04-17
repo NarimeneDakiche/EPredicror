@@ -1,5 +1,4 @@
 
-
 import SnapshotsPrep.*;
 import communityDetection.AttributesComupter;
 import communityDetection.CPM;

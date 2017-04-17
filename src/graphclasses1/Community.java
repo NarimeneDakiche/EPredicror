@@ -7,6 +7,7 @@ import java.util.LinkedList;
  * @author ado_k
  */
 public class Community {
+
     LinkedList<String> nodes;
     LinkedList<String> edges;
 
@@ -14,7 +15,7 @@ public class Community {
         this.nodes = nodes;
         this.edges = edges;
     }
-    
+
     public LinkedList<String> getNodes() {
         return nodes;
     }

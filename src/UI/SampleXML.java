@@ -11,13 +11,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
 /**
  *
  * @author< ado_k
  */
-
-
 public class SampleXML extends Application {
 
     @Override

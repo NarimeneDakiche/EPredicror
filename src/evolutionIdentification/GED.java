@@ -1,6 +1,5 @@
 package evolutionIdentification;
 
-
 import evolutionIdentification.GEDUtils.NodeCompare;
 import evolutionIdentification.GEDUtils.TimeFrame;
 import java.io.FileNotFoundException;
@@ -220,8 +219,8 @@ public class GED {
 
                     //calculating inclusion
                     a = (int) ((1.0 * g1g2 / g1_size) * (1.0 * sr1 / tr1) * 100);
-                   // System.out.println((1.0 * g1g2 / g1_size) * (1.0 * sr1 / tr1) *100 + " " +a);
-                           
+                    // System.out.println((1.0 * g1g2 / g1_size) * (1.0 * sr1 / tr1) *100 + " " +a);
+
 //                    if (a > 10) {
 //                        System.out.println("Inclusion: a=" + a + ", g1g2=" + g1g2 + ", g1_size=" + g1_size + ", sr1=" + sr1 + ", tr1=" + tr1);
 //                    }

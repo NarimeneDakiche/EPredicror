@@ -2,10 +2,10 @@ package graphclasses1;
 
 /**
  * The {@code Edge} class represents a timestamped edge in an
- * {@link EdgeWeightedGraph}. Each edge consists of two Stringegers (naming the two
- * vertices) and a real-value timestamp. The data type provides methods for
- * accessing the two endpoStrings of the edge and the timestamp. The natural order
- * for this data type is by ascending order of timestamp.
+ * {@link EdgeWeightedGraph}. Each edge consists of two Stringegers (naming the
+ * two vertices) and a real-value timestamp. The data type provides methods for
+ * accessing the two endpoStrings of the edge and the timestamp. The natural
+ * order for this data type is by ascending order of timestamp.
  * <p>
  * For additional documentation, see
  * <a href="http://algs4.cs.princeton.edu/43mst">Section 4.3</a> of
@@ -32,7 +32,7 @@ public class Edge implements Comparable<Edge> {
      * @throws IllegalArgumentException if {@code timestamp} is {@code NaN}
      */
     public Edge(String v, String w, long timestamp) { //CustomEdge
-        
+
         //if (Long.isNaN(timestamp)) throw new IllegalArgumentException("Weight is NaN");
         this.v = v;
         this.w = w;
@@ -40,7 +40,7 @@ public class Edge implements Comparable<Edge> {
     }
 
     public Edge(String v, String w) { //CustomEdge
-        
+
         //if (Long.isNaN(timestamp)) throw new IllegalArgumentException("Weight is NaN");
         this.v = v;
         this.w = w;
