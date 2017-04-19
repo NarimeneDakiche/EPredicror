@@ -202,6 +202,7 @@ public class CPM {
          }
          }
          }*/
+        System.out.println(finalGraph.size() + " communities detected");
         return finalGraph;
     }
 

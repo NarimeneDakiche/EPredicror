@@ -18,9 +18,30 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.SingleGraph;
 
 public class SnapshotsPrep {
 
+    public static Graph readCommunity(String file) {
+        Graph g = new SingleGraph("");
+        g.setStrict(false);
+        g.setAutoCreate(true);
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String sCurrentLine;
+
+            while ((sCurrentLine = br.readLine()) != null) {
+                String[] str = sCurrentLine.split(" ");
+                g.addEdge(str[0] + ";" + str[1], str[0], str[1]);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return g;
+
+    }
+    
     private static List<String> readFile(String file)
             throws FileNotFoundException, IOException {
         List<String> textLines = new ArrayList<>();
@@ -76,7 +97,7 @@ public class SnapshotsPrep {
         return (edges);
     }
 
-    public int getSplitSnapshots(String file, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport, String exportExtension) throws IOException, FileNotFoundException, ParseException {
+    public int getSplitSnapshots(String file, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
         boolean bool = false;
         List<List<Edge>> parts = new ArrayList<>();
         MyResult myResult = new MyResult();
@@ -88,7 +109,7 @@ public class SnapshotsPrep {
         if (multipleExport) {
             BufferedWriter[] writers = new BufferedWriter[nbSnap];
             for (int i = 0; i < writers.length; i++) {
-                writers[i] = new BufferedWriter(new FileWriter("Ec" + i + ".txt"));
+                writers[i] = new BufferedWriter(new FileWriter(exportName + i + ".txt"));
             }
 
             FileInputStream stream = new FileInputStream(new File(file));
@@ -120,7 +141,7 @@ public class SnapshotsPrep {
 
             }
         } else {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("Ec.txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(exportName));
 
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String sCurrentLine;
@@ -143,7 +164,7 @@ public class SnapshotsPrep {
         return nbSnap;
     }
 
-    public int getSplitSnapshots(String file, List<Duration> listDuration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport, String exportExtension) throws IOException, FileNotFoundException, ParseException {
+    public int getSplitSnapshots(String file, List<Duration> listDuration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
         MyResult myResult = new MyResult();
         myResult.getResults(file, timeFormat, dataStructure, separator);
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
@@ -152,7 +173,7 @@ public class SnapshotsPrep {
         if (multipleExport) {
             BufferedWriter[] writers = new BufferedWriter[nbSnap];
             for (int i = 0; i < writers.length; i++) {
-                writers[i] = new BufferedWriter(new FileWriter("Ec" + i + ".txt"));
+                writers[i] = new BufferedWriter(new FileWriter(exportName + i + ".txt"));
             }
 
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -189,7 +210,7 @@ public class SnapshotsPrep {
 
             }
         } else {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("Ec.txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(exportName));
 
             FileInputStream stream = new FileInputStream(new File(file));
             boolean once = true;
@@ -218,15 +239,14 @@ public class SnapshotsPrep {
         return nbSnap;
     }
 
-    public void getSplitSnapshots(String file, int nbSnap, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport, String exportExtension) throws FileNotFoundException, IOException, ParseException {
+    public void getSplitSnapshots(String file, int nbSnap, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws FileNotFoundException, IOException, ParseException {
         MyResult myResult = new MyResult();
         myResult.getResults(file, timeFormat, dataStructure, separator);
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
-
         if (multipleExport) {
             BufferedWriter[] writers = new BufferedWriter[nbSnap];
             for (int i = 0; i < writers.length; i++) {
-                writers[i] = new BufferedWriter(new FileWriter("Ec" + i + ".txt"));
+                writers[i] = new BufferedWriter(new FileWriter(exportName + i + ".txt"));
             }
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String sCurrentLine;
@@ -254,7 +274,7 @@ public class SnapshotsPrep {
 
             }
         } else {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("Ec.txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(exportName));
 
             FileInputStream stream = new FileInputStream(new File(file));
             boolean once = true;
@@ -300,12 +320,12 @@ public class SnapshotsPrep {
 
         if (nbSnap <= 0) {
             if (duration != null) {
-                this.getSplitSnapshots(file, duration, timeFormat, dataStructure, separator, exportName, directed, multipleExport, exportExtension);
+                this.getSplitSnapshots(file, duration, timeFormat, dataStructure, separator, exportName, directed, multipleExport);
             } else {
-                this.getSplitSnapshots(file, snapDurations, timeFormat, dataStructure, separator, exportName, directed, multipleExport, exportExtension);
+                this.getSplitSnapshots(file, snapDurations, timeFormat, dataStructure, separator, exportName, directed, multipleExport);
             }
         } else {
-            this.getSplitSnapshots(file, nbSnap, timeFormat, dataStructure, separator, exportName, directed, multipleExport, exportExtension);
+            this.getSplitSnapshots(file, nbSnap, timeFormat, dataStructure, separator, exportName, directed, multipleExport);
         }
         /*List<Edge> edges = this.readEdges(file, timeFormat, dataStructure, separator);  /* get a list of edges */
         /* final int N = edges.size();

@@ -93,7 +93,7 @@ public class MainGED {
         }
 
         GED1 ged1 = new GED1();
-        ged1.excuteGED(network, 50, 50);
+        ged1.excuteGED(network, 50, 50, "text");
 
     }
 }

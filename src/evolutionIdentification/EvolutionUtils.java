@@ -18,22 +18,22 @@ import java.util.ArrayList;
 public class EvolutionUtils {
 
     public static void main(String[] args) {
-        String BDpath = "./LibEvolution/";
-        String BDfilename = "testGED.db";
-        String tabname = "GED";
+        String BDpath = "./GED/";
+        String BDfilename = "flogs_50_50.db";
+        String tabname = "GED_evolution";
         int nbtimeframe = 44;
-        writeEvolutionChain(BDpath, BDfilename, tabname, nbtimeframe/**
+        writeEvolutionChain(BDpath, BDfilename, tabname, nbtimeframe, 2/**
          * nbre timeframes*
          */
         );
+        
     }
 
     /**
      * A method to generate evoltion chains tables*
      */
     public static void writeEvolutionChain(/*LinkedList<TimeFrame> dynamicNetwork,*/String BDpath, String BDfilename, String tabname, int nbtimeframe/**
-     * nbre timeframes*
-     */
+     * nbre timeframes**/, int nbevents/**chain's min lengh*/
     ) {
 
         //Generating evolution chain for groups in Evolution identification method
@@ -111,8 +111,8 @@ public class EvolutionUtils {
                             + "e2.group2 as group2, \n"
                             + "e2.timeframe2 as timeframe2 \n"
                             + "\n"
-                            + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from GED where timeframe1=1) as e2 \n"
-                            + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from GED where timeframe1=0) as e1 \n"
+                            + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=1) as e2 \n"
+                            + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=0) as e1 \n"
                             + "ON e1.group2=e2.group1 )\n"
                             + "\n"
                             + "UNION\n"
@@ -172,8 +172,8 @@ public class EvolutionUtils {
                             + "e2.group2 as group2, \n"
                             + "e2.timeframe2 as timeframe2 \n"
                             + "\n"
-                            + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from GED where timeframe1=0) as e1 \n"
-                            + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from GED where timeframe1=1) as e2 \n"
+                            + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=0) as e1 \n"
+                            + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=1) as e2 \n"
                             + "ON e1.group2=e2.group1 )  \n"
                             + "\n"
                             + ");";
@@ -237,7 +237,7 @@ public class EvolutionUtils {
                                 + "  END event_type,\n"
                                 + "e2.group2 as group2, \n"
                                 + "e2.timeframe2 as timeframe2 \n"
-                                + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from GED where timeframe1=" + ti + ") as e2 \n"
+                                + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=" + ti + ") as e2 \n"
                                 + "LEFT JOIN (select * from Join" + ti + " where group2 is not null) as e1 \n"
                                 + "ON e1.group2=e2.group1 )\n"
                                 + "UNION\n"
@@ -292,7 +292,7 @@ public class EvolutionUtils {
                                 + "e2.group2 as group2, \n"
                                 + "e2.timeframe2 as timeframe2 \n"
                                 + "from ( (select * from Join" + ti + " where group2 is not null) as e1 \n"
-                                + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from GED where timeframe1=" + ti + ") as e2 \n"
+                                + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=" + ti + ") as e2 \n"
                                 + "ON e1.group2=e2.group1 )  \n"
                                 + ");";
                         /*String scriptDeleteTab ="PRAGMA foreign_keys = OFF;\n" +
@@ -369,7 +369,7 @@ public class EvolutionUtils {
                                 + "  \n"
                                 + "e2.group2 as group2, \n"
                                 + "e2.timeframe2 as timeframe2 \n"
-                                + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from GED where timeframe1=" + ti + ") as e2 \n"
+                                + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=" + ti + ") as e2 \n"
                                 + "LEFT JOIN (select * from Join" + ti + " where group2 is not null) as e1 \n"
                                 + "ON e1.group2=e2.group1 )\n"
                                 + "UNION\n"
@@ -424,7 +424,7 @@ public class EvolutionUtils {
                                 + "e2.group2 as group2, \n"
                                 + "e2.timeframe2 as timeframe2 \n"
                                 + "from ( (select * from Join" + ti + " where group2 is not null) as e1 \n"
-                                + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from GED where timeframe1=" + ti + ") as e2 \n"
+                                + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=" + ti + ") as e2 \n"
                                 + "ON e1.group2=e2.group1 )  \n"
                                 + ");";
 
@@ -438,6 +438,7 @@ public class EvolutionUtils {
                 ti++;
             }
             //Writing Completed chains:
+            String scriptDelTab = "DROP TABLE IF EXISTS Chains";
             String scriptJoinTab = "CREATE TABLE Chains (\n"
                     + " group1 text,\n"
                     + " timeframe1 text,\n"
@@ -447,13 +448,13 @@ public class EvolutionUtils {
                     + " );";
             //Execute Scripts
             executeStatement(BDpath, BDfilename, scriptJoinTab);
-
-            for (int temp = 4; temp < nbtimeframe - 1; temp++) {
+            int min=nbevents*7+(nbevents-1);
+            for (int temp = nbevents; temp < nbtimeframe - 1; temp++) {
                 String sql = "";
                 if (temp == nbtimeframe - 2) {
-                    sql = "INSERT INTO Chains select * from Join" + temp + " where LENGTH(event_type)>=31;";
+                    sql = "INSERT INTO Chains select * from Join" + temp + " where LENGTH(event_type)>="+min+";";
                 } else {
-                    sql = "INSERT INTO Chains select * from Join" + temp + " where (group2 is null) and LENGTH(event_type)>=31;";
+                    sql = "INSERT INTO Chains select * from Join" + temp + " where (group2 is null) and LENGTH(event_type)>="+min+";";
                 }
                 //Execute Scripts
                 executeStatement(BDpath, BDfilename, sql);
@@ -467,6 +468,7 @@ public class EvolutionUtils {
             }
 
         }
+        //System.out.println("reached.");
 
     }
 

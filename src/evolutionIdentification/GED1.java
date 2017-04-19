@@ -136,7 +136,7 @@ public class GED1 {
         }
     }
 
-    public void excuteGED(LinkedList<TimeFrame> dynamicNetwork, int alpha, int beta) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
+    public void excuteGED(LinkedList<TimeFrame> dynamicNetwork, int alpha, int beta, String exportName) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
 
         /**
          * 1. Calculer Mesure d'importance et ordre en selon (e.g. degree
@@ -190,7 +190,7 @@ public class GED1 {
         if (!myOutputDir.exists()) {
             myOutputDir.mkdir();
         }
-        fileName = "GED\\test_" + tres + ".db";
+        fileName = "GED\\"+exportName+"_"+ tres + ".db";
         createNewTable(fileName);
         this.conn = DriverManager.getConnection(url);
         this.pstmt = this.conn.prepareStatement(sqlInsert);
@@ -519,31 +519,36 @@ public class GED1 {
         // loop through the result set
         int i = 0, last = 0;
         while (rsCont.next()) {
-            if ((i / cpt) != last) {
-                System.out.print(i / cpt + "(" + i++ + "/" + cpt + ")");
-            }
+//            if ((i / cpt) != last) {
+//                System.out.print(i / cpt + "(" + i++ + "/" + cpt + ")");
+//            }
             g1 = rsCont.getInt("group1");
             t1 = rsCont.getInt("timeframe1");
             g2 = rsCont.getInt("group2");
             t2 = rsCont.getInt("timeframe2");
             String eventType = rsCont.getString("event_type");
 
-            int graphCont1 = dynamicNetwork.get(t1).getCommunities().get(g1).getNodeSet().size();
-            int graphCont2 = dynamicNetwork.get(t2).getCommunities().get(g2).getNodeSet().size();
-            //System.out.println("Counts: " + graphCont1 + " " + graphCont2);
-            if (graphCont1 == graphCont2) {
-                if (eventType.equals("shrinking")) {
-                    // System.out.println(tres + "," + g2 + "," + t2 + ",");
-                    update("continuing", tres, g1, t1, g2, t2, "shrinking");
-                } else if (eventType.equals("growing")) {
-                    update("continuing", tres, g1, t1, g2, t2, "growing");
-                } else {
-                    System.out.println("Whaat!?? :o");
+            if (t2 < dynamicNetwork.size()) {
+                int graphCont1 = dynamicNetwork.get(t1).getCommunities().get(g1).getNodeSet().size();
+                //System.out.println(t2 + " " + g2 + " ");
+                int graphCont2 = dynamicNetwork.get(t2).getCommunities().get(g2).getNodeSet().size();
+                //System.out.println("Counts: " + graphCont1 + " " + graphCont2);
+                if (graphCont1 == graphCont2) {
+                    if (eventType.equals("shrinking")) {
+                        // System.out.println(tres + "," + g2 + "," + t2 + ",");
+                        update("continuing", tres, g1, t1, g2, t2, "shrinking");
+                    } else if (eventType.equals("growing")) {
+                        update("continuing", tres, g1, t1, g2, t2, "growing");
+                    } else {
+                        System.out.println("Whaat!?? :o");
+                    }
                 }
             }
         }
         updateCounts = pstmt3.executeBatch();
         conn.commit();
+        
+        conn.close();
     }
 
     private LinkedList<Node> nodeInter(Collection<Node> gr1, Collection<Node> gr2) {
@@ -564,7 +569,7 @@ public class GED1 {
         for (Node n1 : gr1) {
             for (Node n2 : g1g2) {
                 if (n1.getId().equals(n2.getId())) {
-                    sum += (Double) n1.getAttribute("Cb");
+                    sum += (Double) n1.getAttribute("bcentrality");
                 }
             }
         }
@@ -574,7 +579,7 @@ public class GED1 {
     private double sumMesure(Collection<Node> gr1) {
         double sum = 0;
         for (Node n : gr1) {
-            sum += (Double) n.getAttribute("Cb"); // to adapt
+            sum += (Double) n.getAttribute("bcentrality"); // to adapt
         }
         return sum;
     }
