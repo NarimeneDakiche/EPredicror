@@ -190,7 +190,7 @@ public class GED1 {
         if (!myOutputDir.exists()) {
             myOutputDir.mkdir();
         }
-        fileName = "GED\\"+exportName+"_"+ tres + ".db";
+        fileName = "GED\\" + exportName + "_" + tres + ".db";
         createNewTable(fileName);
         this.conn = DriverManager.getConnection(url);
         this.pstmt = this.conn.prepareStatement(sqlInsert);
@@ -547,7 +547,7 @@ public class GED1 {
         }
         updateCounts = pstmt3.executeBatch();
         conn.commit();
-        
+
         conn.close();
     }
 
