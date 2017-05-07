@@ -78,7 +78,7 @@ public class SnapshotsPrep {
             v = splitContent[dataStructure.indexOf("V")];
             w = splitContent[dataStructure.indexOf("W")];
 
-            if (timeFormat != null) {
+            if (timeFormat != null && !timeFormat.equals("Timestamp")) {
                 String dateS = "";
                 for (int i = -1; (i = dataStructure.indexOf("T", i + 1)) != -1;) {
                     dateS += splitContent[i];
@@ -97,7 +97,7 @@ public class SnapshotsPrep {
         return (edges);
     }
 
-    public int getSplitSnapshots(String file, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
+    private int getSplitSnapshots(String file, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
         boolean bool = false;
         List<List<Edge>> parts = new ArrayList<>();
         MyResult myResult = new MyResult();
@@ -245,7 +245,7 @@ public class SnapshotsPrep {
         return nbSnap;
     }
 
-    public int getSplitSnapshots(String file, List<Duration> listDuration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
+    private int getSplitSnapshots(String file, List<Duration> listDuration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
         MyResult myResult = new MyResult();
         myResult.getResults(file, timeFormat, dataStructure, separator);
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
@@ -307,7 +307,9 @@ public class SnapshotsPrep {
                     timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
                     int step = (int) ((myResult.getMaxTS() - myResult.getMinTS()) / nbSnap);
                     int index = (int) ((timestamp - myResult.getMinTS()) / step);
-
+                    if (timestamp == myResult.getMaxTS()) {
+                        index--;
+                    }
                     if (index < nbSnap) {
                         writer.write(v + " " + w + " " + index + "\n");
                     }
@@ -419,7 +421,7 @@ public class SnapshotsPrep {
         this.getSplitSnapshots(overlapping, file, Duration.ofSeconds(duration), timeFormat, dataStructure, separator, exportName, directed, multipleExport);
     }
 
-    public void getSplitSnapshots(String file, int nbSnap, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws FileNotFoundException, IOException, ParseException {
+    private void getSplitSnapshots(String file, int nbSnap, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws FileNotFoundException, IOException, ParseException {
         MyResult myResult = new MyResult();
         myResult.getResults(file, timeFormat, dataStructure, separator);
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
@@ -456,8 +458,8 @@ public class SnapshotsPrep {
         } else {
             BufferedWriter writer = new BufferedWriter(new FileWriter(exportName));
 
-            FileInputStream stream = new FileInputStream(new File(file));
-            boolean once = true;
+            /*FileInputStream stream = new FileInputStream(new File(file));
+             boolean once = true;*/
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String sCurrentLine;
                 String[] splitContent;
@@ -470,7 +472,9 @@ public class SnapshotsPrep {
                     timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
                     int step = (int) ((myResult.getMaxTS() - myResult.getMinTS()) / nbSnap);
                     int index = (int) ((timestamp - myResult.getMinTS()) / step);
-
+                    if (timestamp == myResult.getMaxTS()) {
+                        index--;
+                    }
                     if (index < nbSnap) {
                         writer.write(v + " " + w + " " + index + "\n");
                     }
@@ -482,7 +486,7 @@ public class SnapshotsPrep {
         System.out.println("Split done. Writing done.");
     }
 
-    public void getSplitSnapshots(String file, int nbSnap, List<Duration> snapDurations, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport, String exportExtension) throws ParseException, FileNotFoundException, UnsupportedEncodingException, IOException, InterruptedException {
+    private void getSplitSnapshots(String file, int nbSnap, List<Duration> snapDurations, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport, String exportExtension) throws ParseException, FileNotFoundException, UnsupportedEncodingException, IOException, InterruptedException {
         /**
          * This method reads and splits sorted List of edges to divide them into
          * k snapshots timeFormat should define the format of the date given in

@@ -49,7 +49,7 @@ public class MyResult {
             boolean first = true;
             while ((sCurrentLine = br.readLine()) != null) {
                 splitContent = sCurrentLine.split(separator);
-                if (timeFormat != null) {
+                if (timeFormat != null && !timeFormat.equals("Timestamp")) {
                     String dateS = "";
                     for (int i = -1; (i = dataStructure.indexOf("T", i + 1)) != -1;) {
                         dateS += splitContent[i];
@@ -77,7 +77,7 @@ public class MyResult {
         /*try (Scanner scanner = new Scanner(stream)) {
          while (scanner.hasNextLine()) {
          splitContent = scanner.nextLine().split(separator);
-         if (timeFormat != null) {
+         if (timeFormat != null && !timeFormat.equals("Timestamp")) {
          String dateS = "";
          for (int i = -1; (i = dataStructure.indexOf("T", i + 1)) != -1;) {
          dateS += splitContent[i];
