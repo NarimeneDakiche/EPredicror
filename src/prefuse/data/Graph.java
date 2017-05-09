@@ -1284,6 +1284,10 @@ public class Graph extends CompositeTupleSet {
         }
     }
 
+    public void addNode(String id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     // ------------------------------------------------------------------------
     // Table and Column Listener
     

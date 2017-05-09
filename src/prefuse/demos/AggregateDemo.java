@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.JComponent;
 
 import javax.swing.JFrame;
@@ -95,7 +96,8 @@ public class AggregateDemo extends Display {
         int[] palette = new int[]{
             ColorLib.rgba(255, 200, 200, 150),
             ColorLib.rgba(200, 255, 200, 150),
-            ColorLib.rgba(200, 200, 255, 150)
+            ColorLib.rgba(200, 200, 255, 150),
+            ColorLib.rgba(200, 200, 0, 150)
         };
         ColorAction aFill = new DataColorAction(AGGR, "id",
                 Constants.NOMINAL, VisualItem.FILLCOLOR, palette);
@@ -145,13 +147,13 @@ public class AggregateDemo extends Display {
         // add nodes to aggregates
         // create an aggregate for each 3-clique of nodes
         Iterator nodes = vg.nodes();
-        for (int i = 0; i < 4; ++i) {
-            AggregateItem aitem = (AggregateItem) at.addItem();
-            aitem.setInt("id", 0);
-            for (int j = 0; j < 3; ++j) {
-                aitem.addItem((VisualItem) nodes.next());
-            }
+        //for (int i = 0; i < 4; ++i) {
+        AggregateItem aitem = (AggregateItem) at.addItem();
+        aitem.setInt("id", ThreadLocalRandom.current().nextInt(0, 4 + 1));
+        for (int j = 0; j < vg.getNodeCount(); ++j) {
+            aitem.addItem((VisualItem) nodes.next());
         }
+        //}
     }
 
     public static void main(String[] argv) {
@@ -181,7 +183,7 @@ public class AggregateDemo extends Display {
         frame.pack();
         return frame;
     }
-    
+
     public static JComponent demoComp(Graph g) {
 
         AggregateDemo ad = new AggregateDemo(g);
