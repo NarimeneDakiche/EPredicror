@@ -15,8 +15,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -71,14 +73,25 @@ public class SLPA extends CommunityMiner {
         String filename = SLPA.getfileName(filePath);
         LinkedList<Graph> communities = new LinkedList<>();
         System.out.println("entered");
+        
+        String newFilePath=".\\LibDetection\\SLPA\\" + filename + ".ipairs";
+        try { 
+            File source= new File(filePath);
+            File dest= new File(newFilePath);
+            Files.copy(source.toPath(), dest.toPath(),REPLACE_EXISTING);
+
+        } catch (IOException e) { 
+            e.printStackTrace(); 
+        }
+        
         final List<String> actualArgs = new ArrayList<>();
         actualArgs.add(0, "java");
         actualArgs.add(1, "-jar");
         actualArgs.add(2, jarFilePath);
         actualArgs.add(3, "-i");
-        actualArgs.add(4, "\"" + filePath + "\"");//GraphPath
+        actualArgs.add(4, "\"" + newFilePath + "\"");//GraphPath
         actualArgs.add(5, "-d");
-        actualArgs.add(6, "\".\\LibDetection\\SLPA\\output\"");
+        actualArgs.add(6, "\".\\LibDetection\\SLPA\"");
         actualArgs.add(7, "-r");
         actualArgs.add(8, "0.1");
 
@@ -97,7 +110,7 @@ public class SLPA extends CommunityMiner {
                 //*Read resulted files and construct Communities**/
                 //File file = new File("filePath");
                 //System.out.println("------"+file.getPath());
-                File f = new File(".\\LibDetection\\SLPA\\output\\" + "SLPA" + "w_" + filename + "_run" + "1" + "_r" + actualArgs.get(8) + "_v3" + "_T100.icpm");
+                File f = new File(".\\LibDetection\\SLPA\\" + "SLPA" + "w_" + filename + "_run" + "1" + "_r" + actualArgs.get(8) + "_v3" + "_T100.icpm");
                 FileInputStream fis = new FileInputStream(f);
                 //Construct BufferedReader from InputStreamReader
                 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
@@ -122,7 +135,7 @@ public class SLPA extends CommunityMiner {
                 f.delete();
 
                 //add the edges for each community
-                f = new File(filePath);
+                f = new File(newFilePath);
                 fis = new FileInputStream(f);
                 //Construct BufferedReader from InputStreamReader
                 br = new BufferedReader(new InputStreamReader(fis));
@@ -150,6 +163,7 @@ public class SLPA extends CommunityMiner {
                 }
                 //add the edges for each community
                 br.close();
+                f.delete();
             }
 
         } catch (final IOException | InterruptedException e) {

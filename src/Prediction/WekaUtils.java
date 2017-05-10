@@ -23,6 +23,8 @@ import weka.filters.AllFilter;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import weka.classifiers.bayes.BayesNet;
+import weka.classifiers.bayes.NaiveBayes;
 
 public class WekaUtils {
 
@@ -32,6 +34,17 @@ public class WekaUtils {
     public static Classifier makeClassifier(String wekaClassifier, String[] options) throws Exception {
 
         switch (WekaClassificationAlgorithms.valueOf(wekaClassifier)) {
+            case naiveBayes:
+                NaiveBayes naive=new NaiveBayes();
+                setOptionsForWekaPredictor(options, naive);
+                return naive;
+                //NaiveBayesUpdateable nb = new NaiveBayesUpdateable();
+                
+            case bayesNet:
+                BayesNet bayes=new BayesNet();
+                setOptionsForWekaPredictor(options, bayes);
+                return bayes;
+                
             case decisionTree:
                 J48 j48 = new J48();
                 setOptionsForWekaPredictor(options, j48);

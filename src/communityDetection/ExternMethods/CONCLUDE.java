@@ -9,11 +9,17 @@ import graphclasses1.Community;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.compress.utils.IOUtils;
 import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.IdAlreadyInUseException;
@@ -30,18 +36,38 @@ public class CONCLUDE extends CommunityMiner {
     private int exitVal;
     String jarFilePath = "\".\\LibDetection\\CONCLUDE\\CONCLUDE.jar\"";
 
-    public LinkedList<Community> findCommunities2(String filePath) {
+    public LinkedList<Graph> findCommunities2(String filePath) {
         // Arguments
 
         String filename = DetectionUtils.getfileName(filePath);
+        /*
+        try { 
+            Files.copy(source, destination); 
+            // Il est également possible de spécifier des options de copie. 
+            // Ici : écrase le fichier destination s'il existe et copie les attributs de la source sur la destination.  
+           //Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES); 
+        } catch (IOException e) { 
+            e.printStackTrace(); 
+        } */
+        String newFilePath=".\\LibDetection\\CONCLUDE\\graphFile_" + filename + ".txt";
+        try { 
+            File source= new File(filePath);
+            File dest= new File(newFilePath);
+            Files.copy(source.toPath(), dest.toPath(),REPLACE_EXISTING);
+
+        } catch (IOException e) { 
+            e.printStackTrace(); 
+        }
+        
+        
         LinkedList<Graph> communities = new LinkedList<>();
 
         final List<String> actualArgs = new ArrayList<String>();
         actualArgs.add(0, "java");
         actualArgs.add(1, "-jar");
         actualArgs.add(2, jarFilePath);
-        actualArgs.add(3, "\"" + filePath + "\"");
-        actualArgs.add(4, "\".\\LibDetection\\CONCLUDE\\clusters-" + filename + ".txt\"");//output file
+        actualArgs.add(3, "\"" + newFilePath + "\"");
+        actualArgs.add(4, "\".\\LibDetection\\CONCLUDE\\clusters-" + "graphFile_" + filename + ".txt\"");//output file
         actualArgs.add(5, " ");//Delimiter
 
         //actualArgs.addAll(args);
@@ -65,7 +91,7 @@ public class CONCLUDE extends CommunityMiner {
             } else {
                 System.out.println("Done.");
 
-                File f = new File(".\\LibDetection\\CONCLUDE\\clusters-" + filename + ".txt");
+                File f = new File(".\\LibDetection\\CONCLUDE\\clusters-" + "graphFile_" + filename + ".txt");
                 FileInputStream fis = new FileInputStream(f);
                 //Construct BufferedReader from InputStreamReader
                 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
@@ -93,7 +119,7 @@ public class CONCLUDE extends CommunityMiner {
                 f.delete();
 
                 //Delete weights file
-                f = new File(".\\LibDetection\\CONCLUDE\\weights-" + filename + ".txt");
+                f = new File(".\\LibDetection\\CONCLUDE\\weights-" + "graphFile_" + filename + ".txt");
                 f.delete();
 
                 //add the edges for each community
@@ -130,9 +156,8 @@ public class CONCLUDE extends CommunityMiner {
         } catch (Exception err) {
             err.printStackTrace();
         }
-        //Read the file and extract communities
 
-        return null;
+        return communities;
     }
 
     public String getExecutionLog() {

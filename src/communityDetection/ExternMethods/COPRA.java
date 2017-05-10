@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,12 +47,22 @@ public class COPRA extends CommunityMiner {
         String filename = DetectionUtils.getfileName(filePath);
         LinkedList<Graph> communities = new LinkedList<>();
 
+        String newFilePath=".\\LibDetection\\COPRA\\" + filename + ".txt";
+        try { 
+            File source= new File(filePath);
+            File dest= new File(newFilePath);
+            Files.copy(source.toPath(), dest.toPath(),REPLACE_EXISTING);
+
+        } catch (IOException e) { 
+            e.printStackTrace(); 
+        }
+        
         final List<String> actualArgs = new ArrayList<String>();
         actualArgs.add(0, "java");
         actualArgs.add(1, "-cp");
         actualArgs.add(2, jarFilePath);
         actualArgs.add(3, "COPRA");
-        actualArgs.add(4, "\"" + filePath + "\"");
+        actualArgs.add(4, "\"" + newFilePath + "\"");
         actualArgs.add(5, "-q");
         if (nbrepeat > 1) {
             actualArgs.add(6, "repeat");
@@ -169,7 +181,7 @@ public class COPRA extends CommunityMiner {
                 f.delete();
 
                 //add the edges for each community
-                f = new File(filePath);
+                f = new File(newFilePath);
                 fis = new FileInputStream(f);
                 //Construct BufferedReader from InputStreamReader
                 br = new BufferedReader(new InputStreamReader(fis));
@@ -197,6 +209,7 @@ public class COPRA extends CommunityMiner {
                 }
                 //add the edges for each community
                 br.close();
+                f.delete();
             }
 
         } catch (Exception err) {
