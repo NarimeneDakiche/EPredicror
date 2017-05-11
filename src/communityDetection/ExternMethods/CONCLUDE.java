@@ -30,7 +30,7 @@ public class CONCLUDE extends CommunityMiner {
     private int exitVal;
     String jarFilePath = "\".\\LibDetection\\CONCLUDE\\CONCLUDE.jar\"";
 
-    public LinkedList<Community> findCommunities2(String filePath) {
+    public LinkedList<Graph> findCommunities2(String filePath) {
         // Arguments
 
         String filename = DetectionUtils.getfileName(filePath);

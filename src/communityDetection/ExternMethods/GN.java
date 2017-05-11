@@ -30,7 +30,7 @@ public class GN extends CommunityMiner {
     private int exitVal;
     String jarFilePath = "\".\\LibDetection\\CONGA\\conga.jar\"";
 
-    public LinkedList<Community> findCommunities2(String filePath, int nbclusters) {
+    public LinkedList<Graph> findCommunities2(String filePath, int nbclusters) {
         // Arguments
 
         String filename = DetectionUtils.getfileName(filePath);

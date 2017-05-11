@@ -18,6 +18,6 @@ public class testMiners {
         //(new SLPA()).findCommunities(".\\LibDetection\\SLPA\\test.ipairs");
         //(new GN()).findCommunities2(".\\LibDetection\\CONGA\\export0.txt",6);
         //(new CONGA()).findCommunities2(".\\LibDetection\\CONGA\\export0.txt",6);
-        (new CONCLUDE()).findCommunities2(".\\LibDetection\\CONCLUDE\\export0.txt");
+        //(new CONCLUDE()).findCommunities2(".\\LibDetection\\CONCLUDE\\export0.txt");
     }
 }

@@ -136,7 +136,7 @@
                                                                                               <Font size="11.0" />
                                                                                           </font>
                                                                                       </Label>
-                                                                                      <TextField fx:id="overlappingLabel" prefHeight="25.0" prefWidth="110.0">
+                                                                                      <TextField fx:id="overlappingLabel" prefHeight="6.0" prefWidth="110.0">
                                                                      <HBox.margin>
                                                                         <Insets left="5.0" />
                                                                      </HBox.margin>
@@ -162,7 +162,7 @@
                                                                               </HBox>
                                                                               <VBox alignment="CENTER" prefHeight="43.0" prefWidth="229.0" spacing="10.0">
                                                                                   <children>
-                                                                                      <CheckBox fx:id="checkboxSplitMultiExport" alignment="CENTER" mnemonicParsing="false" prefHeight="17.0" prefWidth="173.0" text="Export snapshots séparés" />
+                                                                                      <CheckBox fx:id="checkboxSplitMultiExport" alignment="CENTER" mnemonicParsing="false" prefHeight="17.0" prefWidth="173.0" selected="true" text="Export snapshots séparés" />
                                                                                       <CheckBox mnemonicParsing="false" prefHeight="17.0" prefWidth="175.0" text="   Ignorer la première ligne" />
                                                                                   </children>
                                                                               </VBox>
@@ -213,12 +213,12 @@
                                                                               <ComboBox fx:id="comboDetection" prefHeight="7.0" prefWidth="198.0" />
                                                                               <HBox alignment="CENTER_RIGHT">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="64.0" text="Paramètre k: ">
+                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="64.0" text="Paramètre: ">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
                                                                                       </Label>
-                                                                                      <Spinner fx:id="snipperDetection" editable="true" prefHeight="25.0" prefWidth="107.0">
+                                                                                      <Spinner fx:id="snipperDetection" editable="true" prefHeight="10.0" prefWidth="107.0">
                                                                                           <HBox.margin>
                                                                                               <Insets left="5.0" />
                                                                                           </HBox.margin>
@@ -227,7 +227,7 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                                                                   <children>
-                                                                                      <CheckBox mnemonicParsing="false" text="Exporter les résultats">
+                                                                                      <CheckBox mnemonicParsing="false" selected="true" text="Exporter les résultats">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
@@ -262,7 +262,7 @@
                                                       </TitledPane>
                                                       <TitledPane fx:id="titledpane3" animated="false" text="Identification de l'évolution">
                                                           <content>
-                                                              <AnchorPane minHeight="0.0" minWidth="0.0" onDragDetected="#startIdentification" prefHeight="180.0" prefWidth="200.0">
+                                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                   <children>
                                                                       <VBox alignment="CENTER" layoutX="13.0" layoutY="31.0" prefHeight="45.0" prefWidth="210.0" spacing="10.0">
                                                                           <children>
@@ -271,6 +271,7 @@
                                                                                       <Font name="System Bold" size="12.0" />
                                                                                   </font>
                                                                               </Label>
+                                                            <Button mnemonicParsing="false" onAction="#browserEvolutionAction" text="Parcourir" />
                                                                               <ComboBox fx:id="comboEvolution" prefHeight="25.0" prefWidth="217.0" />
                                                                               <HBox alignment="CENTER_RIGHT" spacing="5.0">
                                                                                   <children>
@@ -303,17 +304,17 @@
                                                                                               <Font size="11.0" />
                                                                                           </font>
                                                                                       </Label>
-                                                                                      <TextField fx:id="parameters" prefHeight="25.0" prefWidth="110.0" />
+                                                                                      <TextField fx:id="evolutionParameters" prefHeight="25.0" prefWidth="110.0" promptText="50;50" />
                                                                                   </children>
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                                                                   <children>
-                                                                                      <CheckBox mnemonicParsing="false" text="Exporter les résultats" />
+                                                                                      <CheckBox fx:id="exportDetectionResults" mnemonicParsing="false" text="Exporter les résultats" />
                                                                                   </children>
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="31.0" prefWidth="171.0">
                                                                                   <children>
-                                                                                      <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="69.0" text="Lancer">
+                                                                                      <Button fx:id="launchEvolution" disable="true" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="69.0" text="Lancer">
                                                                                           <font>
                                                                                               <Font size="10.0" />
                                                                                           </font>
@@ -348,6 +349,7 @@
                                                                   <Font name="System Bold" size="12.0" />
                                                                </font>
                                                             </Label>
+                                                            <Button mnemonicParsing="false" onAction="#browserPredictionAction" text="Parcourir" />
                                                                               <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
                                                                                   <children>
                                                                                       <Label alignment="CENTER" prefHeight="20.0" prefWidth="161.0" text="Classificateur:">
@@ -371,7 +373,7 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="15.0" prefWidth="210.0">
                                                                                   <children>
-                                                                                      <Button mnemonicParsing="false" onAction="#startPrediction" prefHeight="32.0" prefWidth="74.0" text="Lancer">
+                                                                                      <Button fx:id="launchPrediction" disable="true" mnemonicParsing="false" onAction="#startPrediction" prefHeight="32.0" prefWidth="74.0" text="Lancer">
                                                                                           <font>
                                                                                               <Font size="10.0" />
                                                                                           </font>
@@ -448,7 +450,7 @@
                                                             </AnchorPane>
                                                       </content>
                                                     </Tab>
-                                                    <Tab text="Statistics">
+                                                    <Tab text="Statistiques">
                                                       <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                                                       </content>
@@ -459,7 +461,7 @@
                                           </AnchorPane>
                                         <AnchorPane maxHeight="80.0" minHeight="80.0" minWidth="0.0" prefHeight="80.0" prefWidth="537.0">
                                              <children>
-                                                          <TextArea fx:id="logTextArea" editable="false" layoutY="-64.0" maxHeight="80.0" minHeight="80.0" prefHeight="80.0" prefWidth="530.0" style="-fx-background-color: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                          <TextArea fx:id="logTextArea" editable="false" layoutY="-64.0" maxHeight="160.0" minHeight="80.0" prefHeight="80.0" prefWidth="530.0" style="-fx-background-color: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                              </children>
                                           </AnchorPane>
                                       </items>
