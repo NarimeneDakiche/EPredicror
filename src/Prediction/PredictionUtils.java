@@ -605,7 +605,7 @@ public class PredictionUtils {
 
             for (int k = 0; k < nbevents; k++) {
                 for (int j = 0; j < nbFeatures; j++) {
-                    atts.addElement(new Attribute(Features.get(k) + j + "_" + k));
+                    atts.addElement(new Attribute(Features.get(j) + "_" + k));
                 }
                 if (k == 0) {
                     //first event
@@ -683,6 +683,8 @@ public class PredictionUtils {
 //                                        Integer.getInteger(g);
 //                                        Integer.getInteger(t);
                                         //Read Feature
+                                        System.out.println("Feature[k=="+ k + "]==" + Features.get(k)+"   for g=="+
+                                                            Integer.getInteger(g) +"   for g=="+ Integer.getInteger(t));
                                         vals[iInsertion] = dynamicNetwork.get(Integer.getInteger(t)).getCommunities().get(
                                                 Integer.getInteger(g)).getAttribute(Features.get(k));
                                     }
