@@ -36,7 +36,43 @@ public class CONCLUDE extends CommunityMiner {
     private int exitVal;
     String jarFilePath = "\".\\LibDetection\\CONCLUDE\\CONCLUDE.jar\"";
 
-    public LinkedList<Graph> findCommunities2(String filePath) {
+
+    public String getExecutionLog() {
+        String error = "";
+        String line;
+        try {
+            while ((line = this.error.readLine()) != null) {
+                error = error + "\n" + line;
+            }
+        } catch (final IOException e) {
+        }
+        String output = "";
+        try {
+            while ((line = this.op.readLine()) != null) {
+                output = output + "\n" + line;
+            }
+        } catch (final IOException e) {
+        }
+        try {
+            this.error.close();
+            this.op.close();
+        } catch (final IOException e) {
+        }
+        return "exitVal: " + this.exitVal + ", error: " + error + ", output: " + output;
+    }
+
+    @Override
+    public String getName() {
+        return "CONGA";
+    }
+
+    @Override
+    public String getShortName() {
+        return "CONGA";
+    }
+
+    @Override
+    public LinkedList<Graph> findCommunities(String filePath) {
         // Arguments
 
         String filename = DetectionUtils.getfileName(filePath);
@@ -158,45 +194,6 @@ public class CONCLUDE extends CommunityMiner {
         }
 
         return communities;
-    }
-
-    public String getExecutionLog() {
-        String error = "";
-        String line;
-        try {
-            while ((line = this.error.readLine()) != null) {
-                error = error + "\n" + line;
-            }
-        } catch (final IOException e) {
-        }
-        String output = "";
-        try {
-            while ((line = this.op.readLine()) != null) {
-                output = output + "\n" + line;
-            }
-        } catch (final IOException e) {
-        }
-        try {
-            this.error.close();
-            this.op.close();
-        } catch (final IOException e) {
-        }
-        return "exitVal: " + this.exitVal + ", error: " + error + ", output: " + output;
-    }
-
-    @Override
-    public String getName() {
-        return "CONGA";
-    }
-
-    @Override
-    public String getShortName() {
-        return "CONGA";
-    }
-
-    @Override
-    public LinkedList<Graph> findCommunities(String filePath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
