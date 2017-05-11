@@ -32,7 +32,7 @@ public class COPRA extends CommunityMiner {
     private int exitVal;
     String jarFilePath = "\".\\LibDetection\\COPRA\\copra.jar\"";
 
-    public LinkedList<Community> findCommunities2(String filePath, int nbrepeat/**
+    public LinkedList<Graph> findCommunities2(String filePath, int nbrepeat/**
              * default 1*
              */
             , int v/**
@@ -217,7 +217,7 @@ public class COPRA extends CommunityMiner {
         }
         //Read the file and extract communities
 
-        return null;
+        return communities;
     }
 
     public String getExecutionLog() {

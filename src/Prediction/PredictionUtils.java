@@ -310,7 +310,7 @@ public class PredictionUtils {
                         //Extract its caracteristics from the graph
                         //Graph group=dynamicNetwork.get(t).getCommunities().get(g);
 
-                            //Exract the next event
+                        //Exract the next event
                             /*String e=new String(events[ievents]);
                          System.out.println("Insert : events["+ievents+"]=="+e);
 
@@ -680,8 +680,8 @@ public class PredictionUtils {
                                         vals[iInsertion] = 0;
                                     } else {
                                         //extract feature of group from dynamic graph
-                                        Integer.getInteger(g);
-                                        Integer.getInteger(t);
+//                                        Integer.getInteger(g);
+//                                        Integer.getInteger(t);
                                         //Read Feature
                                         vals[iInsertion] = dynamicNetwork.get(Integer.getInteger(t)).getCommunities().get(
                                                 Integer.getInteger(g)).getAttribute(Features.get(k));

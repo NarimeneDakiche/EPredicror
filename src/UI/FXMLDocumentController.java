@@ -8,6 +8,11 @@ package UI;
 import Prediction.PredictionUtils;
 import SnapshotsPrep.SnapshotsPrep;
 import communityDetection.CPM;
+import communityDetection.ExternMethods.CM;
+import communityDetection.ExternMethods.CONCLUDE;
+import communityDetection.ExternMethods.CONGA;
+import communityDetection.ExternMethods.COPRA;
+import communityDetection.ExternMethods.GN;
 import communityDetection.ExternMethods.SLPA;
 import evolutionIdentification.AttributesComputer;
 import static evolutionIdentification.EvolutionUtils.writeEvolutionChain;
@@ -227,11 +232,12 @@ public class FXMLDocumentController implements Initializable {
                     case "CM":
                     case "CONCLUDE":
                     case "COPRA":
-                    case "SLPA":
                         snipperDetection.setDisable(true);
                         break;
+                    case "SLPA":
                     case "CPM":
                     case "GN":
+
                     case "CONGA":
                         snipperDetection.setDisable(false);
                         break;
@@ -649,7 +655,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void startDetection(ActionEvent event) {
         try {
-            treeView.getRoot().getChildren().clear();
+            //treeView.getRoot().getChildren().clear();
+            Node rootIcon = new ImageView(new Image(getClass().getResourceAsStream("24-128.png")));
+            root = new TreeItem<>("Snapshots", rootIcon);
+            treeView.setRoot(root);
         } catch (Exception e) {
         }
 
@@ -708,30 +717,57 @@ public class FXMLDocumentController implements Initializable {
                         }
                         case "SLPA": {
                             writeLog("Executing SLPA...");
-                            LinkedList<Graph> communities = (new SLPA()).findCommunities(fileToExecute);
+                            LinkedList<Graph> communities = (new SLPA()).findCommunities(fileToExecute, snipperDetection.getValue());
                             dynamicNetwork.add(new TimeFrame(communities));
-                            System.out.println("Exécution de SLPA est terminée");
+                            writeLog("Exécution de SLPA est terminée");
                             break;
                         }
                         case "GN": {
                             writeLog("Executing GN...");
+                            LinkedList<Graph> communities = (new GN()).findCommunities2(fileToExecute, 5/*nbComm*/);
+                            dynamicNetwork.add(new TimeFrame(communities));
+                            System.out.println("Exécution de GN est terminée");
                             break;
                         }
                         case "CONGA": {
                             writeLog("Executing CONGA...");
+                            LinkedList<Graph> communities = (new CONGA()).findCommunities2(fileToExecute, 5/*nbComm*/);
+                            dynamicNetwork.add(new TimeFrame(communities));
+                            System.out.println("Exécution de CONGA est terminée");
                             //dynamicNetwork.add(new TimeFrame(communities));
                             break;
                         }
                         case "COPRA": {
                             writeLog("Executing COPRA...");
+                            LinkedList<Graph> communities = (new COPRA()).findCommunities2(fileToExecute, 1/**
+                                     * default 1*
+                                     */
+                                    , 1/**
+                                     * Max degree of overlapping
+                                     */
+                                    , true/**
+                                     * Do not split discontiguous communities
+                                     * into contiguous subsets.*
+                                     */
+                                    , false);
+                            dynamicNetwork.add(new TimeFrame(communities));
+                            System.out.println("Exécution de COPRA est terminée");
+
                             //(new COPRA()).findCommunities(fileToExecute);
                             break;
                         }
                         case "CM": {
                             writeLog("Executing CM...");
+                            LinkedList<Graph> communities = (new CM().findCommunities2(fileToExecute, snipperDetection.getValue(), "KJ"));
+                            dynamicNetwork.add(new TimeFrame(communities));
+                            System.out.println("Exécution de CM est terminée");
                             break;
                         }
                         case "CONCLUDE": {
+                            writeLog("Executing CONCLUDE...");
+                            LinkedList<Graph> communities = (new CONCLUDE()).findCommunities(fileToExecute);
+                            dynamicNetwork.add(new TimeFrame(communities));
+                            System.out.println("Exécution de CONCLUDE est terminée");
                             //(new CONCLUDE()).findCommunities2(fileToExecute);
                             break;
                         }
@@ -744,7 +780,6 @@ public class FXMLDocumentController implements Initializable {
                 }
                 writeLog(comboDetection.getSelectionModel().getSelectedItem() + " done.");
 
-                writeLog("Calculating attributes...");
 
                 /*for (int i = 0; i < 10; i++) {
                  TreeItem<String> child = new TreeItem<>("Snapshot " + i);
@@ -767,6 +802,18 @@ public class FXMLDocumentController implements Initializable {
                         //TreeItem<String> child2 = new TreeItem<>(Integer.toString(tf.getCommunities().indexOf(com) + 1));
                         TreeItem<String> child2 = new TreeItem<>("Communauté " + (tf.getCommunities().indexOf(com) + 1));
                         treeView.getRoot().getChildren().get(k).getChildren().add(child2);
+
+                    }
+                }
+                writeLog("Calculating attributes...");
+
+                for (int k = 0; k < dynamicNetwork.size(); k++) {
+                    TimeFrame tf = dynamicNetwork.get(k);
+                    //TreeItem<String> child = new TreeItem<>(Integer.toString(k + 1));
+                    //System.out.println("comm: " + tf.getCommunities().size());
+                    for (Graph com : tf.getCommunities()) {
+                        //TreeItem<String> child2 = new TreeItem<>(Integer.toString(tf.getCommunities().indexOf(com) + 1));
+
                         AttributesComputer.calculateAttributes(tf.getTimGraph(), com);
                     }
                 }
@@ -918,7 +965,10 @@ public class FXMLDocumentController implements Initializable {
             //EvolutionUtils.writeEvolutionChain(BDpath, BDfilename, tabname,nbtimeframe/**nbre timeframes**/);
             //PredictionUtils.createClassifierJ48(filePath+filename+extension,10);
             //PredictionUtils.createArff(filePath, filename,BDpath,BDfilename,nbtimeframe, "", "");
-            PredictionUtils.createArff(filePath, filename, BDpath, BDfilename, dynamicNetwork.size(), "", "", 4);
+            //PredictionUtils.createArff(filePath, filename, BDpath, BDfilename, dynamicNetwork.size(), "", "", 4);
+            PredictionUtils.createArffAttribute(filePath, filename, BDpath, BDfilename,
+                    dynamicNetwork.size(), "", "", 4, (ArrayList<String>) selectedAttributes, dynamicNetwork);
+
             writeLog("Arff file generated.");
         }
 
