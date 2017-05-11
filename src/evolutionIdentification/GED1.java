@@ -190,7 +190,7 @@ public class GED1 {
         if (!myOutputDir.exists()) {
             myOutputDir.mkdir();
         }
-        fileName = "GED\\"+exportName+"_"+ tres + ".db";
+        fileName = "GED\\" + exportName + "_" + tres + ".db";
         createNewTable(fileName);
         this.conn = DriverManager.getConnection(url);
         this.pstmt = this.conn.prepareStatement(sqlInsert);
@@ -527,8 +527,9 @@ public class GED1 {
             g2 = rsCont.getInt("group2");
             t2 = rsCont.getInt("timeframe2");
             String eventType = rsCont.getString("event_type");
-
-            if (t2 < dynamicNetwork.size()) {
+            //System.out.println("dynamicNetwork.size: " + dynamicNetwork.size());
+            if (t2 < dynamicNetwork.size() && dynamicNetwork.get(t1).getCommunities().size() > 0 && dynamicNetwork.get(t2).getCommunities().size() > 0) {
+                //System.out.println(t1 + " " + g1);
                 int graphCont1 = dynamicNetwork.get(t1).getCommunities().get(g1).getNodeSet().size();
                 //System.out.println(t2 + " " + g2 + " ");
                 int graphCont2 = dynamicNetwork.get(t2).getCommunities().get(g2).getNodeSet().size();
@@ -547,7 +548,7 @@ public class GED1 {
         }
         updateCounts = pstmt3.executeBatch();
         conn.commit();
-        
+
         conn.close();
     }
 

@@ -22,10 +22,13 @@ public class SampleXML extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
 
         Scene scene = new Scene(root);
+        //scene.getStylesheets().add("C:\\Users\\ado_k\\Desktop\\11.css");
 
         stage.setScene(scene);
-
         stage.setTitle("Application");
+        stage.setMinHeight(600);
+        stage.setMinWidth(800);
+
         stage.show();
 
     }

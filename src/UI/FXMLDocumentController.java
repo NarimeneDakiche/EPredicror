@@ -8,14 +8,17 @@ package UI;
 import Prediction.PredictionUtils;
 import SnapshotsPrep.SnapshotsPrep;
 import communityDetection.CPM;
+import communityDetection.ExternMethods.SLPA;
 import evolutionIdentification.AttributesComputer;
-import evolutionIdentification.EvolutionUtils;
 import static evolutionIdentification.EvolutionUtils.writeEvolutionChain;
 import evolutionIdentification.GED1;
 import evolutionIdentification.GEDUtils.TimeFrame;
-import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -26,38 +29,42 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.gephi.graph.api.DirectedGraph;
-import org.gephi.graph.api.GraphController;
-import org.gephi.graph.api.GraphModel;
-import org.gephi.io.importer.api.Container;
-import org.gephi.io.importer.api.ImportController;
-import org.gephi.io.processor.plugin.DefaultProcessor;
-import org.gephi.project.api.ProjectController;
-import org.gephi.project.api.Workspace;
+import javafx.util.Callback;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
+import static prefuse.demos.AggregateDemo.demoComp;
 
 /**
  *
@@ -75,19 +82,10 @@ public class FXMLDocumentController implements Initializable {
     private TitledPane titledpane1;
 
     @FXML
-    private ComboBox<String> attributesCombo;
+    private SwingNode swingNode;
 
     @FXML
-    private TextField parameters;
-
-    @FXML
-    private SwingNode s;
-
-    @FXML
-    private Button browserButton;
-
-    @FXML
-    private Label fileLabel;
+    private ListView<String> listViewAttributes;
 
     @FXML
     private Spinner<Integer> spinnerNBClusters;
@@ -99,43 +97,10 @@ public class FXMLDocumentController implements Initializable {
     private ComboBox<String> timeFormatCombo;
 
     @FXML
-    private Label labelStep1;
-
-    @FXML
     private ComboBox<String> comboStructDonnees;
 
     @FXML
     private ComboBox<String> comboDetection;
-
-    @FXML
-    private TitledPane titledpane2;
-
-    @FXML
-    private Button startDetectionButton1;
-
-    @FXML
-    private TitledPane titledpane4;
-
-    @FXML
-    private ComboBox<String> detectionMethodCombo;
-
-    @FXML
-    private ComboBox<String> detectionMethodCombo1;
-
-    @FXML
-    private AnchorPane generalPane;
-
-    @FXML
-    private Pane panel;
-
-    @FXML
-    private AnchorPane panelAnchor;
-
-    @FXML
-    private Label indexGraphLabel;
-
-    @FXML
-    private Spinner<Integer> kDetectionSpinner;
 
     @FXML
     private CheckBox checkboxSplitMultiExport;
@@ -143,7 +108,11 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField splitExportName;
 
-    private File file;
+    @FXML
+    private ComboBox<String> attributesCombo;
+
+    @FXML
+    private CheckBox exportDetectionResults;
 
     private boolean exists;
 
@@ -153,23 +122,75 @@ public class FXMLDocumentController implements Initializable {
 
     private ViewPanel view;
 
+    private File file;
+
     private String filePath;
+
+    private String filePathDetection;
+
+    private File fileDetection;
+
+    private String filePathEvolution;
+
+    private File fileEvolution;
+
+    private String filePathPrediction;
+
+    private File filePrediction;
+
+    @FXML
+    private Button launchDetection;
+
+    @FXML
+    private Button launchEvolution;
+
+    @FXML
+    private Button launchPrediction;
+
+    @FXML
+    private TextField overlappingLabel;
 
     @FXML
     private TextField evolutionExportLabel;
 
     @FXML
+    private TextField durationsLabel;
+
+    @FXML
     private ComboBox<String> comboEvolution;
 
+    @FXML
+    private Pane pane;
+
+    @FXML
+    private TreeView<String> treeView;
+
+    @FXML
+    private TextField evolutionParameters;
+
     private LinkedList<TimeFrame> dynamicNetwork = new LinkedList<TimeFrame>();
-    private LinkedList<TimeFrame> dynamicNetwork1 = new LinkedList<TimeFrame>();
+    //private LinkedList<TimeFrame> dynamicNetwork1 = new LinkedList<TimeFrame>();
+    private int nbSnapshots = 0;
+
+    private TreeItem<String> root;
+
+    private boolean directlyDetection = false;
+    private boolean directlyEvolution = false;
+    private boolean directlyPrediction = false;
+
+    private List<String> selectedAttributes = new ArrayList<>();
+
+    private String BDpath = "./GED/";
+    private String BDfilename;
+    private String tabname = "GED_evolution";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         indexGraph = 0;
         // TODO
         accordion1.setExpandedPane(titledpane1);
-
+        launchDetection.setDisable(true);
+        launchEvolution.setDisable(true);
         /*ObservableList<String> options
          = FXCollections.observableArrayList(
          "dd MMMMM yyyy",
@@ -187,22 +208,128 @@ public class FXMLDocumentController implements Initializable {
                 "Timestamp");
         timeFormatCombo.getSelectionModel().select("Timestamp");
 
-        spinnerNBClusters.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 0));
+        spinnerNBClusters.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 100, 0));
         snipperDetection.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 5));
 
         //kDetectionSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 3));
         comboStructDonnees.getItems().addAll("TVW", "VWT", "TTVW", "VWXT");
         comboStructDonnees.getSelectionModel().select("TVW");
 
-        comboDetection.getItems().addAll("CPM", "CM", "CONCLUDE", "CONGA", "COPRA", "Community Miner", "GN", "SLPA");
+        attributesCombo.getItems().addAll("bcentrality");
+        attributesCombo.getSelectionModel().select("bcentrality");
+
+        comboDetection.getItems().addAll("CPM", "CM", "CONCLUDE", "CONGA", "COPRA", "GN", "SLPA");
         comboDetection.getSelectionModel().select("CPM");
+        comboDetection.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                switch (comboDetection.getValue()) {
+                    case "CM":
+                    case "CONCLUDE":
+                    case "COPRA":
+                    case "SLPA":
+                        snipperDetection.setDisable(true);
+                        break;
+                    case "CPM":
+                    case "GN":
+                    case "CONGA":
+                        snipperDetection.setDisable(false);
+                        break;
+                    default:
+                        System.out.println("How on earth did you get into default?!");
+                        break;
+                }
+            }
+        });
 
         comboEvolution.getItems().addAll("GED", "Asur");
         comboEvolution.getSelectionModel().select("GED");
 
+        //******* ListView Attributes *******//
+        String[] toppings = {"averageDegree", "averageClusteringCoefficient", "averageClusteringCoefficients", "degreeAverageDeviation", "degreeDistribution", "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity", "InOutTotalDegree", "ClosenessCentrality"};
+        listViewAttributes.getItems().addAll(toppings);
+        listViewAttributes.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
+            @Override
+            public ObservableValue<Boolean> call(String item) {
+                BooleanProperty observable = new SimpleBooleanProperty();
+                observable.addListener((obs, wasSelected, isNowSelected) -> {
+                    if (isNowSelected) {
+                        selectedAttributes.add(item);
+                    } else {
+                        selectedAttributes.remove(item);
+                    }
+                });
+                return observable;
+            }
+        }));
+        //***********************************//
+
+        //AquaFx.style();
         //  labelStep1 = new Label();
         //detectionMethodCombo.getItems().addAll("CPM", "Louvain", "...");
         //detectionMethodCombo1.getItems().addAll("CPM", "Louvain", "...");
+
+        /*JFrame frame = demo(g);
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         frame.setVisible(true);*/
+        //Node rootIcon = (Node) new ImageView(new Image(getClass().getResourceAsStream("root.png")));
+        Node rootIcon = new ImageView(new Image(getClass().getResourceAsStream("24-128.png")));
+        root = new TreeItem<>("Snapshots", rootIcon);
+        treeView.setRoot(root);
+        treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                TreeItem<String> selectedItem = (TreeItem<String>) newValue;
+                // System.out.println("Selected Text : " + selectedItem.getValue());
+                int indexSnap = 0, indexComm = 0;
+                try {
+                    indexSnap = Integer.parseInt(selectedItem.getParent().getValue().replaceAll("[^0-9]", "")) - 1;
+                    indexComm = Integer.parseInt(selectedItem.getValue().replaceAll("[^0-9]", "")) - 1;
+                    //System.out.println(indexSnap+" "+indexComm);
+                    Graph go = dynamicNetwork.get(indexSnap).getCommunities().get(indexComm); // do what ever you want 
+                    //System.out.println(go.getNodeCount() + " " + go.getEdgeCount());
+                    prefuse.data.Graph g = graphToGraph(go);
+                    //pane.setAutosizeChildren(false);
+                    swingNode.setContent(demoComp(g));
+                } catch (NumberFormatException | NullPointerException e) {
+                }
+            }
+
+            private prefuse.data.Graph graphToGraph(Graph g) {
+                prefuse.data.Graph gp = new prefuse.data.Graph();
+                List<org.graphstream.graph.Node> listNode = new ArrayList<org.graphstream.graph.Node>(g.getNodeSet());
+                for (org.graphstream.graph.Node n : listNode) {
+                    gp.addNode();
+                }
+                for (org.graphstream.graph.Edge e : g.getEdgeSet()) {
+                    gp.addEdge(listNode.indexOf(e.getSourceNode()), listNode.indexOf(e.getTargetNode()));
+                }
+//                for (int i = 0; i < 4; ++i) {
+//                    Node n1 = g.addNode();
+//                    Node n2 = g.addNode();
+//                    Node n3 = g.addNode();
+//                    g.addEdge(n1, n2);
+//                    g.addEdge(n1, n3);
+//                    g.addEdge(n2, n3);
+//                }
+//                g.addEdge(0, 3);
+//                g.addEdge(3, 6);
+//                g.addEdge(6, 9);
+//                g.addEdge(9, 0);
+                return gp;
+            }
+        });
+
+//        for (int i = 0; i < 10; i++) {
+//            TreeItem<String> child = new TreeItem<>("Snapshot " + i);
+//            root.getChildren().add(child);
+//        }
+//        root.setExpanded(true);
+//
+//        treeView.setRoot(root);// = new TreeView<String> (rootItem);  
+//        treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
     @FXML
@@ -211,7 +338,11 @@ public class FXMLDocumentController implements Initializable {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Choisir un fichier");
         file = chooser.showOpenDialog(new Stage());
-        filePath = file.getAbsolutePath();
+
+        if (file != null && file.exists()) {
+            filePath = file.getAbsolutePath();
+
+        }
         //writeLog(file.getAbsolutePath());
 //        if (file != null) {
 //            String fileName = file.getName();
@@ -235,179 +366,50 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    void start1ButtonAction(ActionEvent event) throws FileNotFoundException, ParseException, UnsupportedEncodingException, IOException {
+    void browserDetectionAction(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Choisir un fichier");
+        fileDetection = chooser.showOpenDialog(new Stage());
 
-        if (exists) {
-            ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
-            pc.newProject();
-            Workspace workspace = pc.getCurrentWorkspace();
-            //Get controllers and models
-            ImportController importController = Lookup.getDefault().lookup(ImportController.class);
-            //Import file
-            Container container;
-            try {
-                container = importController.importFile(file);
-                //File file = new File(main.getClass().getResource("/org/gephi/toolkit/demos/polblogs.gml").toURI());
-                container.getLoader().setEdgeDefault(org.gephi.io.importer.api.EdgeDirectionDefault.UNDIRECTED);   //Force UNDIRECTED
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                return;
-            }
-
-            GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel(workspace);
-            DirectedGraph dG = graphModel.getDirectedGraph();
-            for (org.gephi.graph.api.Node n : dG.getNodes()) {
-
-            }
-//            Graph g = new DefaultGraph("g");
-//            FileSource fs = FileSourceFactory.sourceFor(file.getAbsolutePath());
-//            fs.addSink(g);
-//            try {
-//                System.out.println(file.getAbsolutePath());
-//                fs.readAll(file.getAbsolutePath());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//                fs.removeSink(g);
-//            }
-
-            /*System.out.println(g.getNodeCount());
-             Viewer viewer = new Viewer(g, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-             viewer.enableAutoLayout();
-             ViewPanel view = viewer.addDefaultView(false);   // false indicates "no JFrame".
-             // ...
-
-             //frame.add(view);
-             //JPanel jPanel = new JPanel();
-             //jPanel.setPreferredSize(new Dimension(800, 600));
-             view.setPreferredSize(new Dimension(520, 415));
-
-             //view.setMaximumSize(new Dimension(1000, 1000));
-             //jPanel.add(view);
-             s.setContent(view);*/
-        } else {
-            try {
-                SnapshotsPrep snapp = new SnapshotsPrep();
-                if (file != null && spinnerNBClusters.getValue() > 0 && comboStructDonnees.getValue() != null) {
-                    /* dynamicNetwork = snapp.getSplitSnapshots(file.getAbsolutePath(),
-                     null, comboStructDonnees.getValue(), " ", spinnerNBClusters.getValue(), "export", false, false, "");
-                     snapp = null;
-                     System.gc();*/
-                    labelStep1.setText("Splitting done!");
-                    //this.displayGraph(dynamicNetwork.get(indexGraph).getTimGraph());
-                    //startDetectionButton1.setDisable(false);
-
-                } else {
-                    int x = 1 / 0;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                labelStep1.setText("Inacurate entries!. Please check again.");
-            }
+        if (fileDetection != null && fileDetection.exists()) {
+            filePathDetection = fileDetection.getAbsolutePath();
+            launchDetection.setDisable(false);
+            directlyDetection = true;
+            nbSnapshots = 1;
         }
-
     }
 
     @FXML
-    void handleNextView(ActionEvent event) {
-        indexGraph = (indexGraph + 1) % dynamicNetwork1.size();
-        this.displayGraph(dynamicNetwork1.get(indexGraph).getTimGraph());
-    }
+    void browserEvolutionAction(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Choisir un fichier");
+        fileEvolution = chooser.showOpenDialog(new Stage());
 
-    @FXML
-    void handlePreviousView(ActionEvent event) {
-        indexGraph = (indexGraph + dynamicNetwork.size() - 1) % dynamicNetwork.size();
-        this.displayGraph(dynamicNetwork1.get(indexGraph).getTimGraph());
-    }
+        if (fileEvolution != null && fileEvolution.exists()) {
+            filePathEvolution = fileEvolution.getAbsolutePath();
 
-    private void displayGraph(Graph g) {
-        //s.getContent().removeAll();
-        indexGraphLabel.setText(Integer.toString(indexGraph));
-        System.out.println(g.getNodeCount());
-
-        viewer = new Viewer(g, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-        viewer.enableAutoLayout();
-        view = viewer.addDefaultView(false);   // false indicates "no JFrame".
-        // ...
-        //frame.add(view);
-        //JPanel jPanel = new JPanel();
-        //jPanel.setPreferredSize(new Dimension(800, 600));
-        view.setPreferredSize(new Dimension(520, 415));
-
-        //view.setMaximumSize(new Dimension(1000, 1000));
-        //jPanel.add(view);
-        s.setContent(view);
-        System.gc();
-    }
-
-    @FXML
-    void start2ButtonAction(ActionEvent event) throws FileNotFoundException, ParseException, UnsupportedEncodingException, IOException {
-        if ("CPM".equals(detectionMethodCombo.getValue())) {
-            System.out.println("|");
+            launchEvolution.setDisable(false);
+            directlyEvolution = true;
         }
-        for (int i = 0; i < dynamicNetwork.size(); i++) { //for (int i = 0; i < nbSnap; i++) {
-            //Init a project - and therefore a workspace
-            System.out.println("TimeFrame: " + i);
-            ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
-            pc.newProject();
-            Workspace workspace = pc.getCurrentWorkspace();
-            //Get controllers and models
-            ImportController importController = Lookup.getDefault().lookup(ImportController.class);
-            //Import file
-            Container container;
-            try {
+    }
 
-                String path = "C:\\Users\\ado_k\\Documents\\NetBeansProjects\\CleanProject\\" + "io_gexf" + i + ".gml";
-                File file = new File(path);
-                container = importController.importFile(file);
-                //File file = new File(main.getClass().getResource("/org/gephi/toolkit/demos/polblogs.gml").toURI());
-                container.getLoader().setEdgeDefault(org.gephi.io.importer.api.EdgeDirectionDefault.UNDIRECTED);   //Force UNDIRECTED
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                return;
-            }
+    @FXML
+    void browserPredictionAction(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Choisir un fichier");
+        filePrediction = chooser.showOpenDialog(new Stage());
 
-            //Append imported data to GraphAPI
-            importController.process(container, new DefaultProcessor(), workspace);
-            GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel(workspace);
+        if (filePrediction != null && filePrediction.exists()) {
+            filePathPrediction = filePrediction.getAbsolutePath();
 
-            Graph gsGraph = new SingleGraph("");
-            //gsGraph.setStrict(false);
-            //gsGraph.setAutoCreate(true);
-
-            //Create three nodes
-            for (org.gephi.graph.api.Node n : graphModel.getUndirectedGraph().getNodes()) {
-                gsGraph.addNode(n.getId().toString());
-            }
-            for (org.gephi.graph.api.Edge e : graphModel.getUndirectedGraph().getEdges()) {
-                try {
-                    gsGraph.addEdge(e.getSource().getId().toString() + ";" + e.getTarget().toString(), e.getSource().getId().toString(), e.getTarget().getId().toString());
-                } catch (Exception exp) {
-
-                }
-            }
-            gsGraph.display();
-            CPM cpm = new CPM();
-            //Louvain_old louvain = new Louvain_old();
-            //dynamicNetwork.add(louvain.execute(workspace,50));
-
-            LinkedList<Graph> communities = cpm.execute(gsGraph, 3);//executeD(workspace, 2);
-            //if (communities.size() > 0) {
-            dynamicNetwork1.add(new TimeFrame(communities));
-            //}
-            //System.out.println(communities.size());
-            //louvain.executeD(workspace, 50);
+            launchPrediction.setDisable(false);
+            directlyPrediction = true;
         }
     }
 
     void writeLog(String str) {
         logTextArea.setText(logTextArea.getText() + str + "\n");
-//        new Thread("") {
-//            public void run() {
-//                logTextArea.setText(logTextArea.getText() + str + "\n");
-//            }
-//        }.start();
-//    
+        logTextArea.positionCaret(logTextArea.getText().length());
     }
 
     @FXML
@@ -419,27 +421,48 @@ public class FXMLDocumentController implements Initializable {
         //
         Runnable task = new Runnable() {
             public void run() {
-                int nbSnap = 0;
 
                 SnapshotsPrep snapp = new SnapshotsPrep();
-                Duration d = Duration.ofDays(10);
-                List<Duration> listDuration = new ArrayList<Duration>();
-                //listDuration.add(Duration.ofDays(500));
-                listDuration.add(Duration.ofDays(950));
-                listDuration.add(Duration.ofDays(3));
-                listDuration.add(Duration.ofDays(3));
-                listDuration.add(Duration.ofDays(3));
-                listDuration.add(Duration.ofDays(3));
-                listDuration.add(Duration.ofDays(3));
-                listDuration.add(Duration.ofDays(3));
-                listDuration.add(Duration.ofDays(3));
-                listDuration.add(Duration.ofDays(3));
-                listDuration.add(Duration.ofDays(10));
+                /* Duration d = Duration.ofDays(10);
+                 List<Duration> listDuration = new ArrayList<Duration>();
+                 //listDuration.add(Duration.ofDays(500));
+                 listDuration.add(Duration.ofDays(950));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(10));*/
+                //System.out.println("spinnerNBClusters.getValue()= " + spinnerNBClusters.getValue());
 
-                System.out.println("spinnerNBClusters.getValue()= " + spinnerNBClusters.getValue());
                 try {
-                    nbSnap = snapp.getSplitSnapshots(filePath, listDuration,
-                            null, comboStructDonnees.getSelectionModel().getSelectedItem(), " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+                    float overlapping = isFloat(overlappingLabel.getText()) ? Float.parseFloat(overlappingLabel.getText()) : 0;
+                    if (spinnerNBClusters.getValue() > 0) {
+                        nbSnapshots = spinnerNBClusters.getValue();
+                        snapp.getSplitSnapshots(overlapping, filePath, nbSnapshots,
+                                timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
+                                " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+                    } else {
+                        List<Duration> durations = stringToDuration(durationsLabel.getText());
+                        //String[] splitContent = durationsLabel.getText().split(";");
+                        if (durations.size() > 1) {
+                            nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations,
+                                    timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
+                                    " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+                        } else {
+                            if (durations.size() == 1) {
+                                nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations.get(0),
+                                        timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
+                                        " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+                            } else {
+                                writeLog("Erreur d'entées (le nombre de snpashots ou les durations doivent être données)");
+                                throw new IllegalArgumentException("Wrong entries (either Durations or Snapshots number should be given)");
+                            }
+                        }
+                    }
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 } catch (ParseException ex) {
@@ -448,12 +471,12 @@ public class FXMLDocumentController implements Initializable {
 
                 writeLog("Split done. Writing done.");
 
-                LinkedList<TimeFrame> dynamicNetwork = new LinkedList<>();
+                dynamicNetwork = new LinkedList<>();
                 List<Graph> graphs = new ArrayList<Graph>();
 
                 //writeLog("Executing " + comboDetection.getSelectionModel().getSelectedItem() + "...");
                 //System.out.println(dynamicNetwork.size());
-                for (int i = 0; i < nbSnap; i++) { //for (int i = 0; i < nbSnap; i++) {
+                for (int i = 0; i < nbSnapshots; i++) { //for (int i = 0; i < nbSnap; i++) {
                     // reading files 
                     writeLog("Executing " + comboDetection.getSelectionModel().getSelectedItem() + " on timeframe " + i + "...");
                     graphs.add(SnapshotsPrep.readCommunity(splitExportName.getText() + i + ".txt"));
@@ -504,7 +527,9 @@ public class FXMLDocumentController implements Initializable {
                         }
                         break;
                     }
-
+                    case "Asur": {
+                        writeLog("Method not linked yet.");
+                    }
                     default: {
                         writeLog("Method not linked yet.");
                         break;
@@ -514,13 +539,11 @@ public class FXMLDocumentController implements Initializable {
                 System.out.println(comboEvolution.getSelectionModel().getSelectedItem() + " done.");
                 writeLog("Creating evolution chains...");
 
-                String BDpath = "./GED/";
-                String BDfilename = evolutionExportLabel.getText() + "_50_50" + ".db";
-                String tabname = "GED_evolution";
+                BDpath = "./GED/";
+                BDfilename = evolutionExportLabel.getText() + "_50_50" + ".db";
+                tabname = "GED_evolution";
                 int nbtimeframe = dynamicNetwork.size();
-                writeEvolutionChain(BDpath, BDfilename, tabname, nbtimeframe, 2/**
-                 * nbre timeframes*
-                 */
+                writeEvolutionChain(BDpath, BDfilename, tabname, dynamicNetwork.size(), 2/* nbre timeframes */
                 );
 
                 writeLog("Evolution chains created.");
@@ -542,8 +565,8 @@ public class FXMLDocumentController implements Initializable {
                 }
                 writeLog("Prediction done.");
             }
-        };
 
+        };
         // Run the task in a background thread
         Thread backgroundThread = new Thread(task);
         // Terminate the running thread if the application exits
@@ -552,4 +575,404 @@ public class FXMLDocumentController implements Initializable {
         backgroundThread.start();
     }
 
+    @FXML
+    void startSplit(ActionEvent event) {
+        Runnable task = new Runnable() {
+            public void run() {
+                SnapshotsPrep snapp = new SnapshotsPrep();
+                /* Duration d = Duration.ofDays(10);
+                 List<Duration> listDuration = new ArrayList<Duration>();
+                 //listDuration.add(Duration.ofDays(500));
+                 listDuration.add(Duration.ofDays(950));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(3));
+                 listDuration.add(Duration.ofDays(10));*/
+
+                System.out.println("spinnerNBClusters.getValue()= " + spinnerNBClusters.getValue());
+
+                try {
+                    float overlapping = isFloat(overlappingLabel.getText()) ? Float.parseFloat(overlappingLabel.getText()) : 0;
+                    if (spinnerNBClusters.getValue() > 0) {
+                        System.out.println("1");
+                        nbSnapshots = spinnerNBClusters.getValue();
+                        snapp.getSplitSnapshots(overlapping, filePath, nbSnapshots,
+                                timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
+                                " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+                    } else {
+
+                        List<Duration> durations = stringToDuration(durationsLabel.getText());
+                        //String[] splitContent = durationsLabel.getText().split(";");
+                        if (durations.size() > 1) {
+                            System.out.println("2");
+                            nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations,
+                                    timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
+                                    " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+                        } else {
+                            if (durations.size() == 1) {
+                                System.out.println("3");
+                                nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations.get(0),
+                                        timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
+                                        " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+                            } else {
+                                writeLog("Erreur d'entées (le nombre de snpashots ou les durations doivent être données)");
+                                throw new IllegalArgumentException("Wrong entries (either Durations or Snapshots number should be given)");
+                            }
+                        }
+                    }
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                } catch (ParseException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+
+                writeLog("Split done. Writing done.");
+                if (checkboxSplitMultiExport.isSelected()) {
+                    launchDetection.setDisable(false);
+                    directlyDetection = false;
+                }
+            }
+        };
+        // Run the task in a background thread
+        Thread backgroundThread = new Thread(task);
+        // Terminate the running thread if the application exits
+        backgroundThread.setDaemon(true);
+        // Start the thread
+        backgroundThread.start();
+    }
+
+    @FXML
+    void startDetection(ActionEvent event) {
+        try {
+            treeView.getRoot().getChildren().clear();
+        } catch (Exception e) {
+        }
+
+        Runnable task = new Runnable() {
+            public void run() {
+
+                dynamicNetwork = new LinkedList<>();
+                List<Graph> graphs = new ArrayList<Graph>();
+
+                //writeLog("Executing " + comboDetection.getSelectionModel().getSelectedItem() + "...");
+                //System.out.println(dynamicNetwork.size());
+                for (int i = 0; i < nbSnapshots; i++) { //for (int i = 0; i < nbSnap; i++) {
+                    // reading files 
+                    /*File varTmpDir = new File(splitExportName.getText() + i + ".txt");
+                     System.out.println(varTmpDir.exists());*/
+                    //Graph toWork = (directDetection == null) ? graphs.get(i) : directDetection;
+                    String fileToExecute = "";
+                    if (directlyDetection) {
+                        fileToExecute = filePathDetection;
+                    } else {
+                        fileToExecute = splitExportName.getText() + i + ".txt";
+                    }
+                    switch (comboDetection.getSelectionModel().getSelectedItem()) {
+                        case "CPM": {
+                            Graph toWork;
+                            toWork = new SingleGraph("");
+                            toWork.setStrict(false);
+                            toWork.setAutoCreate(true);
+                            try (BufferedReader br = new BufferedReader(new FileReader(fileToExecute))) {
+                                String sCurrentLine;
+                                while ((sCurrentLine = br.readLine()) != null) {
+                                    String[] str = sCurrentLine.split(" ");
+                                    toWork.addEdge(str[0] + ";" + str[1], str[0], str[1]);
+                                }
+                            } catch (IOException e) {
+                                //e.printStackTrace();
+                            }
+                            if (!directlyDetection) {
+                                writeLog("Executing CPM on timeframe " + i);
+                                graphs.add(SnapshotsPrep.readCommunity(splitExportName.getText() + i + ".txt"));
+                                System.out.println("file " + splitExportName.getText() + " was read");
+                                toWork = graphs.get(i);
+                            } else {
+                                writeLog("Executing CPM...");
+                            }
+                            System.out.println(toWork.getNodeCount() + " nodes were read");
+
+                            CPM cpm = new CPM();
+                            LinkedList<Graph> communities = cpm.execute(toWork, snipperDetection.getValue());
+                            //if (communities.size() > 0) {
+                            //System.out.println(dynamicNetwork.size());
+                            dynamicNetwork.add(new TimeFrame(communities));
+                            //System.out.println(dynamicNetwork.size());
+                            //}
+                            break;
+                        }
+                        case "SLPA": {
+                            writeLog("Executing SLPA...");
+                            LinkedList<Graph> communities = (new SLPA()).findCommunities(fileToExecute);
+                            dynamicNetwork.add(new TimeFrame(communities));
+                            System.out.println("Exécution de SLPA est terminée");
+                            break;
+                        }
+                        case "GN": {
+                            writeLog("Executing GN...");
+                            break;
+                        }
+                        case "CONGA": {
+                            writeLog("Executing CONGA...");
+                            //dynamicNetwork.add(new TimeFrame(communities));
+                            break;
+                        }
+                        case "COPRA": {
+                            writeLog("Executing COPRA...");
+                            //(new COPRA()).findCommunities(fileToExecute);
+                            break;
+                        }
+                        case "CM": {
+                            writeLog("Executing CM...");
+                            break;
+                        }
+                        case "CONCLUDE": {
+                            //(new CONCLUDE()).findCommunities2(fileToExecute);
+                            break;
+                        }
+                        default: {
+                            writeLog("Method not linked yet.");
+                            break;
+                        }
+                    }
+                    // System.out.println("\n");
+                }
+                writeLog(comboDetection.getSelectionModel().getSelectedItem() + " done.");
+
+                writeLog("Calculating attributes...");
+
+                /*for (int i = 0; i < 10; i++) {
+                 TreeItem<String> child = new TreeItem<>("Snapshot " + i);
+                 treeView.getRoot().getChildren().add(child);
+                 treeView.getRoot().setExpanded(true);
+                 }*/
+                // = new TreeView<String> (rootItem);  
+                //for (TimeFrame tf : dynamicNetwork) {
+                /*Node rootIcon = new ImageView(new Image(getClass().getResourceAsStream("24-128.png")));
+                 root = new TreeItem<>("Snapshots", rootIcon);*/
+                treeView.getRoot().getChildren().clear();
+                System.out.println("Size tf: " + dynamicNetwork.size());
+                for (int k = 0; k < dynamicNetwork.size(); k++) {
+                    TimeFrame tf = dynamicNetwork.get(k);
+                    //TreeItem<String> child = new TreeItem<>(Integer.toString(k + 1));
+                    TreeItem<String> child = new TreeItem<>("Snapshot " + (k + 1));
+                    treeView.getRoot().getChildren().add(child);
+                    //System.out.println("comm: " + tf.getCommunities().size());
+                    for (Graph com : tf.getCommunities()) {
+                        //TreeItem<String> child2 = new TreeItem<>(Integer.toString(tf.getCommunities().indexOf(com) + 1));
+                        TreeItem<String> child2 = new TreeItem<>("Communauté " + (tf.getCommunities().indexOf(com) + 1));
+                        treeView.getRoot().getChildren().get(k).getChildren().add(child2);
+                        AttributesComputer.calculateAttributes(tf.getTimGraph(), com);
+                    }
+                }
+                treeView.getRoot().setExpanded(true);
+                writeLog("Calculating attributes done.");
+                if (dynamicNetwork.size() > 1) {
+                    launchEvolution.setDisable(false);
+                }
+                try {
+                    writeLog("Exportation des résultats...");
+                    exportDynamicNetwork(dynamicNetwork, "exportDetection.txt", attributesCombo.getValue());
+                    writeLog("Exportation des résultats terminée");
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                directlyEvolution = false;
+            }
+
+            private void exportDynamicNetwork(LinkedList<TimeFrame> dynamicNetwork, String exportName, String att) throws IOException {
+                /* Exports n1 att1 n2 att2 tf g */
+
+                BufferedWriter writer = new BufferedWriter(new FileWriter(exportName));
+
+                for (int k = 0; k < dynamicNetwork.size(); k++) {
+                    TimeFrame tf = dynamicNetwork.get(k);
+                    for (int i = 0; i < tf.getCommunities().size(); i++) {
+                        Graph g = tf.getCommunities().get(i);
+                        //for (Graph g : tf.getCommunities()) {
+                        for (org.graphstream.graph.Edge e : g.getEdgeSet()) {
+                            writer.write(e.getSourceNode().getId() + " " + e.getSourceNode().getAttribute(att) + " " + e.getTargetNode().getId() + " " + e.getTargetNode().getAttribute(att) + " " + k + " " + i + "\n");
+                            //System.out.println(dynamicNetwork.indexOf(tf) + " " + tf.getCommunities().indexOf(g));
+                        }
+                    }
+                }
+                writer.close();
+            }
+
+        };
+        // Run the task in a background thread
+        Thread backgroundThread = new Thread(task);
+        // Terminate the running thread if the application exits
+        backgroundThread.setDaemon(true);
+        // Start the thread
+        backgroundThread.start();
+    }
+
+    @FXML
+    void startEvolution(ActionEvent event) {
+        Runnable task = new Runnable() {
+            public void run() {
+                writeLog("Executing " + comboEvolution.getSelectionModel().getSelectedItem() + "...");
+                if (directlyEvolution) {
+                    /*Read file of structure: n1|n2|t|g */
+                    dynamicNetwork = readDynamicNetwork();
+                    System.out.println("dynamicNetwork.size: " + dynamicNetwork.size()
+                    );
+                }
+
+                switch (comboEvolution.getSelectionModel().getSelectedItem()) {
+                    case "GED": {
+                        writeLog("GED started...");
+                        GED1 ged = new GED1();
+                        try {
+                            String str = !evolutionParameters.getText().equals("") ? evolutionParameters.getText() : evolutionParameters.getPromptText();
+                            String para[] = str.split(";");
+                            ged.excuteGED(dynamicNetwork, Integer.parseInt(para[0]), Integer.parseInt(para[1]), evolutionExportLabel.getText());
+                        } catch (FileNotFoundException ex) {
+                            Exceptions.printStackTrace(ex);
+                        } catch (UnsupportedEncodingException ex) {
+                            Exceptions.printStackTrace(ex);
+                        } catch (SQLException ex) {
+                            Exceptions.printStackTrace(ex);
+                        }
+                        break;
+                    }
+                    case "Asur": {
+                        writeLog("Method not linked yet.");
+                    }
+                    default: {
+                        writeLog("Method not linked yet.");
+                        break;
+                    }
+                }
+                writeLog(comboEvolution.getSelectionModel().getSelectedItem() + " done.");
+                System.out.println(comboEvolution.getSelectionModel().getSelectedItem() + " done.");
+                writeLog("Creating evolution chains...");
+
+                BDpath = "./GED/";
+                BDfilename = evolutionExportLabel.getText() + "_50_50" + ".db";
+                tabname = "GED_evolution";
+                int nbtimeframe = dynamicNetwork.size();
+                writeEvolutionChain(BDpath, BDfilename, tabname, nbtimeframe, 2/* nbre timeframes */
+                );
+
+                writeLog("Evolution chains created.");
+
+                launchPrediction.setDisable(false);
+            }
+
+            private LinkedList<TimeFrame> readDynamicNetwork() {
+                /*Read file of structure: "n1 att1 n2 att2 t g" */
+                LinkedList<TimeFrame> dynamicNet = new LinkedList<TimeFrame>();
+                try (BufferedReader br = new BufferedReader(new FileReader(filePathEvolution))) {
+                    String sCurrentLine;
+                    while ((sCurrentLine = br.readLine()) != null) {
+                        String[] str = sCurrentLine.split(" ");
+                        int t = Integer.parseInt(str[4]);
+                        int g = Integer.parseInt(str[5]);
+
+                        while (dynamicNet.size() <= t) {
+                            dynamicNet.add(new TimeFrame(new LinkedList<Graph>()));
+                        }
+                        while (dynamicNet.get(t).getCommunities().size() <= g) {
+                            Graph group = new SingleGraph("");
+                            group.setStrict(false);
+                            group.setAutoCreate(true);
+                            dynamicNet.get(t).getCommunities().add(group);
+                        }
+
+                        dynamicNet.get(t).getCommunities().get(g).addEdge(str[0] + ";" + str[2], str[0], str[2]);
+                        dynamicNet.get(t).getCommunities().get(g).getEdge(str[0] + ";" + str[2]).getSourceNode().setAttribute("bcentrality", Double.parseDouble(str[1]));
+                        dynamicNet.get(t).getCommunities().get(g).getEdge(str[0] + ";" + str[2]).getTargetNode().setAttribute("bcentrality", Double.parseDouble(str[3]));
+                    }
+                } catch (IOException e) {
+                    //e.printStackTrace();
+                }
+                return dynamicNet;
+            }
+
+        };
+        // Run the task in a background thread
+        Thread backgroundThread = new Thread(task);
+        // Terminate the running thread if the application exits
+        backgroundThread.setDaemon(true);
+        // Start the thread
+        backgroundThread.start();
+    }
+
+    @FXML
+    void startPrediction(ActionEvent event) {
+        //System.out.println(selectedAttributes.size());
+        if (!directlyPrediction) {
+            String filePath = "./LibPrediction/";
+            String filename = "trainData";
+            String extension = ".arff";
+
+            filePathPrediction = filePath + filename + extension;
+
+            //EvolutionUtils.writeEvolutionChain(BDpath, BDfilename, tabname,nbtimeframe/**nbre timeframes**/);
+            //PredictionUtils.createClassifierJ48(filePath+filename+extension,10);
+            //PredictionUtils.createArff(filePath, filename,BDpath,BDfilename,nbtimeframe, "", "");
+            PredictionUtils.createArff(filePath, filename, BDpath, BDfilename, dynamicNetwork.size(), "", "", 4);
+            writeLog("Arff file generated.");
+        }
+
+        try {
+            PredictionUtils.createClassifier(filePathPrediction, dynamicNetwork.size());
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        writeLog("Prediction done.");
+    }
+
+    public static boolean isFloat(String s) {
+        Pattern DOUBLE_PATTERN = Pattern.compile(
+                "[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\p{Digit}+)(\\.)?((\\p{Digit}+)?)"
+                + "([eE][+-]?(\\p{Digit}+))?)|(\\.((\\p{Digit}+))([eE][+-]?(\\p{Digit}+))?)|"
+                + "(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))"
+                + "[pP][+-]?(\\p{Digit}+)))[fFdD]?))[\\x00-\\x20]*");
+        return DOUBLE_PATTERN.matcher(s).matches();
+    }
+
+    private List<Duration> stringToDuration(String text) {
+        List<Duration> listDuration = new ArrayList<Duration>();
+        String[] s = text.split(";");
+        for (String duration : s) {
+            String periodS = duration;
+            String unit = duration;
+            unit = unit.replaceAll("[^A-Za-z]", "");
+            periodS = periodS.replaceAll("[^\\d.]+|\\.(?!\\d)", "");
+            Long l = Long.parseLong(periodS);
+            //System.out.println(l);
+            //System.out.println(periodS + " " + unit);
+            long period = Long.parseLong(periodS);
+            switch (unit) {
+                case "D":
+                case "d":
+                    listDuration.add(Duration.ofDays(period));
+                    break;
+                case "W":
+                case "w":
+                    listDuration.add(Duration.ofDays(7 * period));
+                    break;
+                case "m":
+                case "M":
+                    listDuration.add(Duration.ofDays(30 * period));
+                    break;
+                case "y":
+                case "Y":
+                    listDuration.add(Duration.ofDays(365 * period));
+                    break;
+                default:
+                    writeLog("Vérifier la structure de l'entrée SVP");
+                    throw new IllegalArgumentException("Vérifier la structure de l'entrée SVP");
+            }
+        }
+        return listDuration;
+    }
 }

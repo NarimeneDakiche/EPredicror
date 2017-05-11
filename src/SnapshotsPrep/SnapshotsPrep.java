@@ -41,7 +41,7 @@ public class SnapshotsPrep {
         return g;
 
     }
-    
+
     private static List<String> readFile(String file)
             throws FileNotFoundException, IOException {
         List<String> textLines = new ArrayList<>();
@@ -78,7 +78,7 @@ public class SnapshotsPrep {
             v = splitContent[dataStructure.indexOf("V")];
             w = splitContent[dataStructure.indexOf("W")];
 
-            if (timeFormat != null) {
+            if (timeFormat != null && !timeFormat.equals("Timestamp")) {
                 String dateS = "";
                 for (int i = -1; (i = dataStructure.indexOf("T", i + 1)) != -1;) {
                     dateS += splitContent[i];
@@ -97,7 +97,7 @@ public class SnapshotsPrep {
         return (edges);
     }
 
-    public int getSplitSnapshots(String file, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
+    private int getSplitSnapshots(String file, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
         boolean bool = false;
         List<List<Edge>> parts = new ArrayList<>();
         MyResult myResult = new MyResult();
@@ -164,7 +164,88 @@ public class SnapshotsPrep {
         return nbSnap;
     }
 
-    public int getSplitSnapshots(String file, List<Duration> listDuration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
+    public int getSplitSnapshots(float overlapping, String file, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
+        if (overlapping >= 1 || overlapping < 0) {
+            throw new IllegalArgumentException("Illegal overlapping value (must be between 0 and 1)");
+        }
+        MyResult myResult = new MyResult();
+        myResult.getResults(file, timeFormat, dataStructure, separator);
+        //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
+        List<LongRange> list = new ArrayList<LongRange>();
+        list.add(new LongRange(myResult.getMinTS(), myResult.getMinTS() + duration.getSeconds()));
+        while (list.get(list.size() - 1).getMax() < myResult.getMaxTS()) {
+            long a = (long) ((list.get(list.size() - 1).getMax() - list.get(list.size() - 1).getMin()) * (1 - overlapping)) + list.get(list.size() - 1).getMin();
+            // System.out.println(list.size() + " " + a);
+            list.add(new LongRange(a, a + duration.getSeconds()));
+        }
+        int nbSnap = list.size();
+        System.out.println(nbSnap + " snapshots created");
+        if (multipleExport) {
+            BufferedWriter[] writers = new BufferedWriter[nbSnap];
+            for (int i = 0; i < writers.length; i++) {
+                writers[i] = new BufferedWriter(new FileWriter(exportName + i + ".txt"));
+            }
+
+            FileInputStream stream = new FileInputStream(new File(file));
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String sCurrentLine;
+                String[] splitContent;
+
+                String v, w;
+                long timestamp;
+                while ((sCurrentLine = br.readLine()) != null) {
+                    splitContent = sCurrentLine.split(separator);
+                    v = splitContent[dataStructure.indexOf("V")];
+                    w = splitContent[dataStructure.indexOf("W")];
+                    timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
+                    //System.out.println(TimeLength.timestampToDate(timestamp));
+                    // System.out.println(duration.getSeconds()+" "+step);
+                    for (int j = 0; j < list.size(); j++) {
+                        //System.out.println(list.get(j).contains(timestamp) + " " + timestamp +" "+list.get(j).getMin()+" "+list.get(j).getMax());
+                        if (list.get(j).contains(timestamp)) {
+                            writers[j].write(v + " " + w + "\n");
+
+                        }
+                    }
+                    //System.out.println("");
+                }
+                for (int i = 0; i < writers.length; i++) {
+                    writers[i].close();
+                }
+
+            }
+        } else {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(exportName + ".txt"));
+
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String sCurrentLine;
+                String[] splitContent;
+                String v, w;
+                long timestamp;
+                while ((sCurrentLine = br.readLine()) != null) {
+                    splitContent = sCurrentLine.split(separator);
+                    v = splitContent[dataStructure.indexOf("V")];
+                    w = splitContent[dataStructure.indexOf("W")];
+                    timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
+
+                    // System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
+                    //  + index);
+                    for (int j = 0; j < list.size(); j++) {
+                        //System.out.println(list.get(j).contains(timestamp) + " " + timestamp +" "+list.get(j).getMin()+" "+list.get(j).getMax());
+                        if (list.get(j).contains(timestamp)) {
+                            writer.write(v + " " + w + " " + j + "\n");
+                        }
+                    }
+                }
+                writer.close();
+
+            }
+        }
+        System.out.println("Split done. Writing done.");
+        return nbSnap;
+    }
+
+    private int getSplitSnapshots(String file, List<Duration> listDuration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
         MyResult myResult = new MyResult();
         myResult.getResults(file, timeFormat, dataStructure, separator);
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
@@ -202,7 +283,7 @@ public class SnapshotsPrep {
                      }*/
                     // System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
                     //  + index);
-                    writers[index].write(v + " " + w + " " + TimeLength.timestampToDate(timestamp) + "\n");
+                    writers[index].write(v + " " + w + "\n");
                 }
                 for (int i = 0; i < writers.length; i++) {
                     writers[i].close();
@@ -226,7 +307,9 @@ public class SnapshotsPrep {
                     timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
                     int step = (int) ((myResult.getMaxTS() - myResult.getMinTS()) / nbSnap);
                     int index = (int) ((timestamp - myResult.getMinTS()) / step);
-
+                    if (timestamp == myResult.getMaxTS()) {
+                        index--;
+                    }
                     if (index < nbSnap) {
                         writer.write(v + " " + w + " " + index + "\n");
                     }
@@ -239,7 +322,106 @@ public class SnapshotsPrep {
         return nbSnap;
     }
 
-    public void getSplitSnapshots(String file, int nbSnap, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws FileNotFoundException, IOException, ParseException {
+    public int getSplitSnapshots(float overlapping, String file, List<Duration> listDuration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
+        if (overlapping > 1 || overlapping < 0) {
+            throw new IllegalArgumentException("Illegal overlapping value (must be between 0 and 1)");
+        }
+        MyResult myResult = new MyResult();
+        myResult.getResults(file, timeFormat, dataStructure, separator);
+        //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
+        List<LongRange> list = new ArrayList<LongRange>();
+        list.add(new LongRange(myResult.getMinTS(), myResult.getMinTS() + listDuration.get(0).getSeconds()));
+        int k = 1;
+        while (list.get(k - 1).getMax() < myResult.getMaxTS()) {
+            if (listDuration.get(k - 1).getSeconds() <= listDuration.get(k).getSeconds()) {
+                long a = (long) ((list.get(k - 1).getMax() - list.get(k - 1).getMin()) * (1 - overlapping)) + list.get(k - 1).getMin();
+                // System.out.println(k + " " + a);
+                list.add(new LongRange(a, a + listDuration.get(k).getSeconds()));
+            } else {
+                long a = (long) (list.get(k - 1).getMax() - (overlapping * listDuration.get(k).getSeconds()));
+//((list.get(k - 1).getMax() - list.get(k - 1).getMin()) * (overlapping));
+                // System.out.println(k + " " + a);
+                list.add(new LongRange(a, a + listDuration.get(k).getSeconds()));
+            }
+            k++;
+        }
+        int nbSnap = list.size();
+        System.out.println(nbSnap + " snapshots created");
+        if (multipleExport) {
+            BufferedWriter[] writers = new BufferedWriter[nbSnap];
+            for (int i = 0; i < writers.length; i++) {
+                writers[i] = new BufferedWriter(new FileWriter(exportName + i + ".txt"));
+            }
+
+            FileInputStream stream = new FileInputStream(new File(file));
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String sCurrentLine;
+                String[] splitContent;
+
+                String v, w;
+                long timestamp;
+                while ((sCurrentLine = br.readLine()) != null) {
+                    splitContent = sCurrentLine.split(separator);
+                    v = splitContent[dataStructure.indexOf("V")];
+                    w = splitContent[dataStructure.indexOf("W")];
+                    timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
+                    //System.out.println(TimeLength.timestampToDate(timestamp));
+                    // System.out.println(duration.getSeconds()+" "+step);
+                    for (int j = 0; j < list.size(); j++) {
+                        //System.out.println(list.get(j).contains(timestamp) + " " + timestamp +" "+list.get(j).getMin()+" "+list.get(j).getMax());
+                        if (list.get(j).contains(timestamp)) {
+                            writers[j].write(v + " " + w + "\n");
+
+                        }
+                    }
+                    //System.out.println("");
+                }
+                for (int i = 0; i < writers.length; i++) {
+                    writers[i].close();
+                }
+
+            }
+        } else {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(exportName + ".txt"));
+
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String sCurrentLine;
+                String[] splitContent;
+                String v, w;
+                long timestamp;
+                while ((sCurrentLine = br.readLine()) != null) {
+                    splitContent = sCurrentLine.split(separator);
+                    v = splitContent[dataStructure.indexOf("V")];
+                    w = splitContent[dataStructure.indexOf("W")];
+                    timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
+
+                    // System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
+                    //  + index);
+                    for (int j = 0; j < list.size(); j++) {
+                        //System.out.println(list.get(j).contains(timestamp) + " " + timestamp +" "+list.get(j).getMin()+" "+list.get(j).getMax());
+                        if (list.get(j).contains(timestamp)) {
+                            writer.write(v + " " + w + " " + j + "\n");
+
+                        }
+                    }
+                }
+                writer.close();
+
+            }
+        }
+        System.out.println("Split done. Writing done.");
+        return nbSnap;
+    }
+
+    public void getSplitSnapshots(float overlapping, String file, int nbSnap, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws FileNotFoundException, IOException, ParseException {
+        MyResult myResult = new MyResult();
+        myResult.getResults(file, timeFormat, dataStructure, separator);
+        long range = myResult.getMaxTS() - myResult.getMinTS();
+        long duration = (long) (range / (1 + (1 - overlapping) * (nbSnap - 1))) + 1;
+        this.getSplitSnapshots(overlapping, file, Duration.ofSeconds(duration), timeFormat, dataStructure, separator, exportName, directed, multipleExport);
+    }
+
+    private void getSplitSnapshots(String file, int nbSnap, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport) throws FileNotFoundException, IOException, ParseException {
         MyResult myResult = new MyResult();
         myResult.getResults(file, timeFormat, dataStructure, separator);
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
@@ -276,8 +458,8 @@ public class SnapshotsPrep {
         } else {
             BufferedWriter writer = new BufferedWriter(new FileWriter(exportName));
 
-            FileInputStream stream = new FileInputStream(new File(file));
-            boolean once = true;
+            /*FileInputStream stream = new FileInputStream(new File(file));
+             boolean once = true;*/
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String sCurrentLine;
                 String[] splitContent;
@@ -290,7 +472,9 @@ public class SnapshotsPrep {
                     timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
                     int step = (int) ((myResult.getMaxTS() - myResult.getMinTS()) / nbSnap);
                     int index = (int) ((timestamp - myResult.getMinTS()) / step);
-
+                    if (timestamp == myResult.getMaxTS()) {
+                        index--;
+                    }
                     if (index < nbSnap) {
                         writer.write(v + " " + w + " " + index + "\n");
                     }
@@ -302,7 +486,7 @@ public class SnapshotsPrep {
         System.out.println("Split done. Writing done.");
     }
 
-    public void getSplitSnapshots(String file, int nbSnap, List<Duration> snapDurations, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport, String exportExtension) throws ParseException, FileNotFoundException, UnsupportedEncodingException, IOException, InterruptedException {
+    private void getSplitSnapshots(String file, int nbSnap, List<Duration> snapDurations, Duration duration, String timeFormat, String dataStructure, String separator, String exportName, boolean directed, boolean multipleExport, String exportExtension) throws ParseException, FileNotFoundException, UnsupportedEncodingException, IOException, InterruptedException {
         /**
          * This method reads and splits sorted List of edges to divide them into
          * k snapshots timeFormat should define the format of the date given in
