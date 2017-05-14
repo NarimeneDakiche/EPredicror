@@ -5,7 +5,9 @@
  */
 package evolutionIdentification;
 
+import evolutionIdentification.GEDUtils.TimeFrame;
 import java.util.Iterator;
+import java.util.LinkedList;
 import org.graphstream.algorithm.APSP;
 import org.graphstream.algorithm.BetweennessCentrality;
 import org.graphstream.algorithm.Centroid;
@@ -21,6 +23,18 @@ import org.graphstream.graph.Node;
  */
 public class AttributesComputer {
 
+    public static void calculateAttributes(LinkedList<TimeFrame> dynamicNetwork) {
+        for (int k = 0; k < dynamicNetwork.size(); k++) {
+            TimeFrame tf = dynamicNetwork.get(k);
+            //TreeItem<String> child = new TreeItem<>(Integer.toString(k + 1));
+            //System.out.println("comm: " + tf.getCommunities().size());
+            for (Graph com : tf.getCommunities()) {
+                //TreeItem<String> child2 = new TreeItem<>(Integer.toString(tf.getCommunities().indexOf(com) + 1));
+                AttributesComputer.calculateAttributes(tf.getTimGraph(), com);
+            }
+        }
+    }
+
     public static void calculateAttributes(Graph g, Graph x) {
         // Creates an attribute = "centroid"
         /**
@@ -28,21 +42,50 @@ public class AttributesComputer {
          * path algorithm, Betweenness Centrality **
          *
          */
+        System.out.println("calculating average degree...");
         x.addAttribute("averageDegree", Toolkit.averageDegree(x));
+
+        System.out.println("calculating averageClusteringCoefficient...");
         x.addAttribute("averageClusteringCoefficient", Toolkit.averageClusteringCoefficient(x));
+
+        System.out.println("calculating averageClusteringCoefficient...");
         x.addAttribute("averageClusteringCoefficients", Toolkit.clusteringCoefficients(x));
+
+        System.out.println("calculating degreeAverageDeviation...");
         x.addAttribute("degreeAverageDeviation", Toolkit.degreeAverageDeviation(x));
+
+        System.out.println("calculating degreeDistribution...");
         x.addAttribute("degreeDistribution", Toolkit.degreeDistribution(x));
+
+        System.out.println("calculating density...");
         x.addAttribute("density", Toolkit.density(x));
+
+        System.out.println("calculating diameter...");
         x.addAttribute("diameter", Toolkit.diameter(x));
 
+        System.out.println("calculating Bc...");
         calculateBc(x);
-        calculateCentroid(x);
+
+//        System.out.println("calculating Centroid...");
+//        calculateCentroid(x);
+
+        System.out.println("calculating Cohesion...");
         calculateCohesion(g, x);
+
+        System.out.println("calculating Leadership...");
         calculateLeadership(x);
+
+        System.out.println("calculating Reciprocity...");
         calculateReciprocity(x);
+
+        System.out.println("calculating InOut degree...");
         calculateInOutTotalDegree(x);
+
+        System.out.println("calculating CC...");
         calculateClosenessCentrality(x);
+
+        System.out.println("att cal done");
+
     }
 
     private static void calculateBc(Graph x) {

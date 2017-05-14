@@ -37,6 +37,11 @@ public class ListViewWithStringAndCheckBox extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        String str = "AA.BB-CC-DD.zip EE       FF\t\tGG; HH,\t II";String[]tokens = str.split("\\W");
+		for (int i=0;i<str.length();i++){
+			String str0= str;
+			System.out.println(str0);
+		}
+        //launch(args);
     }
 }

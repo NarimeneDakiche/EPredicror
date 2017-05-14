@@ -48,18 +48,21 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -217,7 +220,39 @@ public class FXMLDocumentController implements Initializable {
         snipperDetection.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 5));
 
         //kDetectionSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 3));
-        comboStructDonnees.getItems().addAll("TVW", "VWT", "TTVW", "VWXT");
+        comboStructDonnees.getItems().addAll("TVW", "VWT", "TTVW", "VWXT", "");
+        comboStructDonnees.setCellFactory(lv -> {
+            ListCell<String> cell = new ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setText(null);
+                    } else {
+                        if (item.isEmpty()) {
+                            setText("Ajouter...");
+                        } else {
+                            setText(item);
+                        }
+                    }
+                }
+            };
+
+            cell.addEventFilter(MouseEvent.MOUSE_PRESSED, evt -> {
+                if (cell.getItem().isEmpty() && !cell.isEmpty()) {
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setContentText("Enter item");
+                    dialog.showAndWait().ifPresent(text -> {
+                        int index = comboStructDonnees.getItems().size() - 1;
+                        comboStructDonnees.getItems().add(index, text);
+                        comboStructDonnees.getSelectionModel().select(index);
+                    });
+                    evt.consume();
+                }
+            });
+
+            return cell;
+        });
         comboStructDonnees.getSelectionModel().select("TVW");
 
         attributesCombo.getItems().addAll("bcentrality");
@@ -349,7 +384,7 @@ public class FXMLDocumentController implements Initializable {
             filePath = file.getAbsolutePath();
 
         }
-        //writeLog(file.getAbsolutePath());
+        //writeLogLn(file.getAbsolutePath());
 //        if (file != null) {
 //            String fileName = file.getName();
 //            fileLabel.setText(fileName);
@@ -413,8 +448,13 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    void writeLog(String str) {
+    void writeLogLn(String str) {
         logTextArea.setText(logTextArea.getText() + str + "\n");
+        logTextArea.positionCaret(logTextArea.getText().length());
+    }
+
+    void writeLog(String str) {
+        logTextArea.setText(logTextArea.getText() + str);
         logTextArea.positionCaret(logTextArea.getText().length());
     }
 
@@ -428,148 +468,148 @@ public class FXMLDocumentController implements Initializable {
         Runnable task = new Runnable() {
             public void run() {
 
-                SnapshotsPrep snapp = new SnapshotsPrep();
-                /* Duration d = Duration.ofDays(10);
-                 List<Duration> listDuration = new ArrayList<Duration>();
-                 //listDuration.add(Duration.ofDays(500));
-                 listDuration.add(Duration.ofDays(950));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(10));*/
-                //System.out.println("spinnerNBClusters.getValue()= " + spinnerNBClusters.getValue());
-
-                try {
-                    float overlapping = isFloat(overlappingLabel.getText()) ? Float.parseFloat(overlappingLabel.getText()) : 0;
-                    if (spinnerNBClusters.getValue() > 0) {
-                        nbSnapshots = spinnerNBClusters.getValue();
-                        snapp.getSplitSnapshots(overlapping, filePath, nbSnapshots,
-                                timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
-                                " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
-                    } else {
-                        List<Duration> durations = stringToDuration(durationsLabel.getText());
-                        //String[] splitContent = durationsLabel.getText().split(";");
-                        if (durations.size() > 1) {
-                            nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations,
-                                    timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
-                                    " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
-                        } else {
-                            if (durations.size() == 1) {
-                                nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations.get(0),
-                                        timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
-                                        " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
-                            } else {
-                                writeLog("Erreur d'entées (le nombre de snpashots ou les durations doivent être données)");
-                                throw new IllegalArgumentException("Wrong entries (either Durations or Snapshots number should be given)");
-                            }
-                        }
-                    }
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (ParseException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-
-                writeLog("Split done. Writing done.");
-
-                dynamicNetwork = new LinkedList<>();
-                List<Graph> graphs = new ArrayList<Graph>();
-
-                //writeLog("Executing " + comboDetection.getSelectionModel().getSelectedItem() + "...");
-                //System.out.println(dynamicNetwork.size());
-                for (int i = 0; i < nbSnapshots; i++) { //for (int i = 0; i < nbSnap; i++) {
-                    // reading files 
-                    writeLog("Executing " + comboDetection.getSelectionModel().getSelectedItem() + " on timeframe " + i + "...");
-                    graphs.add(SnapshotsPrep.readCommunity(splitExportName.getText() + i + ".txt"));
-                    System.out.println("file " + splitExportName.getText() + " was read");
-                    System.out.println(graphs.get(i).getNodeCount() + " nodes were read");
-
-                    switch (comboDetection.getSelectionModel().getSelectedItem()) {
-                        case "CPM": {
-                            CPM cpm = new CPM();
-                            LinkedList<Graph> communities = cpm.execute(graphs.get(i), snipperDetection.getValue());
-                            if (communities.size() > 0) {
-                                dynamicNetwork.add(new TimeFrame(communities));
-                            }
-                            break;
-                        }
-                        default: {
-                            writeLog("Method not linked yet.");
-                            break;
-                        }
-                    }
-                    System.out.println("\n");
-                }
-                writeLog(comboDetection.getSelectionModel().getSelectedItem() + " done.");
-
-                writeLog("Calculating attributes...");
-
-                for (TimeFrame tf : dynamicNetwork) {
-                    for (Graph com : tf.getCommunities()) {
-                        AttributesComputer.calculateAttributes(tf.getTimGraph(), com);
-                    }
-                }
-                writeLog("Calculating attributes done.");
-
-                writeLog("Executing " + comboEvolution.getSelectionModel().getSelectedItem() + "...");
-
-                switch (comboEvolution.getSelectionModel().getSelectedItem()) {
-                    case "GED": {
-                        writeLog("GED started...");
-                        GED1 ged = new GED1();
-                        try {
-                            ged.excuteGED(dynamicNetwork, 50, 50, evolutionExportLabel.getText());
-                        } catch (FileNotFoundException ex) {
-                            Exceptions.printStackTrace(ex);
-                        } catch (UnsupportedEncodingException ex) {
-                            Exceptions.printStackTrace(ex);
-                        } catch (SQLException ex) {
-                            Exceptions.printStackTrace(ex);
-                        }
-                        break;
-                    }
-                    case "Asur": {
-                        writeLog("Method not linked yet.");
-                    }
-                    default: {
-                        writeLog("Method not linked yet.");
-                        break;
-                    }
-                }
-                writeLog(comboEvolution.getSelectionModel().getSelectedItem() + " done.");
-                System.out.println(comboEvolution.getSelectionModel().getSelectedItem() + " done.");
-                writeLog("Creating evolution chains...");
-
-                BDpath = "./GED/";
-                BDfilename = evolutionExportLabel.getText() + "_50_50" + ".db";
-                tabname = "GED_evolution";
-                int nbtimeframe = dynamicNetwork.size();
-                writeEvolutionChain(BDpath, BDfilename, tabname, dynamicNetwork.size(), 2/* nbre timeframes */
-                );
-
-                writeLog("Evolution chains created.");
-
-                String filePath = "./LibPrediction/";
-                String filename = "trainData";
-                String extension = ".arff";
-
-                //EvolutionUtils.writeEvolutionChain(BDpath, BDfilename, tabname,nbtimeframe/**nbre timeframes**/);
-                //PredictionUtils.createClassifierJ48(filePath+filename+extension,10);
-                //PredictionUtils.createArff(filePath, filename,BDpath,BDfilename,nbtimeframe, "", "");
-                PredictionUtils.createArff(filePath, filename, BDpath, BDfilename, nbtimeframe, "", "", 4);
-                writeLog("Arff file generated.");
-
-                try {
-                    PredictionUtils.createClassifier(filePath + filename + extension, dynamicNetwork.size());
-                } catch (Exception ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-                writeLog("Prediction done.");
+//                SnapshotsPrep snapp = new SnapshotsPrep();
+//                /* Duration d = Duration.ofDays(10);
+//                 List<Duration> listDuration = new ArrayList<Duration>();
+//                 //listDuration.add(Duration.ofDays(500));
+//                 listDuration.add(Duration.ofDays(950));
+//                 listDuration.add(Duration.ofDays(3));
+//                 listDuration.add(Duration.ofDays(3));
+//                 listDuration.add(Duration.ofDays(3));
+//                 listDuration.add(Duration.ofDays(3));
+//                 listDuration.add(Duration.ofDays(3));
+//                 listDuration.add(Duration.ofDays(3));
+//                 listDuration.add(Duration.ofDays(3));
+//                 listDuration.add(Duration.ofDays(3));
+//                 listDuration.add(Duration.ofDays(10));*/
+//                //System.out.println("spinnerNBClusters.getValue()= " + spinnerNBClusters.getValue());
+//
+//                try {
+//                    float overlapping = isFloat(overlappingLabel.getText()) ? Float.parseFloat(overlappingLabel.getText()) : 0;
+//                    if (spinnerNBClusters.getValue() > 0) {
+//                        nbSnapshots = spinnerNBClusters.getValue();
+//                        snapp.getSplitSnapshots(overlapping, filePath, nbSnapshots,
+//                                timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
+//                                " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+//                    } else {
+//                        List<Duration> durations = stringToDuration(durationsLabel.getText());
+//                        //String[] splitContent = durationsLabel.getText().split(";");
+//                        if (durations.size() > 1) {
+//                            nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations,
+//                                    timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
+//                                    " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+//                        } else {
+//                            if (durations.size() == 1) {
+//                                nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations.get(0),
+//                                        timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
+//                                        " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+//                            } else {
+//                                writeLogLn("Erreur d'entées (le nombre de snpashots ou les durations doivent être données)");
+//                                throw new IllegalArgumentException("Wrong entries (either Durations or Snapshots number should be given)");
+//                            }
+//                        }
+//                    }
+//                } catch (IOException ex) {
+//                    Exceptions.printStackTrace(ex);
+//                } catch (ParseException ex) {
+//                    Exceptions.printStackTrace(ex);
+//                }
+//
+//                writeLogLn("Split done. Writing done.");
+//
+//                dynamicNetwork = new LinkedList<>();
+//                List<Graph> graphs = new ArrayList<Graph>();
+//
+//                //writeLogLn("Executing " + comboDetection.getSelectionModel().getSelectedItem() + "...");
+//                //System.out.println(dynamicNetwork.size());
+//                for (int i = 0; i < nbSnapshots; i++) { //for (int i = 0; i < nbSnap; i++) {
+//                    // reading files 
+//                    writeLogLn("Executing " + comboDetection.getSelectionModel().getSelectedItem() + " on timeframe " + i + "...");
+//                    graphs.add(SnapshotsPrep.readCommunity(splitExportName.getText() + i + ".txt"));
+//                    System.out.println("file " + splitExportName.getText() + " was read");
+//                    System.out.println(graphs.get(i).getNodeCount() + " nodes were read");
+//
+//                    switch (comboDetection.getSelectionModel().getSelectedItem()) {
+//                        case "CPM": {
+//                            CPM cpm = new CPM();
+//                            LinkedList<Graph> communities = cpm.execute(graphs.get(i), snipperDetection.getValue());
+//                            if (communities.size() > 0) {
+//                                dynamicNetwork.add(new TimeFrame(communities));
+//                            }
+//                            break;
+//                        }
+//                        default: {
+//                            writeLogLn("Method not linked yet.");
+//                            break;
+//                        }
+//                    }
+//                    System.out.println("\n");
+//                }
+//                writeLogLn(comboDetection.getSelectionModel().getSelectedItem() + " done.");
+//
+//                writeLogLn("Calculating attributes...");
+//
+//                for (TimeFrame tf : dynamicNetwork) {
+//                    for (Graph com : tf.getCommunities()) {
+//                        AttributesComputer.calculateAttributes(tf.getTimGraph(), com);
+//                    }
+//                }
+//                writeLogLn("Calculating attributes done.");
+//
+//                writeLogLn("Executing " + comboEvolution.getSelectionModel().getSelectedItem() + "...");
+//
+//                switch (comboEvolution.getSelectionModel().getSelectedItem()) {
+//                    case "GED": {
+//                        writeLogLn("GED started...");
+//                        GED1 ged = new GED1();
+//                        try {
+//                            ged.excuteGED(dynamicNetwork, 50, 50, evolutionExportLabel.getText());
+//                        } catch (FileNotFoundException ex) {
+//                            Exceptions.printStackTrace(ex);
+//                        } catch (UnsupportedEncodingException ex) {
+//                            Exceptions.printStackTrace(ex);
+//                        } catch (SQLException ex) {
+//                            Exceptions.printStackTrace(ex);
+//                        }
+//                        break;
+//                    }
+//                    case "Asur": {
+//                        writeLogLn("Method not linked yet.");
+//                    }
+//                    default: {
+//                        writeLogLn("Method not linked yet.");
+//                        break;
+//                    }
+//                }
+//                writeLogLn(comboEvolution.getSelectionModel().getSelectedItem() + " done.");
+//                System.out.println(comboEvolution.getSelectionModel().getSelectedItem() + " done.");
+//                writeLogLn("Creating evolution chains...");
+//
+//                BDpath = "./GED/";
+//                BDfilename = evolutionExportLabel.getText() + "_50_50" + ".db";
+//                tabname = "GED_evolution";
+//                int nbtimeframe = dynamicNetwork.size();
+//                writeEvolutionChain(BDpath, BDfilename, tabname, dynamicNetwork.size(), 2/* nbre timeframes */
+//                );
+//
+//                writeLogLn("Evolution chains created.");
+//
+//                String filePath = "./LibPrediction/";
+//                String filename = "trainData";
+//                String extension = ".arff";
+//
+//                //EvolutionUtils.writeEvolutionChain(BDpath, BDfilename, tabname,nbtimeframe/**nbre timeframes**/);
+//                //PredictionUtils.createClassifierJ48(filePath+filename+extension,10);
+//                //PredictionUtils.createArff(filePath, filename,BDpath,BDfilename,nbtimeframe, "", "");
+//                PredictionUtils.createArff(filePath, filename, BDpath, BDfilename, nbtimeframe, "", "", 4);
+//                writeLogLn("Arff file generated.");
+//
+//                try {
+//                    PredictionUtils.createClassifier(filePath + filename + extension, dynamicNetwork.size());
+//                } catch (Exception ex) {
+//                    Exceptions.printStackTrace(ex);
+//                }
+//                writeLogLn("Prediction done.");
             }
 
         };
@@ -626,7 +666,7 @@ public class FXMLDocumentController implements Initializable {
                                         timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
                                         " ", splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
                             } else {
-                                writeLog("Erreur d'entées (le nombre de snpashots ou les durations doivent être données)");
+                                writeLogLn("Erreur d'entées (le nombre de snpashots ou les durations doivent être données)");
                                 throw new IllegalArgumentException("Wrong entries (either Durations or Snapshots number should be given)");
                             }
                         }
@@ -637,7 +677,7 @@ public class FXMLDocumentController implements Initializable {
                     Exceptions.printStackTrace(ex);
                 }
 
-                writeLog("Split done. Writing done.");
+                writeLogLn("Split done. Writing done.");
                 if (checkboxSplitMultiExport.isSelected()) {
                     launchDetection.setDisable(false);
                     directlyDetection = false;
@@ -668,7 +708,7 @@ public class FXMLDocumentController implements Initializable {
                 dynamicNetwork = new LinkedList<>();
                 List<Graph> graphs = new ArrayList<Graph>();
 
-                //writeLog("Executing " + comboDetection.getSelectionModel().getSelectedItem() + "...");
+                //writeLogLn("Executing " + comboDetection.getSelectionModel().getSelectedItem() + "...");
                 //System.out.println(dynamicNetwork.size());
                 for (int i = 0; i < nbSnapshots; i++) { //for (int i = 0; i < nbSnap; i++) {
                     // reading files 
@@ -684,25 +724,23 @@ public class FXMLDocumentController implements Initializable {
                     switch (comboDetection.getSelectionModel().getSelectedItem()) {
                         case "CPM": {
                             Graph toWork;
-                            toWork = new SingleGraph("");
-                            toWork.setStrict(false);
-                            toWork.setAutoCreate(true);
-                            try (BufferedReader br = new BufferedReader(new FileReader(fileToExecute))) {
-                                String sCurrentLine;
-                                while ((sCurrentLine = br.readLine()) != null) {
-                                    String[] str = sCurrentLine.split(" ");
-                                    toWork.addEdge(str[0] + ";" + str[1], str[0], str[1]);
-                                }
-                            } catch (IOException e) {
-                                //e.printStackTrace();
-                            }
+//                            try (BufferedReader br = new BufferedReader(new FileReader(fileToExecute))) {
+//                                String sCurrentLine;
+//                                while ((sCurrentLine = br.readLine()) != null) {
+//                                    String[] str = sCurrentLine.split(" ");
+//                                    toWork.addEdge(str[0] + ";" + str[1], str[0], str[1]);
+//                                }
+//                            } catch (IOException e) {
+//                                //e.printStackTrace();
+//                            }
                             if (!directlyDetection) {
-                                writeLog("Executing CPM on timeframe " + i);
+                                writeLog("Exécution de CPM sur le snapshot " + i + "...");
                                 graphs.add(SnapshotsPrep.readCommunity(splitExportName.getText() + i + ".txt"));
                                 System.out.println("file " + splitExportName.getText() + " was read");
                                 toWork = graphs.get(i);
                             } else {
-                                writeLog("Executing CPM...");
+                                toWork = SnapshotsPrep.readCommunity(fileToExecute);
+                                writeLog("Exécution de CPM...");
                             }
                             System.out.println(toWork.getNodeCount() + " nodes were read");
 
@@ -711,34 +749,52 @@ public class FXMLDocumentController implements Initializable {
                             //if (communities.size() > 0) {
                             //System.out.println(dynamicNetwork.size());
                             dynamicNetwork.add(new TimeFrame(communities));
+                            writeLogLn(" terminée.");
                             //System.out.println(dynamicNetwork.size());
                             //}
                             break;
                         }
                         case "SLPA": {
-                            writeLog("Executing SLPA...");
+                            if (!directlyDetection) {
+                                writeLog("Exécution de SLPA sur le snapshot " + i + "...");
+                            } else {
+                                writeLog("Exécution de SLPA...");
+                            }
                             LinkedList<Graph> communities = (new SLPA()).findCommunities(fileToExecute, snipperDetection.getValue());
                             dynamicNetwork.add(new TimeFrame(communities));
-                            writeLog("Exécution de SLPA est terminée");
+                            writeLogLn(" terminée.");
                             break;
                         }
                         case "GN": {
-                            writeLog("Executing GN...");
-                            LinkedList<Graph> communities = (new GN()).findCommunities2(fileToExecute, 5/*nbComm*/);
+                            if (!directlyDetection) {
+                                writeLog("Exécution de GN sur le snapshot " + i + "...");
+                            } else {
+                                writeLog("Exécution de GN...");
+                            }
+                            LinkedList<Graph> communities = (new GN()).findCommunities2(fileToExecute, 50/*nbComm*/);
                             dynamicNetwork.add(new TimeFrame(communities));
-                            System.out.println("Exécution de GN est terminée");
+                            writeLogLn(" terminée.");
                             break;
                         }
                         case "CONGA": {
-                            writeLog("Executing CONGA...");
+                            if (!directlyDetection) {
+                                writeLog("Exécution de CONGA sur le snapshot " + i + "...");
+                            } else {
+                                writeLog("Exécution de CONGA...");
+                            }
+                            //writeLogLn("Executing CONGA...");
                             LinkedList<Graph> communities = (new CONGA()).findCommunities2(fileToExecute, 5/*nbComm*/);
                             dynamicNetwork.add(new TimeFrame(communities));
-                            System.out.println("Exécution de CONGA est terminée");
+                            writeLogLn(" terminée.");
                             //dynamicNetwork.add(new TimeFrame(communities));
                             break;
                         }
                         case "COPRA": {
-                            writeLog("Executing COPRA...");
+                            if (!directlyDetection) {
+                                writeLog("Exécution de COPRA sur le snapshot " + i + "...");
+                            } else {
+                                writeLog("Exécution de COPRA...");
+                            }
                             LinkedList<Graph> communities = (new COPRA()).findCommunities2(fileToExecute, 1/**
                                      * default 1*
                                      */
@@ -751,34 +807,42 @@ public class FXMLDocumentController implements Initializable {
                                      */
                                     , false);
                             dynamicNetwork.add(new TimeFrame(communities));
-                            System.out.println("Exécution de COPRA est terminée");
+                            writeLogLn(" terminée.");
 
                             //(new COPRA()).findCommunities(fileToExecute);
                             break;
                         }
                         case "CM": {
-                            writeLog("Executing CM...");
+                            if (!directlyDetection) {
+                                writeLog("Exécution de CM sur le snapshot " + i + "...");
+                            } else {
+                                writeLog("Exécution de CM...");
+                            }
                             LinkedList<Graph> communities = (new CM().findCommunities2(fileToExecute, snipperDetection.getValue(), "KJ"));
                             dynamicNetwork.add(new TimeFrame(communities));
-                            System.out.println("Exécution de CM est terminée");
+                            writeLogLn(" terminée.");
                             break;
                         }
                         case "CONCLUDE": {
-                            writeLog("Executing CONCLUDE...");
+                            if (!directlyDetection) {
+                                writeLog("Exécution de CONCLUDE sur le snapshot " + i + "...");
+                            } else {
+                                writeLog("Exécution de CONCLUDE...");
+                            }
                             LinkedList<Graph> communities = (new CONCLUDE()).findCommunities(fileToExecute);
                             dynamicNetwork.add(new TimeFrame(communities));
-                            System.out.println("Exécution de CONCLUDE est terminée");
+                            writeLogLn(" terminée.");
                             //(new CONCLUDE()).findCommunities2(fileToExecute);
                             break;
                         }
                         default: {
-                            writeLog("Method not linked yet.");
+                            writeLogLn("Méthode non encore liée.");
                             break;
                         }
                     }
                     // System.out.println("\n");
                 }
-                writeLog(comboDetection.getSelectionModel().getSelectedItem() + " done.");
+                //writeLogLn(comboDetection.getSelectionModel().getSelectedItem() + " done.");
 
 
                 /*for (int i = 0; i < 10; i++) {
@@ -805,27 +869,18 @@ public class FXMLDocumentController implements Initializable {
 
                     }
                 }
-                writeLog("Calculating attributes...");
+                writeLogLn("Calcul des attributs...");
+                AttributesComputer.calculateAttributes(dynamicNetwork);
+                writeLogLn("Calcul des attributes terminé.");
 
-                for (int k = 0; k < dynamicNetwork.size(); k++) {
-                    TimeFrame tf = dynamicNetwork.get(k);
-                    //TreeItem<String> child = new TreeItem<>(Integer.toString(k + 1));
-                    //System.out.println("comm: " + tf.getCommunities().size());
-                    for (Graph com : tf.getCommunities()) {
-                        //TreeItem<String> child2 = new TreeItem<>(Integer.toString(tf.getCommunities().indexOf(com) + 1));
-
-                        AttributesComputer.calculateAttributes(tf.getTimGraph(), com);
-                    }
-                }
                 treeView.getRoot().setExpanded(true);
-                writeLog("Calculating attributes done.");
                 if (dynamicNetwork.size() > 1) {
                     launchEvolution.setDisable(false);
                 }
                 try {
-                    writeLog("Exportation des résultats...");
-                    exportDynamicNetwork(dynamicNetwork, "exportDetection.txt", attributesCombo.getValue());
-                    writeLog("Exportation des résultats terminée");
+                    writeLogLn("Export des résultats...");
+                    exportDynamicNetwork(dynamicNetwork, "exportDetection_" + comboDetection.getSelectionModel().getSelectedItem() + ".txt", attributesCombo.getValue());
+                    writeLogLn("Export des résultats terminée");
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
@@ -864,17 +919,20 @@ public class FXMLDocumentController implements Initializable {
     void startEvolution(ActionEvent event) {
         Runnable task = new Runnable() {
             public void run() {
-                writeLog("Executing " + comboEvolution.getSelectionModel().getSelectedItem() + "...");
+                writeLogLn("Exécution de " + comboEvolution.getSelectionModel().getSelectedItem() + "...");
                 if (directlyEvolution) {
                     /*Read file of structure: n1|n2|t|g */
                     dynamicNetwork = readDynamicNetwork();
                     System.out.println("dynamicNetwork.size: " + dynamicNetwork.size()
                     );
+                    writeLogLn("Calcul des attributs...");
+                    AttributesComputer.calculateAttributes(dynamicNetwork);
+                    writeLogLn("Calcul des attributes terminé.");
                 }
 
                 switch (comboEvolution.getSelectionModel().getSelectedItem()) {
                     case "GED": {
-                        writeLog("GED started...");
+                        writeLogLn("GED started...");
                         GED1 ged = new GED1();
                         try {
                             String str = !evolutionParameters.getText().equals("") ? evolutionParameters.getText() : evolutionParameters.getPromptText();
@@ -890,16 +948,16 @@ public class FXMLDocumentController implements Initializable {
                         break;
                     }
                     case "Asur": {
-                        writeLog("Method not linked yet.");
+                        writeLogLn("Method not linked yet.");
                     }
                     default: {
-                        writeLog("Method not linked yet.");
+                        writeLogLn("Method not linked yet.");
                         break;
                     }
                 }
-                writeLog(comboEvolution.getSelectionModel().getSelectedItem() + " done.");
+                writeLogLn(comboEvolution.getSelectionModel().getSelectedItem() + " done.");
                 System.out.println(comboEvolution.getSelectionModel().getSelectedItem() + " done.");
-                writeLog("Creating evolution chains...");
+                writeLogLn("Création des chaines d'evolution...");
 
                 BDpath = "./GED/";
                 BDfilename = evolutionExportLabel.getText() + "_50_50" + ".db";
@@ -908,7 +966,7 @@ public class FXMLDocumentController implements Initializable {
                 writeEvolutionChain(BDpath, BDfilename, tabname, nbtimeframe, 2/* nbre timeframes */
                 );
 
-                writeLog("Evolution chains created.");
+                writeLogLn("Evolution chains created.");
 
                 launchPrediction.setDisable(false);
             }
@@ -969,7 +1027,7 @@ public class FXMLDocumentController implements Initializable {
             PredictionUtils.createArffAttribute(filePath, filename, BDpath, BDfilename,
                     dynamicNetwork.size(), "", "", 4, (ArrayList<String>) selectedAttributes, dynamicNetwork);
 
-            writeLog("Arff file generated.");
+            writeLogLn("Arff file generated.");
         }
 
         try {
@@ -977,7 +1035,7 @@ public class FXMLDocumentController implements Initializable {
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
         }
-        writeLog("Prediction done.");
+        writeLogLn("Prediction done.");
     }
 
     public static boolean isFloat(String s) {
@@ -997,7 +1055,7 @@ public class FXMLDocumentController implements Initializable {
             String unit = duration;
             unit = unit.replaceAll("[^A-Za-z]", "");
             periodS = periodS.replaceAll("[^\\d.]+|\\.(?!\\d)", "");
-            Long l = Long.parseLong(periodS);
+            //Long l = Long.parseLong(periodS);
             //System.out.println(l);
             //System.out.println(periodS + " " + unit);
             long period = Long.parseLong(periodS);
@@ -1019,7 +1077,7 @@ public class FXMLDocumentController implements Initializable {
                     listDuration.add(Duration.ofDays(365 * period));
                     break;
                 default:
-                    writeLog("Vérifier la structure de l'entrée SVP");
+                    writeLogLn("Vérifier la structure de l'entrée SVP");
                     throw new IllegalArgumentException("Vérifier la structure de l'entrée SVP");
             }
         }

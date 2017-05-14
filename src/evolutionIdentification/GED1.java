@@ -113,10 +113,11 @@ public class GED1 {
         this.url = "jdbc:sqlite:" + fileName;
 
 // SQL statement for creating a new table
-        this.sql = "CREATE TABLE IF NOT EXISTS GED_evolution( "
+        this.sql = "DROP TABLE IF EXISTS GED_evolution"
+                + "CREATE TABLE IF NOT EXISTS GED_evolution( "
                 + "	id_matched INTEGER PRIMARY KEY NOT NULL, "
                 + "	event_type varchar(30) NULL, "
-                + "	group1 int NULL, "
+                + "	group1 int< NULL, "
                 + "	timeframe1 tinyint NULL, "
                 + "	group2 int NULL, "
                 + "	timeframe2 tinyint NULL, "

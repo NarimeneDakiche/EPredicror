@@ -9,6 +9,7 @@ package communityDetection;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -79,7 +80,6 @@ public class CPM {
                 Bk1.addAll(tmp); //Clone current bk into bk+1
                 Bk1.add(vj);
                 //System.out.println("Bk1.size():" + Bk1.size() + "   " + checkBk1IsClique(g, Bk1));
-
                 if (Bk1.size() <= getK() && checkBk1IsClique(g, Bk1)) { //
                     if (Bk1.size() == getK()) { //A clique of size k found. Finish expanding this bk+1 here.
                         cliques.add(Bk1);
@@ -104,39 +104,50 @@ public class CPM {
         for (Set<Node> firstClique : cliques) { //Create the nodes
             //Node firstNode = gm.factory().newNode(String.valueOf(nID++));
             String nodeLabel = "";
-
             for (Node n1 : firstClique) {
                 nodeLabel += n1.getId() + ",";
             }
-
             nodeLabel = nodeLabel.substring(0, nodeLabel.length() - 1); //remove last ,
             //firstNode.setAttribute("nodesIDs", nodeLabel);
-
             newGraph.addNode(Integer.toString(nID));
             newGraph.getNode(Integer.toString(nID++)).setAttribute("nodesIDs", nodeLabel);
         }
 
-        HashSet<Edge> edges = new HashSet<Edge>();
+        //HashSet<Edge> edges = new HashSet<Edge>();
         /*int i = 0;
          float j = -1;
          DecimalFormat decimalFormat = new DecimalFormat("#.##");*/
-
-        for (Node vi : newGraph.getNodeSet()) {
-            for (Node vj : newGraph.getNodeSet()) {
-                if ((!vi.getId().equals(vj.getId())) && (getSharedNodes(vi, vj) == k - 1)) {
+        System.out.println("Cliques graph created, creating edges...");
+        List<Node> listCliques = new ArrayList<Node>(newGraph.getNodeSet());
+//        Node vi, vj;
+        for (int i = 0; i < listCliques.size() - 1; i++) {
+            Node vi = listCliques.get(i);
+            for (int j = i + 1; j < listCliques.size(); j++) {
+                Node vj = listCliques.get(j);
+                if (getSharedNodes(vi, vj) == k - 1) {
                     if (newGraph.getEdge(vj.getId() + ";" + vi.getId()) == null) { // care
                         // System.out.println(vi.getId() + " " + vj.getId());
                         newGraph.addEdge(vi.getId() + ";" + vj.getId(), vi.getId(), vj.getId());
                     }
                 }
             }
-            /*float actualK = Float.valueOf(decimalFormat.format((float) 100 * i++ / nodes.size()));
-             if (j != actualK) {
-             j = actualK;
-             System.out.print(Float.valueOf(decimalFormat.format(j)) + "%, ");
-             }*/
         }
-
+//        for (Node vi : newGraph.getNodeSet()) {
+//            for (Node vj : newGraph.getNodeSet()) {
+//                if ((!vi.getId().equals(vj.getId())) && (getSharedNodes(vi, vj) == k - 1)) {
+//                    if (newGraph.getEdge(vj.getId() + ";" + vi.getId()) == null) { // care
+//                        // System.out.println(vi.getId() + " " + vj.getId());
+//                        newGraph.addEdge(vi.getId() + ";" + vj.getId(), vi.getId(), vj.getId());
+//                    }
+//                }
+//            }
+//            /*float actualK = Float.valueOf(decimalFormat.format((float) 100 * i++ / nodes.size()));
+//             if (j != actualK) {
+//             j = actualK;
+//             System.out.print(Float.valueOf(decimalFormat.format(j)) + "%, ");
+//             }*/
+//        }
+        System.out.println("done.\nConnected components and finishing...");
         TarjanStronglyConnectedComponents tscc = new TarjanStronglyConnectedComponents();
         tscc.init(newGraph);
         tscc.compute();
@@ -293,21 +304,27 @@ public class CPM {
     }
 
     private int getSharedNodes(Node vi, Node vj) {
-        String[] firstCliqueNodes = vi.getAttribute("nodesIDs").toString().split(",");
-        String[] secondCliqueNodes = vj.getAttribute("nodesIDs").toString().split(",");
-        //String[] secondCliqueNodes = vj.getLabel().split(",");
+//        String[] firstCliqueNodes = vi.getAttribute("nodesIDs").toString().split(",");
+//        String[] secondCliqueNodes = vj.getAttribute("nodesIDs").toString().split(",");
+//        //String[] secondCliqueNodes = vj.getLabel().split(",");
+        List<String> nodes1 = new ArrayList<String>(Arrays.asList(vi.getAttribute("nodesIDs").toString().split(",")));
+        List<String> nodes2 = new ArrayList<String>(Arrays.asList(vj.getAttribute("nodesIDs").toString().split(",")));
 
-        int sharedNodes = 0;
+        nodes1.retainAll(nodes2);
 
-        for (String n1 : firstCliqueNodes) {
-            for (String n2 : secondCliqueNodes) {
-                if (n1.equals(n2)) {
-                    sharedNodes++;
-                }
-            }
-        }
+        return nodes1.size();
+//        int sharedNodes = 0;
+//
+//        for (String n1 : firstCliqueNodes) {
+//            for (String n2 : secondCliqueNodes) {
+//                if (n1.equals(n2)) {
+//                    sharedNodes++;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        return sharedNodes;
 
-        return sharedNodes;
     }
-
 }

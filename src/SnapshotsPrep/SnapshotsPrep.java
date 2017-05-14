@@ -173,13 +173,15 @@ public class SnapshotsPrep {
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
         List<LongRange> list = new ArrayList<LongRange>();
         list.add(new LongRange(myResult.getMinTS(), myResult.getMinTS() + duration.getSeconds()));
+//        System.out.println("Max date:" + TimeLength.timestampToDate(myResult.getMaxTS()) + " " +myResult.getMaxTS() );
+//        System.out.println("Min date:" + TimeLength.timestampToDate(myResult.getMinTS())+ " " +myResult.getMinTS());
         while (list.get(list.size() - 1).getMax() < myResult.getMaxTS()) {
             long a = (long) ((list.get(list.size() - 1).getMax() - list.get(list.size() - 1).getMin()) * (1 - overlapping)) + list.get(list.size() - 1).getMin();
-            // System.out.println(list.size() + " " + a);
+            System.out.println(list.size() + " " + a);
             list.add(new LongRange(a, a + duration.getSeconds()));
         }
         int nbSnap = list.size();
-        System.out.println(nbSnap + " snapshots created");
+//        System.out.println(nbSnap + " snapshots created");
         if (multipleExport) {
             BufferedWriter[] writers = new BufferedWriter[nbSnap];
             for (int i = 0; i < writers.length; i++) {
@@ -198,7 +200,7 @@ public class SnapshotsPrep {
                     v = splitContent[dataStructure.indexOf("V")];
                     w = splitContent[dataStructure.indexOf("W")];
                     timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
-                    //System.out.println(TimeLength.timestampToDate(timestamp));
+//                    System.out.println(TimeLength.timestampToDate(timestamp));
                     // System.out.println(duration.getSeconds()+" "+step);
                     for (int j = 0; j < list.size(); j++) {
                         //System.out.println(list.get(j).contains(timestamp) + " " + timestamp +" "+list.get(j).getMin()+" "+list.get(j).getMax());
