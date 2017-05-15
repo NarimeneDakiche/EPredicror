@@ -447,6 +447,7 @@ public class EvolutionUtils {
                     + " timeframe2 integer\n"
                     + " );";
             //Execute Scripts
+            executeStatement(BDpath, BDfilename, scriptDelTab);
             executeStatement(BDpath, BDfilename, scriptJoinTab);
             int min=nbevents*7+(nbevents-1);
             for (int temp = nbevents; temp < nbtimeframe - 1; temp++) {
