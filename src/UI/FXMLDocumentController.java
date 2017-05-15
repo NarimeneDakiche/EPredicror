@@ -863,15 +863,15 @@ public class FXMLDocumentController implements Initializable {
                     treeView.getRoot().getChildren().add(child);
                     //System.out.println("comm: " + tf.getCommunities().size());
                     for (Graph com : tf.getCommunities()) {
-                        //TreeItem<String> child2 = new TreeItem<>(Integer.toString(tf.getCommunities().indexOf(com) + 1));
+                        //TreeItem<String>vf child2 = new TreeItem<>(Integer.toString(tf.getCommunities().indexOf(com) + 1));
                         TreeItem<String> child2 = new TreeItem<>("Communauté " + (tf.getCommunities().indexOf(com) + 1));
                         treeView.getRoot().getChildren().get(k).getChildren().add(child2);
 
                     }
                 }
-                writeLogLn("Calcul des attributs...");
+                writeLog("Calcul des attributs...");
                 AttributesComputer.calculateAttributes(dynamicNetwork);
-                writeLogLn("Calcul des attributes terminé.");
+                writeLogLn(" terminé.");
 
                 treeView.getRoot().setExpanded(true);
                 if (dynamicNetwork.size() > 1) {
