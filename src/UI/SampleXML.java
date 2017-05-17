@@ -28,7 +28,6 @@ public class SampleXML extends Application {
         stage.setTitle("Application");
         stage.setMinHeight(600);
         stage.setMinWidth(800);
-
         stage.show();
 
     }

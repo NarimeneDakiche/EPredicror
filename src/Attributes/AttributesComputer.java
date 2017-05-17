@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package evolutionIdentification;
+package Attributes;
 
 import evolutionIdentification.GEDUtils.TimeFrame;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import org.graphstream.algorithm.APSP;
 import org.graphstream.algorithm.BetweennessCentrality;
 import org.graphstream.algorithm.Centroid;
@@ -23,67 +24,81 @@ import org.graphstream.graph.Node;
  */
 public class AttributesComputer {
 
-    public static void calculateAttributes(LinkedList<TimeFrame> dynamicNetwork) {
+    public static void calculateAttributes(LinkedList<TimeFrame> dynamicNetwork, List<String> listAttributes) {
         for (int k = 0; k < dynamicNetwork.size(); k++) {
             TimeFrame tf = dynamicNetwork.get(k);
             //TreeItem<String> child = new TreeItem<>(Integer.toString(k + 1));
             //System.out.println("comm: " + tf.getCommunities().size());
             for (Graph com : tf.getCommunities()) {
                 //TreeItem<String> child2 = new TreeItem<>(Integer.toString(tf.getCommunities().indexOf(com) + 1));
-                AttributesComputer.calculateAttributes(tf.getTimGraph(), com);
+                AttributesComputer.calculateAttributes(tf.getTimGraph(), com, listAttributes);
             }
         }
     }
 
-    public static void calculateAttributes(Graph g, Graph x) {
+    public static void calculateAttributes(Graph g, Graph x, List<String> listAttributes) {
         // Creates an attribute = "centroid"
         /**
          * Can be added: ==> Shortest path algorithms (Dijkstra, A* Shortest
          * path algorithm, Betweenness Centrality **
          *
          */
-        System.out.println("calculating average degree...");
-        x.addAttribute("averageDegree", Toolkit.averageDegree(x));
-
-        System.out.println("calculating averageClusteringCoefficient...");
-        x.addAttribute("averageClusteringCoefficient", Toolkit.averageClusteringCoefficient(x));
-
-        System.out.println("calculating averageClusteringCoefficient...");
-        x.addAttribute("averageClusteringCoefficients", Toolkit.clusteringCoefficients(x));
-
-        System.out.println("calculating degreeAverageDeviation...");
-        x.addAttribute("degreeAverageDeviation", Toolkit.degreeAverageDeviation(x));
-
-        System.out.println("calculating degreeDistribution...");
-        x.addAttribute("degreeDistribution", Toolkit.degreeDistribution(x));
-
-        System.out.println("calculating density...");
-        x.addAttribute("density", Toolkit.density(x));
-
-        System.out.println("calculating diameter...");
-        x.addAttribute("diameter", Toolkit.diameter(x));
-
-        System.out.println("calculating Bc...");
-        calculateBc(x);
-
+        if (listAttributes.contains("averageDegree")) {
+            System.out.println("calculating average degree...");
+            x.addAttribute("averageDegree", Toolkit.averageDegree(x));
+        }
+        if (listAttributes.contains("averageClusteringCoefficient")) {
+            System.out.println("calculating averageClusteringCoefficient...");
+            x.addAttribute("averageClusteringCoefficient", Toolkit.averageClusteringCoefficient(x));
+        }
+        if (listAttributes.contains("averageClusteringCoefficients")) {
+            System.out.println("calculating averageClusteringCoefficient...");
+            x.addAttribute("averageClusteringCoefficients", Toolkit.clusteringCoefficients(x));
+        }
+        if (listAttributes.contains("degreeAverageDeviation")) {
+            System.out.println("calculating degreeAverageDeviation...");
+            x.addAttribute("degreeAverageDeviation", Toolkit.degreeAverageDeviation(x));
+        }
+        if (listAttributes.contains("degreeDistribution")) {
+            System.out.println("calculating degreeDistribution...");
+            x.addAttribute("degreeDistribution", Toolkit.degreeDistribution(x));
+        }
+        if (listAttributes.contains("density")) {
+            System.out.println("calculating density...");
+            x.addAttribute("density", Toolkit.density(x));
+        }
+        if (listAttributes.contains("diameter")) {
+            System.out.println("calculating diameter...");
+            x.addAttribute("diameter", Toolkit.diameter(x));
+        }
+        if (listAttributes.contains("Bc")) {
+            System.out.println("calculating Bc...");
+            calculateBc(x);
+        }
 //        System.out.println("calculating Centroid...");
 //        calculateCentroid(x);
+        if (listAttributes.contains("Cohesion")) {
+            System.out.println("calculating Cohesion...");
+            calculateCohesion(g, x);
+        }
+        if (listAttributes.contains("Leadership")) {
+            System.out.println("calculating Leadership...");
+            calculateLeadership(x);
+        }
+        if (listAttributes.contains("Reciprocity")) {
+            System.out.println("calculating Reciprocity...");
+            calculateReciprocity(x);
+        }
+        if (listAttributes.contains("InOutTotalDegree")) {
 
-        System.out.println("calculating Cohesion...");
-        calculateCohesion(g, x);
+            System.out.println("calculating InOut degree...");
+            calculateInOutTotalDegree(x);
+        }
+        if (listAttributes.contains("ClosenessCentrality")) {
 
-        System.out.println("calculating Leadership...");
-        calculateLeadership(x);
-
-        System.out.println("calculating Reciprocity...");
-        calculateReciprocity(x);
-
-        System.out.println("calculating InOut degree...");
-        calculateInOutTotalDegree(x);
-
-        System.out.println("calculating CC...");
-        calculateClosenessCentrality(x);
-
+            System.out.println("calculating Cc...");
+            calculateClosenessCentrality(x);
+        }
         System.out.println("att cal done");
 
     }

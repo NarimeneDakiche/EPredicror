@@ -5,6 +5,7 @@
  */
 package UI;
 
+import Attributes.AttributesComputer;
 import Prediction.PredictionUtils;
 import SnapshotsPrep.SnapshotsPrep;
 import communityDetection.CPM;
@@ -14,7 +15,6 @@ import communityDetection.ExternMethods.CONGA;
 import communityDetection.ExternMethods.COPRA;
 import communityDetection.ExternMethods.GN;
 import communityDetection.ExternMethods.SLPA;
-import evolutionIdentification.AttributesComputer;
 import static evolutionIdentification.EvolutionUtils.writeEvolutionChain;
 import evolutionIdentification.GED1;
 import evolutionIdentification.GEDUtils.TimeFrame;
@@ -27,10 +27,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -39,15 +41,21 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
@@ -63,8 +71,15 @@ import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.graphstream.graph.Graph;
@@ -132,6 +147,8 @@ public class FXMLDocumentController implements Initializable {
 
     private File file;
 
+    List<File> listFile;
+
     private String filePath;
 
     private String filePathDetection;
@@ -182,11 +199,13 @@ public class FXMLDocumentController implements Initializable {
 
     private TreeItem<String> root;
 
+    //private List<String> listAttributes = new ArrayList<String>();
     private boolean directlyDetection = false;
     private boolean directlyEvolution = false;
     private boolean directlyPrediction = false;
 
     private List<String> selectedAttributes = new ArrayList<>();
+    ObservableList<String> observableListAttibutes = FXCollections.observableList(selectedAttributes);
 
     private String BDpath = "./GED/";
     private String BDfilename;
@@ -241,7 +260,9 @@ public class FXMLDocumentController implements Initializable {
             cell.addEventFilter(MouseEvent.MOUSE_PRESSED, evt -> {
                 if (cell.getItem().isEmpty() && !cell.isEmpty()) {
                     TextInputDialog dialog = new TextInputDialog();
-                    dialog.setContentText("Enter item");
+                    dialog.setTitle("Ajouter un élément");
+                    dialog.setHeaderText("Ajouter un élément");
+                    dialog.setContentText("Entrer élément...");
                     dialog.showAndWait().ifPresent(text -> {
                         int index = comboStructDonnees.getItems().size() - 1;
                         comboStructDonnees.getItems().add(index, text);
@@ -285,25 +306,6 @@ public class FXMLDocumentController implements Initializable {
 
         comboEvolution.getItems().addAll("GED", "Asur");
         comboEvolution.getSelectionModel().select("GED");
-
-        //******* ListView Attributes *******//
-        String[] toppings = {"averageDegree", "averageClusteringCoefficient", "averageClusteringCoefficients", "degreeAverageDeviation", "degreeDistribution", "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity", "InOutTotalDegree", "ClosenessCentrality"};
-        listViewAttributes.getItems().addAll(toppings);
-        listViewAttributes.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
-            @Override
-            public ObservableValue<Boolean> call(String item) {
-                BooleanProperty observable = new SimpleBooleanProperty();
-                observable.addListener((obs, wasSelected, isNowSelected) -> {
-                    if (isNowSelected) {
-                        selectedAttributes.add(item);
-                    } else {
-                        selectedAttributes.remove(item);
-                    }
-                });
-                return observable;
-            }
-        }));
-        //***********************************//
 
         //AquaFx.style();
         //  labelStep1 = new Label();
@@ -371,13 +373,77 @@ public class FXMLDocumentController implements Initializable {
 //
 //        treeView.setRoot(root);// = new TreeView<String> (rootItem);  
 //        treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        String[] strs = {"averageDegree", "averageClusteringCoefficient",
+            "averageClusteringCoefficients", "degreeAverageDeviation", "degreeDistribution",
+            "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity",
+            "InOutTotalDegree", "ClosenessCentrality"};
+        selectedAttributes.addAll(Arrays.asList(strs));
+        selectedAttributes.remove("Centroid");
+        selectedAttributes.remove("ClosenessCentrality");
+
+        /*observableListAttibutes.addListener(new ListChangeListener() {
+         @Override
+         public void onChanged(ListChangeListener.Change change) {
+         while (change.next()) {
+         if (change.wasAdded()) {
+         System.out.println("Was added! ");
+         } else if (change.wasRemoved()) {
+         System.out.println("Was removed! ");
+         }
+         //                    System.out.println("Was added? " + change.wasAdded());
+         //                    System.out.println("Was removed? " + change.wasRemoved());
+         //                    System.out.println("Was replaced? " + change.wasReplaced());
+         //                    System.out.println("Was permutated? " + change.wasPermutated());
+         }
+         }
+         });*/
+        //******* ListView Attributes *******//
+        String[] toppings = {"averageDegree", "averageClusteringCoefficient", "averageClusteringCoefficients", "degreeAverageDeviation", "degreeDistribution", "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity", "InOutTotalDegree", "ClosenessCentrality"};
+
+        listViewAttributes.getItems().addAll(toppings);
+        listViewAttributes.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
+            @Override
+            public ObservableValue<Boolean> call(String item) {
+                BooleanProperty observable = new SimpleBooleanProperty();
+                /*for (int i = 0; i < selectedAttributes.size(); i++) {
+                 if (item.equals(selectedAttributes.get(i))) {
+                 observable.set(true);
+                 }
+                 }*/
+                observable.addListener((obs, wasSelected, isNowSelected) -> {
+                    if (isNowSelected) {
+                        if (!observableListAttibutes.contains(item)) {
+                            observableListAttibutes.add(item);
+                        }
+                    } else {
+                        if (observableListAttibutes.contains(item)) {
+                            observableListAttibutes.remove(item);
+                        }
+                    }
+                    System.out.println(observableListAttibutes.size());
+
+                });
+                observable.set(observableListAttibutes.contains(item));
+                observableListAttibutes.addListener((ListChangeListener.Change<? extends String> c)
+                        -> observable.set(observableListAttibutes.contains(item)));
+                return observable;
+            }
+        }));
+        //***********************************//
     }
 
     @FXML
-    void browserAction(ActionEvent event) {
+    void browserAction(ActionEvent event
+    ) {
 
         FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Text Files", "*.txt"),
+                new ExtensionFilter("All Files", "*.*"));
         chooser.setTitle("Choisir un fichier");
+        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+        chooser.setInitialDirectory(new File(currentPath));
+
         file = chooser.showOpenDialog(new Stage());
 
         if (file != null && file.exists()) {
@@ -407,23 +473,47 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    void browserDetectionAction(ActionEvent event) {
+    void browserDetectionAction(ActionEvent event
+    ) {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Choisir un fichier");
-        fileDetection = chooser.showOpenDialog(new Stage());
+        chooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Text Files", "*.txt"),
+                new ExtensionFilter("All Files", "*.*"));
+        chooser.setTitle("Choisir un ou plusieurs fichiers");
+        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+        chooser.setInitialDirectory(new File(currentPath));
 
-        if (fileDetection != null && fileDetection.exists()) {
-            filePathDetection = fileDetection.getAbsolutePath();
-            launchDetection.setDisable(false);
+        Stage stage = (Stage) evolutionExportLabel.getScene().getWindow();
+        listFile = chooser.showOpenMultipleDialog(new Stage());
+
+        if (listFile != null) {
+            for (File file : listFile) {
+                if (!file.exists()) {
+                    listFile = null;
+                    break;
+                }
+            }
             directlyDetection = true;
-            nbSnapshots = 1;
+
+            launchDetection.setDisable(false);
         }
+
+        nbSnapshots = (listFile != null) ? listFile.size() : 0;
+
+        //fileDetection = chooser.showOpenDialog(new Stage());
     }
 
     @FXML
-    void browserEvolutionAction(ActionEvent event) {
+    void browserEvolutionAction(ActionEvent event
+    ) {
         FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Text Files", "*.txt"),
+                new ExtensionFilter("All Files", "*.*"));
         chooser.setTitle("Choisir un fichier");
+        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+        chooser.setInitialDirectory(new File(currentPath));
+
         fileEvolution = chooser.showOpenDialog(new Stage());
 
         if (fileEvolution != null && fileEvolution.exists()) {
@@ -435,9 +525,16 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    void browserPredictionAction(ActionEvent event) {
+    void browserPredictionAction(ActionEvent event
+    ) {
         FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Arff Files", "*.arff"),
+                new ExtensionFilter("All Files", "*.*"));
         chooser.setTitle("Choisir un fichier");
+        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+        chooser.setInitialDirectory(new File(currentPath));
+
         filePrediction = chooser.showOpenDialog(new Stage());
 
         if (filePrediction != null && filePrediction.exists()) {
@@ -448,18 +545,21 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    void writeLogLn(String str) {
+    void writeLogLn(String str
+    ) {
         logTextArea.setText(logTextArea.getText() + str + "\n");
         logTextArea.positionCaret(logTextArea.getText().length());
     }
 
-    void writeLog(String str) {
+    void writeLog(String str
+    ) {
         logTextArea.setText(logTextArea.getText() + str);
         logTextArea.positionCaret(logTextArea.getText().length());
     }
 
     @FXML
-    void handleCancel(ActionEvent event) {
+    void handleCancel(ActionEvent event
+    ) {
     }
 
     @FXML
@@ -622,7 +722,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    void startSplit(ActionEvent event) {
+    void startSplit(ActionEvent event
+    ) {
         Runnable task = new Runnable() {
             public void run() {
                 SnapshotsPrep snapp = new SnapshotsPrep();
@@ -693,7 +794,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    void startDetection(ActionEvent event) {
+    void startDetection(ActionEvent event
+    ) {
         try {
             //treeView.getRoot().getChildren().clear();
             Node rootIcon = new ImageView(new Image(getClass().getResourceAsStream("24-128.png")));
@@ -717,7 +819,7 @@ public class FXMLDocumentController implements Initializable {
                     //Graph toWork = (directDetection == null) ? graphs.get(i) : directDetection;
                     String fileToExecute = "";
                     if (directlyDetection) {
-                        fileToExecute = filePathDetection;
+                        fileToExecute = listFile.get(i).getAbsolutePath();
                     } else {
                         fileToExecute = splitExportName.getText() + i + ".txt";
                     }
@@ -733,15 +835,19 @@ public class FXMLDocumentController implements Initializable {
 //                            } catch (IOException e) {
 //                                //e.printStackTrace();
 //                            }
-                            if (!directlyDetection) {
-                                writeLog("Exécution de CPM sur le snapshot " + i + "...");
-                                graphs.add(SnapshotsPrep.readCommunity(splitExportName.getText() + i + ".txt"));
-                                System.out.println("file " + splitExportName.getText() + " was read");
-                                toWork = graphs.get(i);
-                            } else {
-                                toWork = SnapshotsPrep.readCommunity(fileToExecute);
-                                writeLog("Exécution de CPM...");
-                            }
+                            writeLog("Exécution de CPM sur le snapshot " + i + "...");
+                            graphs.add(SnapshotsPrep.readCommunity(fileToExecute));
+                            System.out.println("file " + splitExportName.getText() + " was read");
+                            toWork = graphs.get(i);
+                            /*if (!directlyDetection) {
+                             writeLog("Exécution de CPM sur le snapshot " + i + "...");
+                             graphs.add(SnapshotsPrep.readCommunity(fileToExecute));
+                             System.out.println("file " + splitExportName.getText() + " was read");
+                             toWork = graphs.get(i);
+                             } else {
+                             toWork = SnapshotsPrep.readCommunity(fileToExecute);
+                             writeLog("Exécution de CPM...");
+                             }*/
                             System.out.println(toWork.getNodeCount() + " nodes were read");
 
                             CPM cpm = new CPM();
@@ -870,7 +976,7 @@ public class FXMLDocumentController implements Initializable {
                     }
                 }
                 writeLog("Calcul des attributs...");
-                AttributesComputer.calculateAttributes(dynamicNetwork);
+                AttributesComputer.calculateAttributes(dynamicNetwork, observableListAttibutes);
                 writeLogLn(" terminé.");
 
                 treeView.getRoot().setExpanded(true);
@@ -878,9 +984,9 @@ public class FXMLDocumentController implements Initializable {
                     launchEvolution.setDisable(false);
                 }
                 try {
-                    writeLogLn("Export des résultats...");
+                    writeLog("Export des résultats...");
                     exportDynamicNetwork(dynamicNetwork, "exportDetection_" + comboDetection.getSelectionModel().getSelectedItem() + ".txt", attributesCombo.getValue());
-                    writeLogLn("Export des résultats terminée");
+                    writeLogLn("terminée");
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
@@ -916,7 +1022,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    void startEvolution(ActionEvent event) {
+    void startEvolution(ActionEvent event
+    ) {
         Runnable task = new Runnable() {
             public void run() {
                 writeLogLn("Exécution de " + comboEvolution.getSelectionModel().getSelectedItem() + "...");
@@ -926,7 +1033,7 @@ public class FXMLDocumentController implements Initializable {
                     System.out.println("dynamicNetwork.size: " + dynamicNetwork.size()
                     );
                     writeLogLn("Calcul des attributs...");
-                    AttributesComputer.calculateAttributes(dynamicNetwork);
+                    AttributesComputer.calculateAttributes(dynamicNetwork, observableListAttibutes);
                     writeLogLn("Calcul des attributes terminé.");
                 }
 
@@ -1011,8 +1118,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    void startPrediction(ActionEvent event) {
-        //System.out.println(selectedAttributes.size());
+    void startPrediction(ActionEvent event
+    ) {
         if (!directlyPrediction) {
             String filePath = "./LibPrediction/";
             String filename = "trainData";
@@ -1025,7 +1132,7 @@ public class FXMLDocumentController implements Initializable {
             //PredictionUtils.createArff(filePath, filename,BDpath,BDfilename,nbtimeframe, "", "");
             //PredictionUtils.createArff(filePath, filename, BDpath, BDfilename, dynamicNetwork.size(), "", "", 4);
             PredictionUtils.createArffAttribute(filePath, filename, BDpath, BDfilename,
-                    dynamicNetwork.size(), "", "", 4, (ArrayList<String>) selectedAttributes, dynamicNetwork);
+                    dynamicNetwork.size(), "", "", 4, (ArrayList<String>) observableListAttibutes, dynamicNetwork);
 
             writeLogLn("Arff file generated.");
         }
@@ -1082,5 +1189,91 @@ public class FXMLDocumentController implements Initializable {
             }
         }
         return listDuration;
+    }
+
+    @FXML
+    void selectAttributes(ActionEvent event) {
+        ListView<String> listView = new ListView<>();
+        String[] toppings = {"averageDegree", "averageClusteringCoefficient", "averageClusteringCoefficients", "degreeAverageDeviation", "degreeDistribution", "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity", "InOutTotalDegree", "ClosenessCentrality"};
+        listView.getItems().addAll(toppings);
+//        listView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
+//            @Override
+//            public ObservableValue<Boolean> call(String item) {
+//                BooleanProperty observable = new SimpleBooleanProperty();
+//                /*for (int i = 0; i < selectedAttributes.size(); i++) {
+//                    if (item.equals(selectedAttributes.get(i))) {
+//                        observable.set(true);
+//                    }
+//                }*/
+//                observable.set(selectedAttributes.contains(item));
+//                observableListAttibutes.addListener((ListChangeListener.Change<? extends String> c)
+//                        -> observable.set(selectedAttributes.contains(item)));
+//                observable.addListener((obs, wasSelected, isNowSelected) -> {
+//                    if (isNowSelected) {
+//                        observableListAttibutes.add(item);
+//                    } else {
+//                        observableListAttibutes.remove(item);
+//                    }
+//                    System.out.println(observableListAttibutes.size());
+//                });
+//                return observable;
+//            }
+//        }));
+
+        listView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
+            @Override
+            public ObservableValue<Boolean> call(String item) {
+                BooleanProperty observable = new SimpleBooleanProperty();
+                /*for (int i = 0; i < selectedAttributes.size(); i++) {
+                 if (item.equals(selectedAttributes.get(i))) {
+                 observable.set(true);
+                 }
+                 }*/
+                observable.addListener((obs, wasSelected, isNowSelected) -> {
+                    if (isNowSelected) {
+                        if (!observableListAttibutes.contains(item)) {
+                            observableListAttibutes.add(item);
+                        }
+                    } else {
+                        if (observableListAttibutes.contains(item)) {
+                            observableListAttibutes.remove(item);
+                        }
+                    }
+                    System.out.println(observableListAttibutes.size());
+
+                });
+                observable.set(observableListAttibutes.contains(item));
+                observableListAttibutes.addListener((ListChangeListener.Change<? extends String> c)
+                        -> observable.set(observableListAttibutes.contains(item)));
+                return observable;
+            }
+        }));
+
+        // VBox
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(10, 50, 50, 50));
+        vb.setSpacing(10);
+
+        Label lbl = new Label("VBox");
+        lbl.setFont(Font.font("Amble CN", FontWeight.BOLD, 24));
+        vb.getChildren().add(lbl);
+
+        vb.getChildren().add(listView);
+
+        // Adding VBox to the scene
+        /*Scene scene = new Scene(vb);
+         BorderPane root = new BorderPane(listView);*/
+        Scene scene = new Scene(vb, 250, 400);
+        Stage dialog = new Stage();
+        dialog.setTitle("Attributs");
+        dialog.initOwner((Stage) launchPrediction.getScene().getWindow());
+        dialog.setScene(scene);
+
+        dialog.show();
+    }
+
+    @FXML
+    void visualizeFile(ActionEvent event) {
+
     }
 }

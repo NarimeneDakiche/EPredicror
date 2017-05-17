@@ -114,8 +114,8 @@ public class GED1 {
 
 // SQL statement for creating a new table
         /*this.sql = "DROP TABLE IF EXISTS GED_evolution"
-                + "CREATE TABLE IF NOT EXISTS GED_evolution( "*/
-        String sql1="DROP TABLE IF EXISTS GED_evolution";
+         + "CREATE TABLE IF NOT EXISTS GED_evolution( "*/
+        String sql1 = "DROP TABLE IF EXISTS GED_evolution";
         this.sql = "CREATE TABLE IF NOT EXISTS GED_evolution( "
                 + "	id_matched INTEGER PRIMARY KEY NOT NULL, "
                 + "	event_type varchar(30) NULL, "

@@ -414,6 +414,16 @@
                                                     <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startAll" style="color: ;" text="Lancer" textAlignment="CENTER" />
                                        </children>
                                     </HBox>
+                                    <HBox alignment="CENTER" layoutY="10.0" prefHeight="27.0" prefWidth="181.0" spacing="10.0">
+                                       <children>
+                                          <Button minWidth="20.0" mnemonicParsing="false" onAction="#visualizeFile" prefHeight="27.0" prefWidth="76.0" text="Visualiser">
+                                             <HBox.margin>
+                                                <Insets right="20.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                          <Button mnemonicParsing="false" onAction="#selectAttributes" prefHeight="25.0" prefWidth="64.0" text="Attributs" />
+                                       </children>
+                                    </HBox>
                                           </children>
                                       </AnchorPane>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
