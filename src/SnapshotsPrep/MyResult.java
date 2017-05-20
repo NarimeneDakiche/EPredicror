@@ -39,7 +39,7 @@ public class MyResult {
         this.maxTS = maxTS;
     }
 
-    public MyResult getResults(String file, String timeFormat, String dataStructure, String separator) throws FileNotFoundException, IOException, ParseException {
+    public MyResult getResults(String file, String timeFormat, String dataStructure) throws FileNotFoundException, IOException, ParseException {
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String sCurrentLine;
@@ -48,7 +48,7 @@ public class MyResult {
             Date d;
             boolean first = true;
             while ((sCurrentLine = br.readLine()) != null) {
-                splitContent = sCurrentLine.split(separator);
+                splitContent = SnapshotsPrep.splitInput(sCurrentLine);// sCurrentLine.split(separator);
                 if (timeFormat != null && !timeFormat.equals("Timestamp")) {
                     String dateS = "";
                     for (int i = -1; (i = dataStructure.indexOf("T", i + 1)) != -1;) {

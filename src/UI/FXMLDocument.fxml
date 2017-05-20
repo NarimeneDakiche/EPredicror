@@ -163,29 +163,28 @@
                                                                               <VBox alignment="CENTER" prefHeight="43.0" prefWidth="229.0" spacing="10.0">
                                                                                   <children>
                                                                                       <CheckBox fx:id="checkboxSplitMultiExport" alignment="CENTER" mnemonicParsing="false" prefHeight="17.0" prefWidth="173.0" selected="true" text="Export snapshots séparés" />
-                                                                                      <CheckBox mnemonicParsing="false" prefHeight="17.0" prefWidth="175.0" text="   Ignorer la première ligne" />
+                                                                                    <HBox alignment="CENTER" prefHeight="25.0" prefWidth="229.0">
+                                                                                        <children>
+                                                                                            <Button mnemonicParsing="false" onAction="#startSplit" prefHeight="18.0" prefWidth="74.0" text="Lancer">
+                                                                                                <font>
+                                                                                                    <Font size="11.0" />
+                                                                                                </font>
+                                                                                            </Button>
+                                                                                            <Button mnemonicParsing="false" prefHeight="23.0" prefWidth="71.0" text="Annuler">
+                                                                                                <font>
+                                                                                                    <Font size="11.0" />
+                                                                                                </font>
+                                                                                                <HBox.margin>
+                                                                                                    <Insets left="20.0" />
+                                                                                                </HBox.margin>
+                                                                                            </Button>
+                                                                                        </children>
+                                                                                        <VBox.margin>
+                                                                                            <Insets />
+                                                                                        </VBox.margin>
+                                                                                    </HBox>
                                                                                   </children>
                                                                               </VBox>
-                                                                              <HBox alignment="CENTER" prefHeight="25.0" prefWidth="229.0">
-                                                                                  <children>
-                                                                                      <Button mnemonicParsing="false" onAction="#startSplit" prefHeight="18.0" prefWidth="74.0" text="Lancer">
-                                                                                          <font>
-                                                                                              <Font size="11.0" />
-                                                                                          </font>
-                                                                                      </Button>
-                                                                                      <Button mnemonicParsing="false" prefHeight="23.0" prefWidth="71.0" text="Annuler">
-                                                                                          <font>
-                                                                                              <Font size="11.0" />
-                                                                                          </font>
-                                                                                          <HBox.margin>
-                                                                                              <Insets left="20.0" />
-                                                                                          </HBox.margin>
-                                                                                      </Button>
-                                                                                  </children>
-                                                                                  <VBox.margin>
-                                                                                      <Insets />
-                                                                                  </VBox.margin>
-                                                                              </HBox>
                                                                           </children>
                                                                           <opaqueInsets>
                                                                               <Insets />
@@ -414,11 +413,11 @@
                                                     <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startAll" style="color: ;" text="Lancer" textAlignment="CENTER" />
                                        </children>
                                     </HBox>
-                                    <HBox alignment="CENTER" layoutY="10.0" prefHeight="27.0" prefWidth="181.0" spacing="10.0">
+                                    <HBox alignment="CENTER" layoutY="10.0" prefHeight="30.0" prefWidth="181.0" spacing="10.0">
                                        <children>
-                                          <Button minWidth="20.0" mnemonicParsing="false" onAction="#visualizeFile" prefHeight="27.0" prefWidth="76.0" text="Visualiser">
+                                          <Button minWidth="20.0" mnemonicParsing="false" onAction="#visualizeFile" prefHeight="27.0" prefWidth="70.0" text="Visualiser">
                                              <HBox.margin>
-                                                <Insets right="20.0" />
+                                                <Insets />
                                              </HBox.margin>
                                           </Button>
                                           <Button mnemonicParsing="false" onAction="#selectAttributes" prefHeight="25.0" prefWidth="64.0" text="Attributs" />
