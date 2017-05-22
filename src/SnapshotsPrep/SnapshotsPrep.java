@@ -131,7 +131,6 @@ public class SnapshotsPrep {
                         w = splitContent[dataStructure.indexOf("W")];
                         timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
                         //System.out.println(TimeLength.timestampToDate(timestamp));
-                        int step = (int) ((myResult.getMaxTS() - myResult.getMinTS()) / nbSnap);
                         // System.out.println(duration.getSeconds()+" "+step);
                         int index = (int) ((timestamp - myResult.getMinTS()) / duration.getSeconds());
                         if (timestamp == myResult.getMaxTS()) {
@@ -188,7 +187,7 @@ public class SnapshotsPrep {
 //        System.out.println("Min date:" + TimeLength.timestampToDate(myResult.getMinTS())+ " " +myResult.getMinTS());
         while (list.get(list.size() - 1).getMax() < myResult.getMaxTS()) {
             long a = (long) ((list.get(list.size() - 1).getMax() - list.get(list.size() - 1).getMin()) * (1 - overlapping)) + list.get(list.size() - 1).getMin();
-            System.out.println(list.size() + " " + a);
+            //System.out.println(list.size() + " " + a + TimeLength.timestampToDate(timestamp));
             list.add(new LongRange(a, a + duration.getSeconds()));
         }
         int nbSnap = list.size();
@@ -215,7 +214,9 @@ public class SnapshotsPrep {
 //                    System.out.println(TimeLength.timestampToDate(timestamp));
                         // System.out.println(duration.getSeconds()+" "+step);
                         for (int j = 0; j < list.size(); j++) {
-                            //System.out.println(list.get(j).contains(timestamp) + " " + timestamp +" "+list.get(j).getMin()+" "+list.get(j).getMax());
+//                            if (list.get(j).contains(timestamp)){
+//                                System.out.println(timestamp +" "+list.get(j).getMin()+" "+list.get(j).getMax());
+//                            }
                             if (list.get(j).contains(timestamp)) {
                                 writers[j].write(v + " " + w + "\n");
 

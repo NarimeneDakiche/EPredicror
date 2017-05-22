@@ -92,7 +92,7 @@ public class MainGED {
             // System.out.println(cpm);
         }
 
-        GED1 ged1 = new GED1();
+        GED ged1 = new GED();
         ged1.excuteGED(network, 50, 50, "text");
 
     }

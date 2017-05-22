@@ -48,23 +48,25 @@ public class MyResult {
             Date d;
             boolean first = true;
             while ((sCurrentLine = br.readLine()) != null) {
-                splitContent = SnapshotsPrep.splitInput(sCurrentLine);// sCurrentLine.split(separator);
-                if (timeFormat != null && !timeFormat.equals("Timestamp")) {
-                    String dateS = "";
-                    for (int i = -1; (i = dataStructure.indexOf("T", i + 1)) != -1;) {
-                        dateS += splitContent[i];
-                    } // prints "4", "13", "22"
+                if (sCurrentLine.charAt(0) != '%' && sCurrentLine.charAt(0) != '#') {
+                    splitContent = SnapshotsPrep.splitInput(sCurrentLine);// sCurrentLine.split(separator);
+                    if (timeFormat != null && !timeFormat.equals("Timestamp")) {
+                        String dateS = "";
+                        for (int i = -1; (i = dataStructure.indexOf("T", i + 1)) != -1;) {
+                            dateS += splitContent[i];
+                        } // prints "4", "13", "22"
 
-                    d = new SimpleDateFormat(timeFormat)
-                            .parse(splitContent[0] + " " + splitContent[1]);
-                    timestamp = d.getTime();
-                } else {
-                    maxTS = Math.max(maxTS, Long.parseLong(splitContent[dataStructure.indexOf("T")]));
-                    if (first) {
-                        minTS = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
-                        first = false;
+                        d = new SimpleDateFormat(timeFormat)
+                                .parse(splitContent[0] + " " + splitContent[1]);
+                        timestamp = d.getTime();
                     } else {
-                        minTS = Math.min(minTS, Long.parseLong(splitContent[dataStructure.indexOf("T")]));
+                        maxTS = Math.max(maxTS, Long.parseLong(splitContent[dataStructure.indexOf("T")]));
+                        if (first) {
+                            minTS = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
+                            first = false;
+                        } else {
+                            minTS = Math.min(minTS, Long.parseLong(splitContent[dataStructure.indexOf("T")]));
+                        }
                     }
                 }
             }

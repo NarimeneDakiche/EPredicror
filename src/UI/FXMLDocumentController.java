@@ -18,7 +18,7 @@ import communityDetection.ExternMethods.COPRA;
 import communityDetection.ExternMethods.GN;
 import communityDetection.ExternMethods.SLPA;
 import static evolutionIdentification.EvolutionUtils.writeEvolutionChain;
-import evolutionIdentification.GED1;
+import evolutionIdentification.GED;
 import evolutionIdentification.GEDUtils.TimeFrame;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -118,6 +118,15 @@ public class FXMLDocumentController implements Initializable {
     private ListView<String> listViewAttributes;
 
     @FXML
+    private ComboBox<String> comboClassifier;
+
+    @FXML
+    private TextField chainLength;
+
+    @FXML
+    private ComboBox<String> comboSelectionAttributes;
+
+    @FXML
     private Spinner<Integer> spinnerNBClusters;
 
     @FXML
@@ -134,6 +143,9 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private CheckBox checkboxSplitMultiExport;
+
+    @FXML
+    private CheckBox checkboxDetection;
 
     @FXML
     private TextField splitExportName;
@@ -314,6 +326,12 @@ public class FXMLDocumentController implements Initializable {
         comboEvolution.getItems().addAll("GED", "Asur");
         comboEvolution.getSelectionModel().select("GED");
 
+        comboClassifier.getItems().addAll("naiveBayes", "bayesNet", "decisionTree", "svm", "randomForest", "decisionStump", "perceptron", "logisticRegression");
+        comboClassifier.getSelectionModel().select("decisionTree");
+
+        comboSelectionAttributes.getItems().addAll("Filtrage", "Manuellement", "Encapsulée..");
+        comboSelectionAttributes.getSelectionModel().select("Filtrage");
+
         //AquaFx.style();
         //  labelStep1 = new Label();
         //detectionMethodCombo.getItems().addAll("CPM", "Louvain", "...");
@@ -445,8 +463,8 @@ public class FXMLDocumentController implements Initializable {
 
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Text Files", "*.txt"),
-                new ExtensionFilter("All Files", "*.*"));
+                new ExtensionFilter("All Files", "*.*"),
+                new ExtensionFilter("Text Files", "*.txt"));
         chooser.setTitle("Choisir un fichier");
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         chooser.setInitialDirectory(new File(currentPath));
@@ -484,8 +502,8 @@ public class FXMLDocumentController implements Initializable {
     ) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Text Files", "*.txt"),
-                new ExtensionFilter("All Files", "*.*"));
+                new ExtensionFilter("All Files", "*.*"),
+                new ExtensionFilter("Text Files", "*.txt"));
         chooser.setTitle("Choisir un ou plusieurs fichiers");
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         chooser.setInitialDirectory(new File(currentPath));
@@ -515,8 +533,8 @@ public class FXMLDocumentController implements Initializable {
     ) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Text Files", "*.txt"),
-                new ExtensionFilter("All Files", "*.*"));
+                new ExtensionFilter("All Files", "*.*"),
+                new ExtensionFilter("Text Files", "*.txt"));
         chooser.setTitle("Choisir un fichier");
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         chooser.setInitialDirectory(new File(currentPath));
@@ -536,8 +554,8 @@ public class FXMLDocumentController implements Initializable {
     ) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Arff Files", "*.arff"),
-                new ExtensionFilter("All Files", "*.*"));
+                new ExtensionFilter("All Files", "*.*"),
+                new ExtensionFilter("Arff Files", "*.arff"));
         chooser.setTitle("Choisir un fichier");
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         chooser.setInitialDirectory(new File(currentPath));
@@ -749,6 +767,7 @@ public class FXMLDocumentController implements Initializable {
                  listDuration.add(Duration.ofDays(10));*/
 
                 System.out.println("spinnerNBClusters.getValue()= " + spinnerNBClusters.getValue());
+                splitExportName.setText("./ExportedResults/" + splitExportName.getText());
 
                 try {
                     float overlapping = isFloat(overlappingLabel.getText()) ? Float.parseFloat(overlappingLabel.getText()) : 0;
@@ -801,8 +820,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    void startDetection(ActionEvent event
-    ) {
+    void startDetection(ActionEvent event) {
         try {
             //treeView.getRoot().getChildren().clear();
             Node rootIcon = new ImageView(new Image(getClass().getResourceAsStream("24-128.png")));
@@ -990,13 +1008,16 @@ public class FXMLDocumentController implements Initializable {
                 if (dynamicNetwork.size() > 1) {
                     launchEvolution.setDisable(false);
                 }
-                try {
-                    writeLog("Export des résultats...");
-                    exportDynamicNetwork(dynamicNetwork, "exportDetection_" + comboDetection.getSelectionModel().getSelectedItem() + ".txt", attributesCombo.getValue());
-                    writeLogLn("terminée");
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
+                if (checkboxDetection.isSelected()) {
+                    try {
+                        writeLog("Export des résultats...");
+                        exportDynamicNetwork(dynamicNetwork, "./ExportedResults/" + "detection_" + comboDetection.getSelectionModel().getSelectedItem() + "_" + snipperDetection.getValue() + ".txt", attributesCombo.getValue());
+                        writeLogLn("terminée");
+                    } catch (IOException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
                 }
+
                 directlyEvolution = false;
             }
 
@@ -1011,7 +1032,8 @@ public class FXMLDocumentController implements Initializable {
                         Graph g = tf.getCommunities().get(i);
                         //for (Graph g : tf.getCommunities()) {
                         for (org.graphstream.graph.Edge e : g.getEdgeSet()) {
-                            writer.write(e.getSourceNode().getId() + " " + e.getSourceNode().getAttribute(att) + " " + e.getTargetNode().getId() + " " + e.getTargetNode().getAttribute(att) + " " + k + " " + i + "\n");
+                            writer.write(e.getSourceNode().getId() + " " + e.getTargetNode().getId() + " " + k + " " + i + "\n");
+                            //writer.write(e.getSourceNode().getId() + " " + e.getSourceNode().getAttribute(att) + " " + e.getTargetNode().getId() + " " + e.getTargetNode().getAttribute(att) + " " + k + " " + i + "\n");
                             //System.out.println(dynamicNetwork.indexOf(tf) + " " + tf.getCommunities().indexOf(g));
                         }
                     }
@@ -1047,7 +1069,7 @@ public class FXMLDocumentController implements Initializable {
                 switch (comboEvolution.getSelectionModel().getSelectedItem()) {
                     case "GED": {
                         writeLogLn("GED started...");
-                        GED1 ged = new GED1();
+                        GED ged = new GED();
                         try {
                             String str = !evolutionParameters.getText().equals("") ? evolutionParameters.getText() : evolutionParameters.getPromptText();
                             String para[] = str.split(";");
@@ -1062,7 +1084,19 @@ public class FXMLDocumentController implements Initializable {
                         break;
                     }
                     case "Asur": {
-                        writeLogLn("Method not linked yet.");
+                        writeLogLn("Asur started...");
+//                        try {
+//                            //String str = !evolutionParameters.getText().equals("") ? evolutionParameters.getText() : evolutionParameters.getPromptText();
+//                            //String para[] = str.split(";");
+//                            //Asur.ex
+//                        } catch (FileNotFoundException ex) {
+//                            Exceptions.printStackTrace(ex);
+//                        } catch (UnsupportedEncodingException ex) {
+//                            Exceptions.printStackTrace(ex);
+//                        } catch (SQLException ex) {
+//                            Exceptions.printStackTrace(ex);
+//                        }
+                        break;
                     }
                     default: {
                         writeLogLn("Method not linked yet.");
@@ -1092,22 +1126,22 @@ public class FXMLDocumentController implements Initializable {
                     String sCurrentLine;
                     while ((sCurrentLine = br.readLine()) != null) {
                         String[] str = sCurrentLine.split(" ");
-                        int t = Integer.parseInt(str[4]);
-                        int g = Integer.parseInt(str[5]);
+                        int snp = Integer.parseInt(str[2]);
+                        int comm = Integer.parseInt(str[3]);
 
-                        while (dynamicNet.size() <= t) {
+                        while (dynamicNet.size() <= snp) {
                             dynamicNet.add(new TimeFrame(new LinkedList<Graph>()));
                         }
-                        while (dynamicNet.get(t).getCommunities().size() <= g) {
+                        while (dynamicNet.get(snp).getCommunities().size() <= comm) {
                             Graph group = new SingleGraph("");
                             group.setStrict(false);
                             group.setAutoCreate(true);
-                            dynamicNet.get(t).getCommunities().add(group);
+                            dynamicNet.get(snp).getCommunities().add(group);
                         }
 
-                        dynamicNet.get(t).getCommunities().get(g).addEdge(str[0] + ";" + str[2], str[0], str[2]);
-                        dynamicNet.get(t).getCommunities().get(g).getEdge(str[0] + ";" + str[2]).getSourceNode().setAttribute("bcentrality", Double.parseDouble(str[1]));
-                        dynamicNet.get(t).getCommunities().get(g).getEdge(str[0] + ";" + str[2]).getTargetNode().setAttribute("bcentrality", Double.parseDouble(str[3]));
+                        dynamicNet.get(snp).getCommunities().get(comm).addEdge(str[0] + ";" + str[1], str[0], str[1]);
+//                        dynamicNet.get(snp).getCommunities().get(comm).getEdge(str[0] + ";" + str[2]).getSourceNode().setAttribute("bcentrality", Double.parseDouble(str[1]));
+//                        dynamicNet.get(snp).getCommunities().get(comm).getEdge(str[0] + ";" + str[2]).getTargetNode().setAttribute("bcentrality", Double.parseDouble(str[3]));
                     }
                 } catch (IOException e) {
                     //e.printStackTrace();
@@ -1320,7 +1354,7 @@ public class FXMLDocumentController implements Initializable {
                         if (timestamp == myResult.getMaxTS()) {
                             index--;
                         }
-         // System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
+                        // System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
                         //  + index);
                         counters.set(index, counters.get(index) + 1);
                     }

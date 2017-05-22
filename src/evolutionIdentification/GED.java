@@ -2,6 +2,7 @@ package evolutionIdentification;
 
 import evolutionIdentification.GEDUtils.NodeCompare;
 import evolutionIdentification.GEDUtils.TimeFrame;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
@@ -29,6 +30,9 @@ public class GED {
     private Connection conn;
     private String sqlInsert;
     private PreparedStatement pstmt;
+    private PreparedStatement pstmt1;
+    private PreparedStatement pstmt2;
+    private PreparedStatement pstmt3;
 
     public void insert(String event, Integer g1, int timeFrame, Integer g2, int timeFrame1, int inclusion1, int inclusion2, String threshold) throws SQLException {
         //String sqlInsert = "INSERT INTO GED_evolution(event_type,group1,timeframe1,group2,timeframe2,alpha,beta,threshold) VALUES (?,?,?,?,?,?,?,?);";
@@ -55,43 +59,53 @@ public class GED {
     }
 
     private void update(String event, String threshold, Integer group1, Integer timeframe1, Integer group2, Integer timeframe2, String oldEvent) throws SQLException {
-        String update1 = "UPDATE GED_evolution "
-                + "SET event_type = ? "
-                + "WHERE threshold = ? AND group1 = ? AND timeframe1 = ? AND group2 = ? AND timeframe2 = ? AND event_type = ?;";
-        PreparedStatement pstmt = conn.prepareStatement(update1);
+        /*String update1 = "UPDATE GED_evolution "
+         + "SET event_type = ? "
+         + "WHERE threshold = ? AND group1 = ? AND timeframe1 = ? AND group2 = ? AND timeframe2 = ? AND event_type = ?;";
+         PreparedStatement pstmt = conn.prepareStatement(update1);*/
 
         // set the corresponding param
-        pstmt.setString(1, event);
-        pstmt.setString(2, threshold);
-        pstmt.setInt(3, group1);
-        pstmt.setInt(4, timeframe1);
-        pstmt.setInt(5, group2);
-        pstmt.setInt(6, timeframe2);
-        pstmt.setString(7, oldEvent);
+        pstmt3.setString(1, event);
+        pstmt3.setString(2, threshold);
+        pstmt3.setInt(3, group1);
+        pstmt3.setInt(4, timeframe1);
+        pstmt3.setInt(5, group2);
+        pstmt3.setInt(6, timeframe2);
+        pstmt3.setString(7, oldEvent);
         // update 
-        pstmt.executeUpdate();
+        pstmt3.addBatch();
 
     }
 
     public void update(String event, String threshold, Integer group1, Integer timeframe1, String oldEvent, int group) throws SQLException {
-        String update1 = (group == 1) ? "UPDATE GED_evolution "
-                + "SET event_type = ? "
-                + "WHERE threshold = ? AND group1 = ? AND timeframe1 = ? AND event_type = ?;"
-                : ((group == 2) ? "UPDATE GED_evolution "
-                        + "SET event_type = ? "
-                        + "WHERE threshold = ? AND group2 = ? AND timeframe2 = ? AND event_type = ?;"
-                        : null);
+        /* String update1 = (group == 1) ? "UPDATE GED_evolution "
+         + "SET event_type = ? "
+         + "WHERE threshold = ? AND group1 = ? AND timeframe1 = ? AND event_type = ?;"
+         : ((group == 2) ? "UPDATE GED_evolution "
+         + "SET event_type = ? "
+         + "WHERE threshold = ? AND group2 = ? AND timeframe2 = ? AND event_type = ?;"
+         : null);
 
-        PreparedStatement pstmt = conn.prepareStatement(update1);
+         pstmt = conn.prepareStatement(update1);*/
 
         // set the corresponding param
-        pstmt.setString(1, event);
-        pstmt.setString(2, threshold);
-        pstmt.setInt(3, group1);
-        pstmt.setInt(4, timeframe1);
-        pstmt.setString(5, oldEvent);
-        // update 
-        pstmt.executeUpdate();
+        if (group == 1) {
+            pstmt1.setString(1, event);
+            pstmt1.setString(2, threshold);
+            pstmt1.setInt(3, group1);
+            pstmt1.setInt(4, timeframe1);
+            pstmt1.setString(5, oldEvent);
+            // update 
+            pstmt1.addBatch();
+        } else {
+            pstmt2.setString(1, event);
+            pstmt2.setString(2, threshold);
+            pstmt2.setInt(3, group1);
+            pstmt2.setInt(4, timeframe1);
+            pstmt2.setString(5, oldEvent);
+            // update 
+            pstmt2.addBatch();
+        }
     }
 
     public void createNewTable(String fileName) {
@@ -99,6 +113,9 @@ public class GED {
         this.url = "jdbc:sqlite:" + fileName;
 
 // SQL statement for creating a new table
+        /*this.sql = "DROP TABLE IF EXISTS GED_evolution"
+         + "CREATE TABLE IF NOT EXISTS GED_evolution( "*/
+        String sql1 = "DROP TABLE IF EXISTS GED_evolution";
         this.sql = "CREATE TABLE IF NOT EXISTS GED_evolution( "
                 + "	id_matched INTEGER PRIMARY KEY NOT NULL, "
                 + "	event_type varchar(30) NULL, "
@@ -115,13 +132,14 @@ public class GED {
         try (Connection conn = DriverManager.getConnection(url);
                 Statement stmt = conn.createStatement()) {
             // create a new table
+            stmt.execute(sql1);
             stmt.execute(sql);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void excuteGED(LinkedList<TimeFrame> dynamicNetwork) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
+    public void excuteGED(LinkedList<TimeFrame> dynamicNetwork, int alpha, int beta, String exportName) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
 
         /**
          * 1. Calculer Mesure d'importance et ordre en selon (e.g. degree
@@ -136,12 +154,6 @@ public class GED {
          * shrinking SET continue when size is the same
          *
          */
-        String fileName = "text.db";
-        createNewTable(fileName);
-        this.conn = DriverManager.getConnection(url);
-        this.pstmt = this.conn.prepareStatement(sqlInsert);
-        conn.setAutoCommit(false);
-
         int group1 = 0;
         int group2 = 0;
         int g1g2 = 0;
@@ -160,9 +172,9 @@ public class GED {
 
         int fd_tres = 10;
 
-        int a_tres_tmp = 50;
+        int a_tres_tmp = alpha;
         int a_tres = a_tres_tmp;
-        int b_tres_tmp = 50;
+        int b_tres_tmp = beta;
         int b_tres = b_tres_tmp;
 
         String tres = new String();
@@ -175,6 +187,29 @@ public class GED {
          while (b_tres < 110) {*/
 
         tres = a_tres + "_" + b_tres;
+
+        String fileName = "GED";
+        File myOutputDir = new File(fileName);
+        if (!myOutputDir.exists()) {
+            myOutputDir.mkdir();
+        }
+        fileName = "GED\\" + exportName + "_" + tres + ".db";
+        createNewTable(fileName);
+        this.conn = DriverManager.getConnection(url);
+        this.pstmt = this.conn.prepareStatement(sqlInsert);
+        this.pstmt1 = this.conn.prepareStatement("UPDATE GED_evolution "
+                + "SET event_type = ? "
+                + "WHERE threshold = ? AND group1 = ? AND timeframe1 = ? AND event_type = ?;");
+        this.pstmt2 = this.conn.prepareStatement("UPDATE GED_evolution "
+                + "SET event_type = ? "
+                + "WHERE threshold = ? AND group2 = ? AND timeframe2 = ? AND event_type = ?;");
+        this.pstmt3 = this.conn.prepareStatement("UPDATE GED_evolution "
+                + "SET event_type = ? "
+                + "WHERE threshold = ? AND group1 = ? AND timeframe1 = ? AND group2 = ? AND timeframe2 = ? AND event_type = ?;");
+        /*String sql = "PRAGMA synchronous=OFF";
+         Statement st = conn.createStatement();
+         st.execute(sql);*/
+        conn.setAutoCommit(false);
 
         while (i_timeFrame < dynamicNetwork.size() - 1) {
             //t1_no : nb de groupes dans timeframe actuel
@@ -219,7 +254,7 @@ public class GED {
 
                     //calculating inclusion
                     a = (int) ((1.0 * g1g2 / g1_size) * (1.0 * sr1 / tr1) * 100);
-                    // System.out.println((1.0 * g1g2 / g1_size) * (1.0 * sr1 / tr1) *100 + " " +a);
+                    //System.out.println((1.0 * g1g2 / g1_size) * (1.0 * sr1 / tr1) *100 + " " +a);
 
 //                    if (a > 10) {
 //                        System.out.println("Inclusion: a=" + a + ", g1g2=" + g1g2 + ", g1_size=" + g1_size + ", sr1=" + sr1 + ", tr1=" + tr1);
@@ -353,36 +388,34 @@ public class GED {
             group1 = group2 = 0;
 
         }
-        //b_tres += 10;
-        //i_timeFrame = 0;
-        /*}
+        /* b_tres += 10;
+         i_timeFrame = 0;
+         }
          a_tres += 10;
          b_tres = 50;
          }*/
-        // writer.close();
+        //writer.close();
         // splitting/shrinking and merging/growing update
         // update growing and shrinking SET continue when size is the same
         int[] updateCounts = pstmt.executeBatch();
         conn.commit();
-        conn.setAutoCommit(true);
+        // conn.setAutoCommit(true);
 
         System.out.println("Insert done!");
 
         System.out.println("Update started!");
 
-        String sql = "PRAGMA synchronous=OFF";
-        Statement st = conn.createStatement();
-        st.execute(sql);
         int g1, t1, g2, t2;
 
-        /*a_tres = a_tres_tmp;
-         b_tres = b_tres_tmp;
-
-         while (a_tres < 101) {
-         while (b_tres < 101) {*/
         a_tres = a_tres_tmp;
         b_tres = b_tres_tmp;
+
+        int cpt = 0;
+        /* while (a_tres < 101) {
+         while (b_tres < 101) {*/
+
         tres = Integer.toString(a_tres) + "_" + Integer.toString(b_tres);
+        System.out.println("Update " + tres + " started!");
         //System.out.println("Point 0 " + tres);
 
         String spl = "SELECT group1, timeframe1 FROM GED_evolution WHERE threshold = '" + tres + "' AND event_type = 'splitting/shrinking';";
@@ -425,6 +458,7 @@ public class GED {
                 update("splitting", tres, g1, t1, "splitting/shrinking", 1);
             } else {
                 update("shrinking", tres, g1, t1, "splitting/shrinking", 1);
+                cpt++;
             }
         }
 
@@ -466,44 +500,59 @@ public class GED {
                 update("merging", tres, g2, t2, "merging/growing", 2);
             } else {
                 update("growing", tres, g2, t2, "merging/growing", 2);
+                cpt++;
             }
         }
-
+        ///_________
+        /*b_tres += 10;
+         }
+         a_tres += 10;
+         b_tres = b_tres_tmp;
+         }*/
+        updateCounts = pstmt1.executeBatch();
+        updateCounts = pstmt2.executeBatch();
+        conn.commit();
+        //conn.setAutoCommit(true);
         System.out.println("Update continuing started!");
         String cont = "SELECT group1, timeframe1, group2, timeframe2, event_type FROM GED_evolution WHERE event_type IN ('shrinking', 'growing');";
         Statement stmtCont = conn.createStatement();
-        ResultSet rsCont = stmt.executeQuery(cont);
+        ResultSet rsCont = stmtCont.executeQuery(cont);
        // System.out.println("I am here!");
 
         // loop through the result set
+        int i = 0, last = 0;
         while (rsCont.next()) {
-
+//            if ((i / cpt) != last) {
+//                System.out.print(i / cpt + "(" + i++ + "/" + cpt + ")");
+//            }
             g1 = rsCont.getInt("group1");
             t1 = rsCont.getInt("timeframe1");
             g2 = rsCont.getInt("group2");
             t2 = rsCont.getInt("timeframe2");
             String eventType = rsCont.getString("event_type");
-
-            int graphCont1 = dynamicNetwork.get(t1).getCommunities().get(g1).getNodeSet().size();
-            int graphCont2 = dynamicNetwork.get(t2).getCommunities().get(g2).getNodeSet().size();
-            //System.out.println("Counts: " + graphCont1 + " " + graphCont2);
-            if (graphCont1 == graphCont2) {
-                if (eventType.equals("shrinking")) {
-                    // System.out.println(tres + "," + g2 + "," + t2 + ",");
-                    update("continuing", tres, g1, t1, g2, t2, "shrinking");
-                } else if (eventType.equals("growing")) {
-                    update("continuing", tres, g1, t1, g2, t2, "growing");
-                } else {
-                    System.out.println("Whaat!?? :o");
+            //System.out.println("dynamicNetwork.size: " + dynamicNetwork.size());
+            if (t2 < dynamicNetwork.size() && dynamicNetwork.get(t1).getCommunities().size() > 0 && dynamicNetwork.get(t2).getCommunities().size() > 0) {
+                //System.out.println(t1 + " " + g1);
+                int graphCont1 = dynamicNetwork.get(t1).getCommunities().get(g1).getNodeSet().size();
+                //System.out.println(t2 + " " + g2 + " ");
+                int graphCont2 = dynamicNetwork.get(t2).getCommunities().get(g2).getNodeSet().size();
+                //System.out.println("Counts: " + graphCont1 + " " + graphCont2);
+                if (graphCont1 == graphCont2) {
+                    if (eventType.equals("shrinking")) {
+                        // System.out.println(tres + "," + g2 + "," + t2 + ",");
+                        update("continuing", tres, g1, t1, g2, t2, "shrinking");
+                    } else if (eventType.equals("growing")) {
+                        update("continuing", tres, g1, t1, g2, t2, "growing");
+                    } else {
+                        System.out.println("Whaat!?? :o");
+                    }
                 }
             }
         }
-        ///_________
-        //b_tres += 10;
-        /*}
-         a_tres += 10;
-         b_tres = b_tres_tmp;
-         }*/
+        updateCounts = pstmt3.executeBatch();
+        conn.commit();
+
+        conn.close();
     }
 
     private LinkedList<Node> nodeInter(Collection<Node> gr1, Collection<Node> gr2) {
@@ -524,7 +573,7 @@ public class GED {
         for (Node n1 : gr1) {
             for (Node n2 : g1g2) {
                 if (n1.getId().equals(n2.getId())) {
-                    sum += (Double) n1.getAttribute("Cb");
+                    sum += (Double) n1.getAttribute("bcentrality");
                 }
             }
         }
@@ -534,7 +583,7 @@ public class GED {
     private double sumMesure(Collection<Node> gr1) {
         double sum = 0;
         for (Node n : gr1) {
-            sum += (Double) n.getAttribute("Cb"); // to adapt
+            sum += (Double) n.getAttribute("bcentrality"); // to adapt
         }
         return sum;
     }
@@ -553,6 +602,12 @@ public class GED {
                         found = true;
                         break;
                     }
+                    if (found) {
+                        break;
+                    }
+                }
+                if (found) {
+                    break;
                 }
             }
             //if (found) System.out.println("yay!");

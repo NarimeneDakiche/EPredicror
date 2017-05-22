@@ -226,7 +226,7 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                                                                   <children>
-                                                                                      <CheckBox mnemonicParsing="false" selected="true" text="Exporter les résultats">
+                                                                                      <CheckBox fx:id="checkboxDetection" mnemonicParsing="false" selected="true" text="Exporter les résultats">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
@@ -356,15 +356,39 @@
                                                                                               <Font size="11.0" />
                                                                                           </font>
                                                                                       </Label>
-                                                                                      <ComboBox fx:id="comboFormatTemp121" prefHeight="25.0" prefWidth="215.0" />
+                                                                                      <ComboBox fx:id="comboClassifier" prefHeight="25.0" prefWidth="215.0" />
                                                                                   </children>
                                                                               </HBox>
+                                                            <HBox alignment="CENTER_RIGHT">
+                                                               <children>
+                                                                  <Label alignment="CENTER" prefHeight="25.0" prefWidth="98.0" text="Longueur de chaine">
+                                                                     <font>
+                                                                        <Font size="11.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <TextField fx:id="chainLength" prefHeight="25.0" prefWidth="110.0">
+                                                                     <HBox.margin>
+                                                                        <Insets left="5.0" />
+                                                                     </HBox.margin>
+                                                                  </TextField>
+                                                               </children>
+                                                            </HBox>
                                                                               <HBox alignment="CENTER_RIGHT" prefHeight="231.0" prefWidth="210.0" spacing="10.0">
                                                                                   <children>
                                                                                       <Label text="Attributs:" />
                                                                                       <ListView fx:id="listViewAttributes" minHeight="90.0" prefHeight="130.0" prefWidth="134.0" />
                                                                                   </children>
                                                                               </HBox>
+                                                            <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
+                                                               <children>
+                                                                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="122.0" text="Sélection d'attributs">
+                                                                     <font>
+                                                                        <Font size="11.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <ComboBox fx:id="comboSelectionAttributes" prefHeight="25.0" prefWidth="99.0" />
+                                                               </children>
+                                                            </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="23.0" prefWidth="210.0">
                                                                                   <children>
                                                                                       <CheckBox mnemonicParsing="false" text="Exporter les résultats" />
