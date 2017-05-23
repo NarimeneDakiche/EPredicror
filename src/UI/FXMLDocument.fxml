@@ -274,6 +274,30 @@
                                                               </AnchorPane>
                                                           </content>
                                                       </TitledPane>
+                                          <TitledPane animated="false" text="Calcul d'attributs">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                   <children>
+                                                      <VBox alignment="CENTER" layoutX="-36.0" layoutY="-18.0" prefHeight="363.0" prefWidth="246.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <children>
+                                                            <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Calcul d'attributs">
+                                                               <font>
+                                                                  <Font name="System Bold" size="12.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <HBox alignment="CENTER_RIGHT" prefHeight="231.0" prefWidth="210.0" spacing="10.0">
+                                                               <children>
+                                                                  <Label text="Attributs:" />
+                                                                  <ListView fx:id="listView" minHeight="90.0" prefHeight="231.0" prefWidth="158.0" />
+                                                               </children>
+                                                            </HBox>
+                                                            <Button fx:id="launchCalculation" mnemonicParsing="false" onAction="#startCalculateAttributes" text="Calculate" />
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                </AnchorPane>
+                                            </content>
+                                          </TitledPane>
                                                       <TitledPane fx:id="titledpane3" animated="false" text="Identification de l'évolution">
                                                           <content>
                                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -377,7 +401,7 @@
                                                                               <HBox alignment="CENTER_RIGHT" prefHeight="231.0" prefWidth="210.0" spacing="10.0">
                                                                                   <children>
                                                                                       <Label text="Attributs:" />
-                                                                                      <ListView fx:id="listViewAttributes" minHeight="90.0" prefHeight="130.0" prefWidth="134.0" />
+                                                                                      <ListView fx:id="listViewAttributes" minHeight="90.0" prefHeight="90.0" prefWidth="143.0" />
                                                                                   </children>
                                                                               </HBox>
                                                             <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
