@@ -33,7 +33,7 @@ public class EvolutionUtils {
      * A method to generate evoltion chains tables*
      */
     public static void writeEvolutionChain(/*LinkedList<TimeFrame> dynamicNetwork,*/String BDpath, String BDfilename, String tabname, int nbtimeframe/**
-     * nbre timeframes**/, int nbevents/**chain's min lengh*/
+     * nbre timeframes**/, int chainLength/**chain's min lengh*/
     ) {
 
         //Generating evolution chain for groups in Evolution identification method
@@ -449,8 +449,8 @@ public class EvolutionUtils {
             //Execute Scripts
             executeStatement(BDpath, BDfilename, scriptDelTab);
             executeStatement(BDpath, BDfilename, scriptJoinTab);
-            int min=nbevents*7+(nbevents-1);
-            for (int temp = nbevents; temp < nbtimeframe - 1; temp++) {
+            int min=chainLength*7+(chainLength-1);
+            for (int temp = chainLength; temp < nbtimeframe - 1; temp++) {
                 String sql = "";
                 if (temp == nbtimeframe - 2) {
                     sql = "INSERT INTO Chains select * from Join" + temp + " where LENGTH(event_type)>="+min+";";

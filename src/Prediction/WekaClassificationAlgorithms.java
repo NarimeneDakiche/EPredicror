@@ -11,5 +11,6 @@ package Prediction;
  */
 public enum WekaClassificationAlgorithms {
 
-    naiveBayes, bayesNet, decisionTree, svm, randomForest, decisionStump, perceptron, logisticRegression
+    naiveBayes, bayesNet, decisionTree, svm, randomForest, decisionStump, perceptron, logisticRegression, randomTree, iBk,
+    oneR, bagging
 }

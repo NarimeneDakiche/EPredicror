@@ -25,6 +25,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import weka.classifiers.bayes.BayesNet;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.lazy.IBk;
+import weka.classifiers.meta.Bagging;
+import weka.classifiers.rules.OneR;
+import weka.classifiers.trees.RandomTree;
 
 public class WekaUtils {
 
@@ -70,6 +74,26 @@ public class WekaUtils {
                 MultilayerPerceptron perceptron = new MultilayerPerceptron();
                 setOptionsForWekaPredictor(options, perceptron);
                 return perceptron;
+            case randomTree:
+                RandomTree randomTree = new RandomTree();
+                setOptionsForWekaPredictor(options, randomTree);
+                return randomTree;
+            case iBk:
+                IBk iBk = new IBk();
+                setOptionsForWekaPredictor(options, iBk);
+                return iBk;
+            case oneR:
+                OneR oneR = new OneR();
+                setOptionsForWekaPredictor(options, oneR);
+                return oneR;  
+            case bagging:
+                Bagging bagging = new Bagging();
+                setOptionsForWekaPredictor(options, bagging);
+                return bagging;  
+            /*case simpleCart:
+                SimpleCart simpleCart = new SimpleCart();
+                setOptionsForWekaPredictor(options, simpleCart);
+                return simpleCart; */
             default:
                 return new SMO();
         }

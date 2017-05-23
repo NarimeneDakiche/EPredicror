@@ -29,6 +29,7 @@ public class SnapshotsPrep {
         Graph g = new SingleGraph("");
         g.setStrict(false);
         g.setAutoCreate(true);
+        System.out.println(file);
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String sCurrentLine;
 

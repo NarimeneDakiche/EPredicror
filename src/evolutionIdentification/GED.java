@@ -139,7 +139,7 @@ public class GED {
         }
     }
 
-    public void excuteGED(LinkedList<TimeFrame> dynamicNetwork, int alpha, int beta, String exportName) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
+    public void excuteGED(LinkedList<TimeFrame> dynamicNetwork, int alpha, int beta,  String totalPath) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
 
         /**
          * 1. Calculer Mesure d'importance et ordre en selon (e.g. degree
@@ -193,8 +193,8 @@ public class GED {
         if (!myOutputDir.exists()) {
             myOutputDir.mkdir();
         }
-        fileName = "GED\\" + exportName + "_" + tres + ".db";
-        createNewTable(fileName);
+        // fileName = "GED\\" + exportName + "_" + tres + ".db";
+        createNewTable(totalPath);
         this.conn = DriverManager.getConnection(url);
         this.pstmt = this.conn.prepareStatement(sqlInsert);
         this.pstmt1 = this.conn.prepareStatement("UPDATE GED_evolution "

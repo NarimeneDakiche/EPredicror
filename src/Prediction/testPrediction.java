@@ -6,6 +6,9 @@
 package Prediction;
 
 import evolutionIdentification.EvolutionUtils;
+import evolutionIdentification.GEDUtils.TimeFrame;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  *
@@ -25,6 +28,24 @@ public class testPrediction {
         //EvolutionUtils.writeEvolutionChain(BDpath, BDfilename, tabname,nbtimeframe/**nbre timeframes**/);
         //PredictionUtils.createClassifierJ48(filePath+filename+extension,10);
         //PredictionUtils.createArff(filePath, filename,BDpath,BDfilename,nbtimeframe, "", "");
-        PredictionUtils.createArff(filePath, filename, BDpath, BDfilename, nbtimeframe, "", "", 4);
+        //PredictionUtils.createArffAttribute(filePath, filename,BDpath, BDfilename,nbtimeframe, 4,null, dynamicNetwork);
+        //PredictionUtils.createArff(filePath, filename, BDpath, BDfilename, nbtimeframe, "", "", 4);
+        
+        String selectionMethod="Wrapper";//"Filter";
+        String evalMethod="CfsSubsetEval";
+        String searchMethod="GreedyStepwise";
+        String wekaClassifier="naiveBayes"; 
+        String[] options=null;
+        String fichierEntrainement=filePath+filename+extension;
+        int kfolds=10;
+        
+        EvaluationReport e=
+        PredictionUtils.makePredictor(selectionMethod, searchMethod, evalMethod, 
+                                        wekaClassifier, options, fichierEntrainement, kfolds);
+        
+        //e.printReport();
+        //e.generateCurve1(/*filePath+filename+*/"f.png");
+        //e.generateROCcurve();
+        e.saveReportTextFile("C:\\Users\\HADJER\\Desktop\\report.txt");
     }
 }

@@ -11,6 +11,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
@@ -72,29 +73,34 @@
                                                                   <Font name="System Bold" size="12.0" />
                                                                </font>
                                                             </Label>
-                                                                              <Button mnemonicParsing="false" onAction="#browserAction" text="Parcourir" />
-                                                                              <HBox alignment="CENTER_RIGHT">
+                                                            <HBox alignment="CENTER" prefHeight="21.0" prefWidth="227.0" spacing="20.0">
+                                                               <children>
+                                                                                    <Button mnemonicParsing="false" onAction="#browserAction" text="Parcourir" />
+                                                                  <Button minWidth="20.0" mnemonicParsing="false" onAction="#visualizeDataStructure" prefHeight="27.0" prefWidth="70.0" text="Visualiser" />
+                                                               </children>
+                                                            </HBox>
+                                                                              <HBox alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="227.0">
                                                                                   <children>
                                                                                       <Label alignment="CENTER" prefHeight="16.0" prefWidth="85.0" text="Format du temp:">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
                                                                                       </Label>
-                                                                                      <ComboBox fx:id="timeFormatCombo" prefHeight="25.0" prefWidth="110.0">
+                                                                                      <ComboBox fx:id="timeFormatCombo" prefHeight="26.0" prefWidth="110.0">
                                                                                           <HBox.margin>
                                                                                               <Insets left="5.0" />
                                                                                           </HBox.margin>
                                                                                       </ComboBox>
                                                                                   </children>
                                                                               </HBox>
-                                                                              <HBox alignment="CENTER_RIGHT">
+                                                                              <HBox alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="227.0">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="91.0" text=" Nb de snapshots:">
+                                                                                      <Label alignment="CENTER" prefHeight="20.0" prefWidth="91.0" text=" Nb de snapshots:">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
                                                                                       </Label>
-                                                                                      <Spinner fx:id="spinnerNBClusters" editable="true" prefHeight="25.0" prefWidth="110.0">
+                                                                                      <Spinner fx:id="spinnerNBClusters" editable="true" prefHeight="14.0" prefWidth="110.0">
                                                                                           <HBox.margin>
                                                                                               <Insets left="5.0" />
                                                                                           </HBox.margin>
@@ -115,7 +121,7 @@
                                                                   </TextField>
                                                                                   </children>
                                                                               </HBox>
-                                                                              <HBox alignment="CENTER_RIGHT">
+                                                                              <HBox alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="227.0">
                                                                                   <children>
                                                                                       <Label alignment="CENTER" prefHeight="25.0" prefWidth="98.0" text="Nom de(s) fichier(s):">
                                                                                           <font>
@@ -135,15 +141,24 @@
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
-                                                                                      </Label>
-                                                                                      <TextField fx:id="overlappingLabel" prefHeight="6.0" prefWidth="110.0">
                                                                      <HBox.margin>
-                                                                        <Insets left="5.0" />
+                                                                        <Insets right="2.0" />
                                                                      </HBox.margin>
-                                                                  </TextField>
+                                                                                      </Label>
+                                                                  <Slider fx:id="sliderOverlapping" max="99.0" minorTickCount="5" prefHeight="33.0" prefWidth="80.0" snapToTicks="true" />
+                                                                  <Label fx:id="labelOverlapping" alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="17.0" prefWidth="20.0" text="0" textAlignment="RIGHT">
+                                                                     <font>
+                                                                        <Font size="10.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text="\%">
+                                                                     <font>
+                                                                        <Font size="10.0" />
+                                                                     </font>
+                                                                  </Label>
                                                                                   </children>
                                                                               </HBox>
-                                                                              <HBox alignment="CENTER_RIGHT">
+                                                                              <HBox alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="227.0">
                                                                                   <children>
                                                                                       <Label alignment="CENTER" prefHeight="24.0" prefWidth="110.0" text="Structure de données:">
                                                                                           <font>
@@ -210,14 +225,14 @@
                                                                               </Label>
                                                                               <Button mnemonicParsing="false" onAction="#browserDetectionAction" text="Parcourir" />
                                                                               <ComboBox fx:id="comboDetection" prefHeight="7.0" prefWidth="198.0" />
-                                                                              <HBox alignment="CENTER_RIGHT">
+                                                                              <HBox alignment="CENTER_RIGHT" prefHeight="21.0" prefWidth="210.0">
                                                                                   <children>
                                                                                       <Label alignment="CENTER" prefHeight="25.0" prefWidth="64.0" text="Paramètre: ">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
                                                                                       </Label>
-                                                                                      <Spinner fx:id="snipperDetection" editable="true" prefHeight="10.0" prefWidth="107.0">
+                                                                                      <Spinner fx:id="snipperDetection" editable="true" prefHeight="16.0" prefWidth="107.0">
                                                                                           <HBox.margin>
                                                                                               <Insets left="5.0" />
                                                                                           </HBox.margin>
@@ -274,16 +289,6 @@
                                                                               <ComboBox fx:id="comboEvolution" prefHeight="25.0" prefWidth="217.0" />
                                                                               <HBox alignment="CENTER_RIGHT" spacing="5.0">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="90.0" text="Fichier à exporter:">
-                                                                                          <font>
-                                                                                              <Font size="11.0" />
-                                                                                          </font>
-                                                                                      </Label>
-                                                                                      <TextField fx:id="evolutionExportLabel" prefHeight="25.0" prefWidth="110.0" text="testEvolution" />
-                                                                                  </children>
-                                                                              </HBox>
-                                                                              <HBox alignment="CENTER_RIGHT" spacing="5.0">
-                                                                                  <children>
                                                                                       <Label alignment="CENTER" prefHeight="25.0" prefWidth="51.0" text="Attributes:">
                                                                                           <font>
                                                                                               <Font size="11.0" />
@@ -308,7 +313,7 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                                                                   <children>
-                                                                                      <CheckBox fx:id="exportDetectionResults" mnemonicParsing="false" text="Exporter les résultats" />
+                                                                                      <CheckBox fx:id="exportDetectionResults" mnemonicParsing="false" selected="true" text="Exporter les résultats" />
                                                                                   </children>
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="31.0" prefWidth="171.0">
@@ -361,16 +366,12 @@
                                                                               </HBox>
                                                             <HBox alignment="CENTER_RIGHT">
                                                                <children>
-                                                                  <Label alignment="CENTER" prefHeight="25.0" prefWidth="98.0" text="Longueur de chaine">
+                                                                  <Label alignment="CENTER" prefHeight="25.0" prefWidth="118.0" text="Longueur de chaine: ">
                                                                      <font>
                                                                         <Font size="11.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <TextField fx:id="chainLength" prefHeight="25.0" prefWidth="110.0">
-                                                                     <HBox.margin>
-                                                                        <Insets left="5.0" />
-                                                                     </HBox.margin>
-                                                                  </TextField>
+                                                                  <Spinner fx:id="chainLength" prefHeight="30.0" prefWidth="99.0" />
                                                                </children>
                                                             </HBox>
                                                                               <HBox alignment="CENTER_RIGHT" prefHeight="231.0" prefWidth="210.0" spacing="10.0">
@@ -387,6 +388,26 @@
                                                                      </font>
                                                                   </Label>
                                                                   <ComboBox fx:id="comboSelectionAttributes" prefHeight="25.0" prefWidth="99.0" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
+                                                               <children>
+                                                                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="161.0" text="Méthodes de recherche:">
+                                                                     <font>
+                                                                        <Font size="11.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <ComboBox fx:id="comboSearchMethod" prefHeight="25.0" prefWidth="118.0" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
+                                                               <children>
+                                                                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="161.0" text="Méthodes dévaluation:">
+                                                                     <font>
+                                                                        <Font size="11.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <ComboBox fx:id="comboEvaluationMethod" prefHeight="25.0" prefWidth="118.0" />
                                                                </children>
                                                             </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="23.0" prefWidth="210.0">
@@ -483,11 +504,16 @@
                                                             </AnchorPane>
                                                       </content>
                                                     </Tab>
-                                                    <Tab text="Statistiques">
+                                                    <Tab text="Visualisation">
                                                       <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                                                       </content>
                                                     </Tab>
+                                                      <Tab text="Résultats">
+                                                        <content>
+                                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                                        </content>
+                                                      </Tab>
                                                   </tabs>
                                                 </TabPane>
                                              </children>
