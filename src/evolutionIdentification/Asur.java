@@ -43,15 +43,18 @@ public class Asur {
     int g1011_size;//--number of nodes in group10 UNION group11
     int g2021_size;//--number of nodes in group20 UNION group21
 
-    void execute(LinkedList<TimeFrame> dynamicNetwork, int k//--percentage treshold for split
+    public void execute(LinkedList<TimeFrame> dynamicNetwork, int k//--percentage treshold for split
     ) {
         int nbtimeframe= dynamicNetwork.size();
         k=k*100;
         //Création des tables (Variables
         connect2(BDpath, "testAsur.db");
         createNewDatabase(BDpath, "testAsur.db");
+        executeStatement(BDpath, "testAsur.db", scriptDelTabGroups);
         executeStatement(BDpath, "testAsur.db", scriptGroupsTab);
+        executeStatement(BDpath, "testAsur.db", scriptDelTabAsur);
         executeStatement(BDpath, "testAsur.db", scriptAsurTab);
+
         //Insertion des données dans les tables 
         insertDataNodesTable(dynamicNetwork, 1000);
 
@@ -317,14 +320,16 @@ public class Asur {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     static String BDpath = "./LibEvolution/";
     //Tab entrés
+    String scriptDelTabGroups = "DROP TABLE IF EXISTS Groups";
     static String scriptGroupsTab = "CREATE TABLE Groups (\n" //IF NOT EXISTS
             + "  group_id integer,\n"
             + "  node_id integer,\n"
             + "  timeframe integer,\n"
             + "  PRIMARY KEY (group_id, node_id, timeframe)\n"
             + ");";
-
+    
     //Tab sorties
+    String scriptDelTabAsur = "DROP TABLE IF EXISTS Asur";
     static String scriptAsurTab = "CREATE TABLE Asur (\n"
             //+ " id_matched integer PRIMARY KEY,\n"
             + " event_type text NOT NULL,\n"

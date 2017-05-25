@@ -18,6 +18,7 @@ import communityDetection.ExternMethods.CONGA;
 import communityDetection.ExternMethods.COPRA;
 import communityDetection.ExternMethods.GN;
 import communityDetection.ExternMethods.SLPA;
+import evolutionIdentification.Asur;
 import static evolutionIdentification.EvolutionUtils.writeEvolutionChain;
 import evolutionIdentification.GED;
 import evolutionIdentification.GEDUtils.TimeFrame;
@@ -1154,6 +1155,9 @@ public class FXMLDocumentController implements Initializable {
                     }
                     case "Asur": {
                         writeLogLn("Asur started...");
+                        Asur asur= new Asur(); 
+                        int param=40;//à lire de l'interface
+                        asur.execute(dynamicNetwork, param);
 //                        try {
 //                            //String str = !evolutionParameters.getText().equals("") ? evolutionParameters.getText() : evolutionParameters.getPromptText();
 //                            //String para[] = str.split(";");
