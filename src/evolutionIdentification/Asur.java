@@ -25,7 +25,7 @@ public class Asur {
 
     int timeframe = 0;
     int timeframe2 = 1;
-    int k = 50;//--percentage treshold for split
+    
     int matched;//--if 1 stop loops
     int form;
     int dissolve;
@@ -43,10 +43,10 @@ public class Asur {
     int g1011_size;//--number of nodes in group10 UNION group11
     int g2021_size;//--number of nodes in group20 UNION group21
 
-    void execute(LinkedList<TimeFrame> dynamicNetwork, int nbtimeframe/**
-     * nbre timeframes*
-     */
+    void execute(LinkedList<TimeFrame> dynamicNetwork, int k//--percentage treshold for split
     ) {
+        int nbtimeframe= dynamicNetwork.size();
+        k=k*100;
         //Création des tables (Variables
         connect2(BDpath, "testAsur.db");
         createNewDatabase(BDpath, "testAsur.db");
@@ -65,8 +65,7 @@ public class Asur {
         group21 = 1;
 
         //Executer l'algorithme
-        int count = 0;
-        int batchSize = 1000;
+
         try {
             while (this.timeframe < nbtimeframe - 1) {
                 t1_no = dynamicNetwork.get(timeframe).getCommunities().size();
@@ -175,13 +174,15 @@ public class Asur {
                                     + " INTERSECT Select node_id from Groups where "
                                     + "(group_id=" + group11 + " and timeframe=" + timeframe2 + "))");
                             r.next();
-                            B = r.getInt("rowcount");
+                            
+                            B = g1120_size;
+                            /*B = r.getInt("rowcount");
                             r.close();
                             System.out.println("SELECT COUNT(node_id) AS rowcount FROM ( SELECT node_id FROM Groups where "
                                     + "(group_id=" + group20 + " and timeframe=" + timeframe2 + ")"
                                     + " INTERSECT Select node_id from Groups where "
                                     + "(group_id=" + group11 + " and timeframe=" + timeframe + "))" + " B1 = " + B);
-
+                            */
                             //////////
                             if ((A * 100 > (k * temp_max)) && (g1020_size > g10_size / 2) && (B > (g11.getNodeCount() / 2))) {
                                 insertAsur("merge", group10, timeframe, group20, timeframe2);
