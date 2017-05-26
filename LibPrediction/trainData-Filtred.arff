@@ -1,0 +1,30 @@
+@relation 'EvolutionChain-weka.filters.supervised.attribute.AttributeSelection-Eweka.attributeSelection.CfsSubsetEval -P 1 -E 1-Sweka.attributeSelection.GreedyStepwise -B -T -1.7976931348623157E308 -N -1 -num-slots 1'
+
+@attribute EventT_0_1 {forming,continuing,growing,shrinking,merging,splitting,dissolving}
+@attribute EventT_1_2 {continuing,growing,shrinking,merging,splitting,dissolving}
+@attribute EventT_2_3 {continuing,growing,shrinking,merging,splitting,dissolving}
+@attribute EventT_3_4 {continuing,growing,shrinking,merging,splitting,dissolving}
+
+@data
+forming,growing,shrinking,merging
+growing,shrinking,merging,splitting
+forming,growing,shrinking,merging
+growing,shrinking,merging,splitting
+growing,continuing,shrinking,growing
+continuing,shrinking,growing,shrinking
+growing,continuing,shrinking,growing
+continuing,shrinking,growing,shrinking
+merging,shrinking,shrinking,growing
+shrinking,shrinking,growing,shrinking
+merging,shrinking,shrinking,growing
+shrinking,shrinking,growing,shrinking
+forming,growing,shrinking,merging
+growing,shrinking,merging,shrinking
+shrinking,merging,shrinking,shrinking
+merging,shrinking,shrinking,growing
+shrinking,shrinking,growing,shrinking
+forming,growing,shrinking,merging
+growing,shrinking,merging,shrinking
+shrinking,merging,shrinking,shrinking
+merging,shrinking,shrinking,growing
+shrinking,shrinking,growing,shrinking
