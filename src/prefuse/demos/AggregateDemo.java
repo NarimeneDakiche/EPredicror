@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.JComponent;
 
@@ -28,15 +27,14 @@ import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.PanControl;
-import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import static prefuse.demos.AggregateDragControl.setFixed;
 import prefuse.render.DefaultRendererFactory;
-import prefuse.render.LabelRenderer;
 import prefuse.render.PolygonRenderer;
 import prefuse.render.Renderer;
+import prefuse.render.ShapeRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.GraphicsLib;
 import prefuse.visual.AggregateItem;
@@ -61,105 +59,57 @@ public class AggregateDemo extends Display {
     public static final String EDGES = "graph.edges";
     public static final String AGGR = "aggregates";
 
-    public AggregateDemo(Graph g, String label) {
+    public AggregateDemo(Graph g) {
+        // initialize display and data
         super(new Visualization());
         initDataGroups(g);
-        
-//        DefaultRendererFactory drf = (DefaultRendererFactory) m_vis.getRendererFactory();
-//		((LabelRenderer) drf.getDefaultRenderer()).setTextField("name");
-		
-		LabelRenderer tr = new LabelRenderer();
-		
-		tr.setRoundedCorner(8, 8);
-		m_vis.setRendererFactory(new DefaultRendererFactory(tr));
-		DefaultRendererFactory drf = (DefaultRendererFactory) m_vis.getRendererFactory();
-		((LabelRenderer) drf.getDefaultRenderer()).setTextField(label);
-				
+
         // set up the renderers
         // draw the nodes as basic shapes
-       // Renderer nodeR = new ShapeRenderer(20);
+        Renderer nodeR = new ShapeRenderer(20);
         // draw aggregates as polygons with curved edges
         Renderer polyR = new PolygonRenderer(Constants.POLY_TYPE_CURVE);
-        ((PolygonRenderer)polyR).setCurveSlack(0.15f);
-        
-        //DefaultRendererFactory drf = new DefaultRendererFactory();
-       // drf.setDefaultRenderer(nodeR);
+        ((PolygonRenderer) polyR).setCurveSlack(0.15f);
+
+        DefaultRendererFactory drf = new DefaultRendererFactory();
+        drf.setDefaultRenderer(nodeR);
         drf.add("ingroup('aggregates')", polyR);
-      //  m_vis.setRendererFactory(drf);
-        
+        m_vis.setRendererFactory(drf);
+
         // set up the visual operators
         // first set up all the color actions
-       /* ColorAction nStroke = new ColorAction(NODES, VisualItem.STROKECOLOR);
+        ColorAction nStroke = new ColorAction(NODES, VisualItem.STROKECOLOR);
         nStroke.setDefaultColor(ColorLib.gray(100));
         nStroke.add("_hover", ColorLib.gray(50));
-        
+
         ColorAction nFill = new ColorAction(NODES, VisualItem.FILLCOLOR);
         nFill.setDefaultColor(ColorLib.gray(255));
         nFill.add("_hover", ColorLib.gray(200));
-        
+
         ColorAction nEdges = new ColorAction(EDGES, VisualItem.STROKECOLOR);
         nEdges.setDefaultColor(ColorLib.gray(100));
-        
 
-        
         ColorAction aStroke = new ColorAction(AGGR, VisualItem.STROKECOLOR);
         aStroke.setDefaultColor(ColorLib.gray(200));
-        aStroke.add("_hover", ColorLib.rgb(255,100,100));*/
-        
+        aStroke.add("_hover", ColorLib.rgb(255, 100, 100));
+
         int[] palette = new int[]{
-                ColorLib.rgba(255, 200, 200, 150),
-                ColorLib.rgba(200, 255, 200, 150),
-                ColorLib.rgba(200, 200, 255, 150),
-                ColorLib.rgba(200, 200, 255, 150),
-                ColorLib.rgba(126, 23, 230, 150),
-                ColorLib.rgba(188, 23, 230, 150),
-                ColorLib.rgba(126, 230, 23, 150),
-                ColorLib.rgba(200, 200, 255, 150),
-                ColorLib.rgba(23, 230, 106, 150),
-                ColorLib.rgba(23, 230, 168, 150),
-                ColorLib.rgba(23, 168, 230, 150),
-                ColorLib.rgba(23, 44, 230, 150),
-                ColorLib.rgba(23, 230, 44, 150),
-                ColorLib.rgba(230, 23, 23, 150),
-                ColorLib.rgba(230, 209, 23, 150),
-                ColorLib.rgba(200, 200, 0, 150)
-            };
-            Random rnd = ThreadLocalRandom.current();
-            for (int i = palette.length - 1; i > 0; i--) {
-                int index = rnd.nextInt(i + 1);
-                // Simple swap
-                int a = palette[index];
-                palette[index] = palette[i];
-                palette[i] = a;
-            }
+            ColorLib.rgba(255, 200, 200, 150),
+            ColorLib.rgba(200, 255, 200, 150),
+            ColorLib.rgba(200, 200, 255, 150),
+            ColorLib.rgba(200, 200, 0, 150)
+        };
         ColorAction aFill = new DataColorAction(AGGR, "id",
                 Constants.NOMINAL, VisualItem.FILLCOLOR, palette);
-       
+
         // bundle the color actions
         ActionList colors = new ActionList();
-       /* colors.add(nStroke);
+        colors.add(nStroke);
         colors.add(nFill);
         colors.add(nEdges);
-        colors.add(aStroke);*/
+        colors.add(aStroke);
         colors.add(aFill);
-        
-        
-        /*int hops = 30;
-        final GraphDistanceFilter filter = new GraphDistanceFilter(GRAPH, hops);*/
 
-		ColorAction fill = new ColorAction(NODES, VisualItem.FILLCOLOR,ColorLib.gray(255)); //NODES, VisualItem.FILLCOLOR, ColorLib.rgb(200, 200, 255)
-		fill.add(VisualItem.FIXED, ColorLib.rgb(255, 100, 100));
-		fill.add(VisualItem.HIGHLIGHT, ColorLib.rgb(255, 200, 125));
-
-		ActionList draw = new ActionList();
-		colors.add(fill);
-		colors.add(new ColorAction(NODES, VisualItem.STROKECOLOR, ColorLib.gray(100)));
-		colors.add(new ColorAction(NODES, VisualItem.FILLCOLOR, ColorLib.gray(255)));
-		colors.add(new ColorAction(NODES, VisualItem.TEXTCOLOR, ColorLib.rgb(0, 0, 0)));
-		//colors.add(new ColorAction(EDGES, VisualItem.FILLCOLOR, ColorLib.gray(200)));
-		colors.add(new ColorAction(EDGES, VisualItem.STROKECOLOR,ColorLib.gray(100)));
-
-        
         // now create the main layout routine
         ActionList layout = new ActionList(Activity.INFINITY);
         layout.add(colors);
@@ -167,80 +117,76 @@ public class AggregateDemo extends Display {
         layout.add(new AggregateLayout(AGGR));
         layout.add(new RepaintAction());
         m_vis.putAction("layout", layout);
-        
+
         // set up the display
-        setSize(500, 500);
+        setSize(310, 310);
         pan(250, 250);
         setHighQuality(true);
         addControlListener(new AggregateDragControl());
         addControlListener(new ZoomControl());
         addControlListener(new PanControl());
-        addControlListener(new WheelZoomControl());
-        
+
         // set things running
         m_vis.run("layout");
     }
 
     private void initDataGroups(Graph g) {
+        // create sample graph
+        // 9 nodes broken up into 3 interconnected cliques
+
+        // add visual data groups
         VisualGraph vg = m_vis.addGraph(GRAPH, g);
         m_vis.setInteractive(EDGES, null, false);
         m_vis.setValue(NODES, null, VisualItem.SHAPE,
-            new Integer(Constants.SHAPE_ELLIPSE));
-        
-        
-       
-		AggregateTable at = m_vis.addAggregates(AGGR);
-		at.addColumn(VisualItem.POLYGON, float[].class);
-		at.addColumn("id", int.class);
+                new Integer(Constants.SHAPE_ELLIPSE));
 
-		// add nodes to aggregates
-		// create an aggregate for each 3-clique of nodes
-		Iterator nodes = vg.nodes();
+        AggregateTable at = m_vis.addAggregates(AGGR);
+        at.addColumn(VisualItem.POLYGON, float[].class);
+        at.addColumn("id", int.class);
+
+        // add nodes to aggregates
+        // create an aggregate for each 3-clique of nodes
+        Iterator nodes = vg.nodes();
         //for (int i = 0; i < 4; ++i) {
         AggregateItem aitem = (AggregateItem) at.addItem();
-        aitem.setInt("id", 1);
-        //System.out.println("Data: " + i);
+        aitem.setInt("id", ThreadLocalRandom.current().nextInt(0, 4 + 1));
         for (int j = 0; j < vg.getNodeCount(); ++j) {
             aitem.addItem((VisualItem) nodes.next());
         }
+        //}
     }
 
     public static void main(String[] argv) {
-
         Graph g = new Graph();
-        String label = "name";
-        g.addColumn(label, String.class);
-        for (int i = 0; i < 3; ++i) {
+        for (int i = 0; i < 4; ++i) {
             Node n1 = g.addNode();
-            n1.setString(label, "peofkgozfzpigp pzps");
             Node n2 = g.addNode();
-            n2.setString(label, "1");
             Node n3 = g.addNode();
-            n3.setString(label, "1");
             g.addEdge(n1, n2);
             g.addEdge(n1, n3);
             g.addEdge(n2, n3);
         }
         g.addEdge(0, 3);
         g.addEdge(3, 6);
-        g.addEdge(6, 0);
-        JFrame frame = demo(g, label);
+        g.addEdge(6, 9);
+        g.addEdge(9, 0);
+        JFrame frame = demo(g);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
 
-    public static JFrame demo(Graph g, String label) {
+    public static JFrame demo(Graph g) {
 
-        AggregateDemo ad = new AggregateDemo(g, label);
+        AggregateDemo ad = new AggregateDemo(g);
         JFrame frame = new JFrame("p r e f u s e  |  a g g r e g a t e d");
         frame.getContentPane().add(ad);
         frame.pack();
         return frame;
     }
 
-    public static JComponent demoComp(Graph g, String label) {
+    public static JComponent demoComp(Graph g) {
 
-        AggregateDemo ad = new AggregateDemo(g, label);
+        AggregateDemo ad = new AggregateDemo(g);
 //        JFrame frame = new JFrame("p r e f u s e  |  a g g r e g a t e d");
 //        frame.getContentPane().add(ad);
 //        frame.pack();
