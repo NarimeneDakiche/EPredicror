@@ -147,11 +147,11 @@
                                                                      </HBox.margin>
                                                                                       </Label>
                                                                   <Slider fx:id="sliderOverlapping" max="99.0" minorTickCount="5" prefHeight="33.0" prefWidth="80.0" snapToTicks="true" />
-                                                                  <Label fx:id="labelOverlapping" alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="17.0" prefWidth="20.0" text="0" textAlignment="RIGHT">
+                                                                  <TextField fx:id="tfOverlapping" alignment="CENTER" prefHeight="25.0" prefWidth="24.0" text="0">
                                                                      <font>
-                                                                        <Font size="10.0" />
+                                                                        <Font size="9.0" />
                                                                      </font>
-                                                                  </Label>
+                                                                  </TextField>
                                                                   <Label text="\%">
                                                                      <font>
                                                                         <Font size="10.0" />

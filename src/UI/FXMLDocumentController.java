@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -231,7 +232,7 @@ public class FXMLDocumentController implements Initializable {
     private Button launchPrediction;
 
     @FXML
-    private Label labelOverlapping;
+    private TextField tfOverlapping;
 
     @FXML
     private Label statusLabel;
@@ -307,24 +308,55 @@ public class FXMLDocumentController implements Initializable {
                     @Override
                     public void changed(ObservableValue arg0, Object arg1, Object arg2
                     ) {
-                        labelOverlapping.textProperty().setValue(
+                        tfOverlapping.textProperty().setValue(
                                 String.valueOf((int) sliderOverlapping.getValue()));
                     }
                 }
                 );
 
-        indexGraph = 0;
+        tfOverlapping.textProperty()
+                .addListener((obsValue, oldValue, newValue) -> {
+                    try {
+                        if (Integer.parseInt(newValue) <= 99 && Integer.parseInt(newValue) >= 0) {
+                            tfOverlapping.setText(newValue);
+                            sliderOverlapping.setValue(Double.parseDouble(newValue));
+                        } else {
+                            tfOverlapping.setText(oldValue);
+                            sliderOverlapping.setValue(Double.parseDouble(oldValue));
+                        }
+                    } catch (Exception e) {
+                    }
+                });
+        /*((StringProperty)obsValue).setValue(oldValue);
+         sliderOverlapping.setValue(
+         Double.parseDouble(tfOverlapping.textProperty().getValue()));/*
+                    
+         }
+         );
 
-        // TODO
-        accordion1.setExpandedPane(titledpane1);
+         sliderOverlapping.valueProperty()
+         .addListener(new ChangeListener() {
+         @Override
+         public void changed(ObservableValue arg0, Object arg1, Object arg2
+         ) {
+         tfOverlapping.textProperty().setValue(
+         String.valueOf((int) sliderOverlapping.getValue()));
+         }
+         }
+         );
 
-        launchDetection.setDisable(
-                true);
-        launchEvolution.setDisable(
-                true);
-        launchCalculation.setDisable(
-                true);
-        /*ObservableList<String> options
+         indexGraph = 0;
+
+         // TODO
+         accordion1.setExpandedPane(titledpane1);
+
+         launchDetection.setDisable(
+         true);
+         launchEvolution.setDisable(
+         true);
+         launchCalculation.setDisable(
+         true);
+         /*ObservableList<String> options
          = FXCollections.observableArrayList(
          "dd MMMMM yyyy",
          "dd.MM.yy",
@@ -459,7 +491,7 @@ public class FXMLDocumentController implements Initializable {
                                 break;
                         }
                     }
-                } 
+                }
                 );
 
         comboEvolution.getItems()
@@ -471,7 +503,7 @@ public class FXMLDocumentController implements Initializable {
                 .addAll("naiveBayes", "bayesNet", "decisionTree", "svm", "randomForest", "decisionStump", "perceptron", "logisticRegression");
         comboClassifier.getSelectionModel()
                 .select("decisionTree");
- 
+
         comboSelectionAttributes.getItems()
                 .addAll("Filter", "Manual", "Wrapper");
         comboSelectionAttributes.getSelectionModel()
@@ -709,7 +741,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    void browserEvolutionAction(ActionEvent event) {
+    void browserEvolutionAction(ActionEvent event
+    ) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
                 new ExtensionFilter("All Files", "*.*"),
@@ -789,37 +822,46 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void startSplit(ActionEvent event
     ) {
-        launchSplit.setDisable(true);
-        Task<Void> task = new Task<Void>() {
-            @Override
-            public Void call() throws Exception {
-                SnapshotsPrep snapp = new SnapshotsPrep();
-                /* Duration d = Duration.ofDays(10);
-                 List<Duration> listDuration = new ArrayList<Duration>();
-                 //listDuration.add(Duration.ofDays(500));
-                 listDuration.add(Duration.ofDays(950));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(3));
-                 listDuration.add(Duration.ofDays(10));*/
+        if ((spinnerNBClusters.getValue() == 0 && durationsLabel.getText().equals("")) || fileString.equals("")) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.setHeaderText("Incomplete entry");
+            alert.setContentText("Please make sure to enter the file and parameters");
 
-                System.out.println("spinnerNBClusters.getValue()= " + spinnerNBClusters.getValue());
-                //directoryPath = directoryPath + splitExportName.getText() + "/";
-                totalPath = directoryPath + fileString + "/";
-                System.out.println(totalPath);
-                Path path = Paths.get(totalPath);
-                if (!Files.exists(path)) {
-                    try {
-                        Files.createDirectories(path);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+            alert.showAndWait();
+            return;
+        }
+        launchSplit.setDisable(true);
+        /*Task<Void> task = new Task<Void>() {
+         @Override
+         public Void call() throws Exception {*/
+        SnapshotsPrep snapp = new SnapshotsPrep();
+        /* Duration d = Duration.ofDays(10);
+         List<Duration> listDuration = new ArrayList<Duration>();
+         //listDuration.add(Duration.ofDays(500));
+         listDuration.add(Duration.ofDays(950));
+         listDuration.add(Duration.ofDays(3));
+         listDuration.add(Duration.ofDays(3));
+         listDuration.add(Duration.ofDays(3));
+         listDuration.add(Duration.ofDays(3));
+         listDuration.add(Duration.ofDays(3));
+         listDuration.add(Duration.ofDays(3));
+         listDuration.add(Duration.ofDays(3));
+         listDuration.add(Duration.ofDays(3));
+         listDuration.add(Duration.ofDays(10));*/
+
+        //System.out.println("spinnerNBClusters.getValue()= " + spinnerNBClusters.getValue());
+        //directoryPath = directoryPath + splitExportName.getText() + "/";
+        totalPath = directoryPath + fileString + "/";
+        System.out.println(totalPath);
+        Path path = Paths.get(totalPath);
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 //                File theDir = new File(totalPath);
 //                if (!theDir.exists()) {
 //                    System.out.println("creating directory: " + theDir.getName());
@@ -832,59 +874,60 @@ public class FXMLDocumentController implements Initializable {
 //                    }
 //                }
 
-                try {
-                    float overlapping = (float) sliderOverlapping.getValue() / 100f;
-                    System.out.println("overlapping:" + overlapping);
-                    if (spinnerNBClusters.getValue() > 0) {
-                        System.out.println("1");
-                        nbSnapshots = spinnerNBClusters.getValue();
-                        snapp.getSplitSnapshots(overlapping, filePath, nbSnapshots, timeFormatCombo.getValue(),
-                                comboStructDonnees.getSelectionModel().getSelectedItem(),
+        try {
+            float overlapping = (float) sliderOverlapping.getValue() / 100f;
+            System.out.println("overlapping:" + overlapping);
+            if (spinnerNBClusters.getValue() > 0) {
+                System.out.println("1");
+                nbSnapshots = spinnerNBClusters.getValue();
+                snapp.getSplitSnapshots(overlapping, filePath, nbSnapshots, timeFormatCombo.getValue(),
+                        comboStructDonnees.getSelectionModel().getSelectedItem(),
+                        totalPath + splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+            } else {
+
+                List<Duration> durations = stringToDuration(durationsLabel.getText());
+                //String[] splitContent = durationsLabel.getText().split(";");
+                if (durations.size() > 1) {
+                    System.out.println("2");
+                    nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations,
+                            timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
+                            totalPath + splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
+                } else {
+                    if (durations.size() == 1) {
+                        System.out.println("3");
+                        nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations.get(0),
+                                timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
                                 totalPath + splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
                     } else {
-
-                        List<Duration> durations = stringToDuration(durationsLabel.getText());
-                        //String[] splitContent = durationsLabel.getText().split(";");
-                        if (durations.size() > 1) {
-                            System.out.println("2");
-                            nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations,
-                                    timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
-                                    totalPath + splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
-                        } else {
-                            if (durations.size() == 1) {
-                                System.out.println("3");
-                                nbSnapshots = snapp.getSplitSnapshots(overlapping, filePath, durations.get(0),
-                                        timeFormatCombo.getValue(), comboStructDonnees.getSelectionModel().getSelectedItem(),
-                                        totalPath + splitExportName.getText(), false, checkboxSplitMultiExport.isSelected());
-                            } else {
-                                writeLogLn("Erreur d'entées (le nombre de snpashots ou les durations doivent être données)");
-                                throw new IllegalArgumentException("Wrong entries (either Durations or Snapshots number should be given)");
-                            }
-                        }
+                        writeLogLn("Erreur d'entées (le nombre de snpashots ou les durations doivent être données)");
+                        throw new IllegalArgumentException("Wrong entries (either Durations or Snapshots number should be given)");
                     }
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (ParseException ex) {
-                    Exceptions.printStackTrace(ex);
                 }
-
-                writeLogLn("Split done. Writing done.");
-                if (checkboxSplitMultiExport.isSelected()) {
-                    launchSplit.setDisable(false);
-                    directlyDetection = false;
-                }
-                return null;
             }
-        };
-        task.setOnSucceeded(e -> {
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (ParseException ex) {
+            Exceptions.printStackTrace(ex);
+        }
 
-            launchDetection.setDisable(false);
-        });
-        new Thread(task).start();
+        writeLogLn("Split done. Writing done.");
+        if (checkboxSplitMultiExport.isSelected()) {
+            launchSplit.setDisable(false);
+            directlyDetection = false;
+        }
+                //return null;
+
+        //};
+        /*task.setOnSucceeded(e -> {
+
+         launchDetection.setDisable(false);
+         });
+         new Thread(task).start();*/
     }
 
     @FXML
-    void startDetection(ActionEvent event) {
+    void startDetection(ActionEvent event
+    ) {
         launchDetection.setDisable(true);
         try {
             //treeView.getRoot().getChildren().clear();
@@ -955,7 +998,7 @@ public class FXMLDocumentController implements Initializable {
                             System.out.println(toWork.getNodeCount() + " nodes were read");
 
                             CPM cpm = new CPM();
-                            LinkedList<Graph> communities = cpm.execute(toWork, snipperDetection.getValue());
+                            LinkedList<Graph> communities = cpm.execute(toWork, snipperDetection.getValue(), this);
                             //if (communities.size() > 0) {
                             //System.out.println(dynamicNetwork.size());
                             dynamicNetwork.add(new TimeFrame(communities));
@@ -1167,7 +1210,7 @@ public class FXMLDocumentController implements Initializable {
         cancelDetection.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                System.out.println("Hello");
+                // System.out.println("Hello");
                 task.cancel(true);
             }
         });
@@ -1222,8 +1265,8 @@ public class FXMLDocumentController implements Initializable {
                     }
                     case "Asur": {
                         writeLogLn("Asur started...");
-                        Asur asur= new Asur(); 
-                        int param=40;//à lire de l'interface
+                        Asur asur = new Asur();
+                        int param = 40;//à lire de l'interface
                         asur.execute(dynamicNetwork, param);
 //                        try {
 //                            //String str = !evolutionParameters.getText().equals("") ? evolutionParameters.getText() : evolutionParameters.getPromptText();
@@ -1574,7 +1617,7 @@ public class FXMLDocumentController implements Initializable {
             }
             //init(new Stage(), counters);
            /* Stage primaryStage = new Stage();
-             primaryStage.setScene(new Scene(root*/ 
+             primaryStage.setScene(new Scene(root*/
             groupFileVisualize.getChildren().add(createChart(counters, number));
             //primaryStage.show();
         } catch (Exception e) {
