@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+import javafx.concurrent.Task;
 import org.graphstream.algorithm.TarjanStronglyConnectedComponents;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -49,7 +50,7 @@ public class CPM {
         return g;
     }
 
-    public LinkedList<Graph> execute(Graph g, int k) {
+    public LinkedList<Graph> execute(Graph g, int k, Task task) {
         System.out.println("CPM");
         setK(k);
         TreeSet<Node> tmp;
@@ -71,27 +72,31 @@ public class CPM {
         tmp = bk.dequeue();
 
         while (tmp != null) {
-            //Search for bk+1
-            Node vi = tmp.last(); //(Node) getLastElement(tmp);
-            Vector<Node> largerIndexes = getLargerIndexNodes(g, vi);
-            //System.out.println("larger: " + largerIndexes.size());
-            for (Node vj : largerIndexes) {
-                TreeSet<Node> Bk1 = new TreeSet<Node>(new SortByID());
-                Bk1.addAll(tmp); //Clone current bk into bk+1
-                Bk1.add(vj);
-                //System.out.println("Bk1.size():" + Bk1.size() + "   " + checkBk1IsClique(g, Bk1));
-                if (Bk1.size() <= getK() && checkBk1IsClique(g, Bk1)) { //
-                    if (Bk1.size() == getK()) { //A clique of size k found. Finish expanding this bk+1 here.
-                        cliques.add(Bk1);
-                    } else if (Bk1.size() < getK()) {
-                        bk.enqueue(Bk1); //k should be checked for finding cliques of size k.
-                    } else { //Clique with larger size will be omitted.
-                        System.out.println("What are you doing here :o");
+            if (task.isCancelled()) {
+                return null;
+            } else {
+                //Search for bk+1
+                Node vi = tmp.last(); //(Node) getLastElement(tmp);
+                Vector<Node> largerIndexes = getLargerIndexNodes(g, vi);
+                //System.out.println("larger: " + largerIndexes.size());
+                for (Node vj : largerIndexes) {
+                    TreeSet<Node> Bk1 = new TreeSet<Node>(new SortByID());
+                    Bk1.addAll(tmp); //Clone current bk into bk+1
+                    Bk1.add(vj);
+                    //System.out.println("Bk1.size():" + Bk1.size() + "   " + checkBk1IsClique(g, Bk1));
+                    if (Bk1.size() <= getK() && checkBk1IsClique(g, Bk1)) { //
+                        if (Bk1.size() == getK()) { //A clique of size k found. Finish expanding this bk+1 here.
+                            cliques.add(Bk1);
+                        } else if (Bk1.size() < getK()) {
+                            bk.enqueue(Bk1); //k should be checked for finding cliques of size k.
+                        } else { //Clique with larger size will be omitted.
+                            System.out.println("What are you doing here :o");
+                        }
                     }
                 }
+                tmp = bk.dequeue(); //Check next item
+                //    System.out.println(bk.size());
             }
-            tmp = bk.dequeue(); //Check next item
-            //    System.out.println(bk.size());
         }
         //Algorithm finished.
 
@@ -123,11 +128,15 @@ public class CPM {
         for (int i = 0; i < listCliques.size() - 1; i++) {
             Node vi = listCliques.get(i);
             for (int j = i + 1; j < listCliques.size(); j++) {
-                Node vj = listCliques.get(j);
-                if (getSharedNodes(vi, vj) == k - 1) {
-                    if (newGraph.getEdge(vj.getId() + ";" + vi.getId()) == null) { // care
-                        // System.out.println(vi.getId() + " " + vj.getId());
-                        newGraph.addEdge(vi.getId() + ";" + vj.getId(), vi.getId(), vj.getId());
+                if (task.isCancelled()) {
+                    return null;
+                } else {
+                    Node vj = listCliques.get(j);
+                    if (getSharedNodes(vi, vj) == k - 1) {
+                        if (newGraph.getEdge(vj.getId() + ";" + vi.getId()) == null) { // care
+                            // System.out.println(vi.getId() + " " + vj.getId());
+                            newGraph.addEdge(vi.getId() + ";" + vj.getId(), vi.getId(), vj.getId());
+                        }
                     }
                 }
             }

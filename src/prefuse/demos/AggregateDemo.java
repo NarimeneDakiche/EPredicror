@@ -64,102 +64,97 @@ public class AggregateDemo extends Display {
     public AggregateDemo(Graph g, String label) {
         super(new Visualization());
         initDataGroups(g);
-        
+
 //        DefaultRendererFactory drf = (DefaultRendererFactory) m_vis.getRendererFactory();
 //		((LabelRenderer) drf.getDefaultRenderer()).setTextField("name");
-		
-		LabelRenderer tr = new LabelRenderer();
-		
-		tr.setRoundedCorner(8, 8);
-		m_vis.setRendererFactory(new DefaultRendererFactory(tr));
-		DefaultRendererFactory drf = (DefaultRendererFactory) m_vis.getRendererFactory();
-		((LabelRenderer) drf.getDefaultRenderer()).setTextField(label);
-				
+        LabelRenderer tr = new LabelRenderer();
+
+        tr.setRoundedCorner(8, 8);
+        m_vis.setRendererFactory(new DefaultRendererFactory(tr));
+        DefaultRendererFactory drf = (DefaultRendererFactory) m_vis.getRendererFactory();
+        ((LabelRenderer) drf.getDefaultRenderer()).setTextField(label);
+
         // set up the renderers
         // draw the nodes as basic shapes
-       // Renderer nodeR = new ShapeRenderer(20);
+        // Renderer nodeR = new ShapeRenderer(20);
         // draw aggregates as polygons with curved edges
         Renderer polyR = new PolygonRenderer(Constants.POLY_TYPE_CURVE);
-        ((PolygonRenderer)polyR).setCurveSlack(0.15f);
-        
+        ((PolygonRenderer) polyR).setCurveSlack(0.15f);
+
         //DefaultRendererFactory drf = new DefaultRendererFactory();
-       // drf.setDefaultRenderer(nodeR);
+        // drf.setDefaultRenderer(nodeR);
         drf.add("ingroup('aggregates')", polyR);
       //  m_vis.setRendererFactory(drf);
-        
+
         // set up the visual operators
         // first set up all the color actions
        /* ColorAction nStroke = new ColorAction(NODES, VisualItem.STROKECOLOR);
-        nStroke.setDefaultColor(ColorLib.gray(100));
-        nStroke.add("_hover", ColorLib.gray(50));
+         nStroke.setDefaultColor(ColorLib.gray(100));
+         nStroke.add("_hover", ColorLib.gray(50));
         
-        ColorAction nFill = new ColorAction(NODES, VisualItem.FILLCOLOR);
-        nFill.setDefaultColor(ColorLib.gray(255));
-        nFill.add("_hover", ColorLib.gray(200));
+         ColorAction nFill = new ColorAction(NODES, VisualItem.FILLCOLOR);
+         nFill.setDefaultColor(ColorLib.gray(255));
+         nFill.add("_hover", ColorLib.gray(200));
         
-        ColorAction nEdges = new ColorAction(EDGES, VisualItem.STROKECOLOR);
-        nEdges.setDefaultColor(ColorLib.gray(100));
+         ColorAction nEdges = new ColorAction(EDGES, VisualItem.STROKECOLOR);
+         nEdges.setDefaultColor(ColorLib.gray(100));
         
 
         
-        ColorAction aStroke = new ColorAction(AGGR, VisualItem.STROKECOLOR);
-        aStroke.setDefaultColor(ColorLib.gray(200));
-        aStroke.add("_hover", ColorLib.rgb(255,100,100));*/
-        
+         ColorAction aStroke = new ColorAction(AGGR, VisualItem.STROKECOLOR);
+         aStroke.setDefaultColor(ColorLib.gray(200));
+         aStroke.add("_hover", ColorLib.rgb(255,100,100));*/
         int[] palette = new int[]{
-                ColorLib.rgba(255, 200, 200, 150),
-                ColorLib.rgba(200, 255, 200, 150),
-                ColorLib.rgba(200, 200, 255, 150),
-                ColorLib.rgba(200, 200, 255, 150),
-                ColorLib.rgba(126, 23, 230, 150),
-                ColorLib.rgba(188, 23, 230, 150),
-                ColorLib.rgba(126, 230, 23, 150),
-                ColorLib.rgba(200, 200, 255, 150),
-                ColorLib.rgba(23, 230, 106, 150),
-                ColorLib.rgba(23, 230, 168, 150),
-                ColorLib.rgba(23, 168, 230, 150),
-                ColorLib.rgba(23, 44, 230, 150),
-                ColorLib.rgba(23, 230, 44, 150),
-                ColorLib.rgba(230, 23, 23, 150),
-                ColorLib.rgba(230, 209, 23, 150),
-                ColorLib.rgba(200, 200, 0, 150)
-            };
-            Random rnd = ThreadLocalRandom.current();
-            for (int i = palette.length - 1; i > 0; i--) {
-                int index = rnd.nextInt(i + 1);
-                // Simple swap
-                int a = palette[index];
-                palette[index] = palette[i];
-                palette[i] = a;
-            }
+            ColorLib.rgba(255, 200, 200, 150),
+            ColorLib.rgba(200, 255, 200, 150),
+            ColorLib.rgba(200, 200, 255, 150),
+            ColorLib.rgba(200, 200, 255, 150),
+            ColorLib.rgba(126, 23, 230, 150),
+            ColorLib.rgba(188, 23, 230, 150),
+            ColorLib.rgba(126, 230, 23, 150),
+            ColorLib.rgba(200, 200, 255, 150),
+            ColorLib.rgba(23, 230, 106, 150),
+            ColorLib.rgba(23, 230, 168, 150),
+            ColorLib.rgba(23, 168, 230, 150),
+            ColorLib.rgba(23, 44, 230, 150),
+            ColorLib.rgba(23, 230, 44, 150),
+            ColorLib.rgba(230, 23, 23, 150),
+            ColorLib.rgba(230, 209, 23, 150),
+            ColorLib.rgba(200, 200, 0, 150)
+        };
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = palette.length - 1; i > 0; i--) {
+            int index = rnd.nextInt(i + 1);
+            // Simple swap
+            int a = palette[index];
+            palette[index] = palette[i];
+            palette[i] = a;
+        }
         ColorAction aFill = new DataColorAction(AGGR, "id",
                 Constants.NOMINAL, VisualItem.FILLCOLOR, palette);
-       
+
         // bundle the color actions
         ActionList colors = new ActionList();
-       /* colors.add(nStroke);
-        colors.add(nFill);
-        colors.add(nEdges);
-        colors.add(aStroke);*/
+        /* colors.add(nStroke);
+         colors.add(nFill);
+         colors.add(nEdges);
+         colors.add(aStroke);*/
         colors.add(aFill);
-        
-        
+
         /*int hops = 30;
-        final GraphDistanceFilter filter = new GraphDistanceFilter(GRAPH, hops);*/
+         final GraphDistanceFilter filter = new GraphDistanceFilter(GRAPH, hops);*/
+        ColorAction fill = new ColorAction(NODES, VisualItem.FILLCOLOR, ColorLib.gray(255)); //NODES, VisualItem.FILLCOLOR, ColorLib.rgb(200, 200, 255)
+        fill.add(VisualItem.FIXED, ColorLib.rgb(255, 100, 100));
+        fill.add(VisualItem.HIGHLIGHT, ColorLib.rgb(255, 200, 125));
 
-		ColorAction fill = new ColorAction(NODES, VisualItem.FILLCOLOR,ColorLib.gray(255)); //NODES, VisualItem.FILLCOLOR, ColorLib.rgb(200, 200, 255)
-		fill.add(VisualItem.FIXED, ColorLib.rgb(255, 100, 100));
-		fill.add(VisualItem.HIGHLIGHT, ColorLib.rgb(255, 200, 125));
+        ActionList draw = new ActionList();
+        colors.add(fill);
+        colors.add(new ColorAction(NODES, VisualItem.STROKECOLOR, ColorLib.gray(100)));
+        colors.add(new ColorAction(NODES, VisualItem.FILLCOLOR, ColorLib.gray(255)));
+        colors.add(new ColorAction(NODES, VisualItem.TEXTCOLOR, ColorLib.rgb(0, 0, 0)));
+        //colors.add(new ColorAction(EDGES, VisualItem.FILLCOLOR, ColorLib.gray(200)));
+        colors.add(new ColorAction(EDGES, VisualItem.STROKECOLOR, ColorLib.gray(100)));
 
-		ActionList draw = new ActionList();
-		colors.add(fill);
-		colors.add(new ColorAction(NODES, VisualItem.STROKECOLOR, ColorLib.gray(100)));
-		colors.add(new ColorAction(NODES, VisualItem.FILLCOLOR, ColorLib.gray(255)));
-		colors.add(new ColorAction(NODES, VisualItem.TEXTCOLOR, ColorLib.rgb(0, 0, 0)));
-		//colors.add(new ColorAction(EDGES, VisualItem.FILLCOLOR, ColorLib.gray(200)));
-		colors.add(new ColorAction(EDGES, VisualItem.STROKECOLOR,ColorLib.gray(100)));
-
-        
         // now create the main layout routine
         ActionList layout = new ActionList(Activity.INFINITY);
         layout.add(colors);
@@ -167,7 +162,7 @@ public class AggregateDemo extends Display {
         layout.add(new AggregateLayout(AGGR));
         layout.add(new RepaintAction());
         m_vis.putAction("layout", layout);
-        
+
         // set up the display
         setSize(310, 310);
         pan(155, 155);
@@ -176,7 +171,7 @@ public class AggregateDemo extends Display {
         addControlListener(new ZoomControl());
         addControlListener(new PanControl());
         addControlListener(new WheelZoomControl());
-        
+
         // set things running
         m_vis.run("layout");
     }
@@ -185,17 +180,15 @@ public class AggregateDemo extends Display {
         VisualGraph vg = m_vis.addGraph(GRAPH, g);
         m_vis.setInteractive(EDGES, null, false);
         m_vis.setValue(NODES, null, VisualItem.SHAPE,
-            new Integer(Constants.SHAPE_ELLIPSE));
-        
-        
-       
-		AggregateTable at = m_vis.addAggregates(AGGR);
-		at.addColumn(VisualItem.POLYGON, float[].class);
-		at.addColumn("id", int.class);
+                new Integer(Constants.SHAPE_ELLIPSE));
+
+        AggregateTable at = m_vis.addAggregates(AGGR);
+        at.addColumn(VisualItem.POLYGON, float[].class);
+        at.addColumn("id", int.class);
 
 		// add nodes to aggregates
-		// create an aggregate for each 3-clique of nodes
-		Iterator nodes = vg.nodes();
+        // create an aggregate for each 3-clique of nodes
+        Iterator nodes = vg.nodes();
         //for (int i = 0; i < 4; ++i) {
         AggregateItem aitem = (AggregateItem) at.addItem();
         aitem.setInt("id", 1);

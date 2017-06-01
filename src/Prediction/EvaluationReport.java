@@ -176,7 +176,7 @@ public class EvaluationReport implements java.io.Serializable{
             JComponentWriter jcw = new PNGWriter(vmc.getPlotPanel(), new File(filename));
             jcw.toOutput();
         } catch (Exception ex) {
-            Exceptions.printStackTrace(ex);
+            ex.printStackTrace();
         }
     }
     
@@ -217,7 +217,7 @@ public class EvaluationReport implements java.io.Serializable{
             });
             jf.setVisible(true);
         } catch (Exception ex) {
-            Exceptions.printStackTrace(ex);
+            ex.printStackTrace();
         }
     }
     
@@ -477,9 +477,9 @@ public class EvaluationReport implements java.io.Serializable{
             document.add(catPart);
             
         } catch (BadElementException ex) {
-            Exceptions.printStackTrace(ex);
+            ex.printStackTrace();
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            ex.printStackTrace();
         }
 
 

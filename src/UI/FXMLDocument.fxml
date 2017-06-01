@@ -23,7 +23,6 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -63,7 +62,7 @@
                                           <children>
                                               <Accordion fx:id="accordion1" prefHeight="481.0" prefWidth="252.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <panes>
-                                                      <TitledPane fx:id="titledpane1" animated="false" prefHeight="385.0" prefWidth="283.0" text="Fractionnenement des Snapshots">
+                                                      <TitledPane fx:id="titledpane1" animated="false" prefHeight="385.0" prefWidth="283.0" text="Segmentation des Snapshots">
                                                           <content>
                                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="394.0" prefWidth="263.0">
                                                                   <children>
@@ -147,11 +146,11 @@
                                                                      </HBox.margin>
                                                                                       </Label>
                                                                   <Slider fx:id="sliderOverlapping" max="99.0" minorTickCount="5" prefHeight="33.0" prefWidth="80.0" snapToTicks="true" />
-                                                                  <Label fx:id="labelOverlapping" alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="17.0" prefWidth="20.0" text="0" textAlignment="RIGHT">
+                                                                  <TextField fx:id="tfOverlapping" alignment="CENTER" prefHeight="25.0" prefWidth="24.0" text="0">
                                                                      <font>
-                                                                        <Font size="10.0" />
+                                                                        <Font size="9.0" />
                                                                      </font>
-                                                                  </Label>
+                                                                  </TextField>
                                                                   <Label text="\%">
                                                                      <font>
                                                                         <Font size="10.0" />
@@ -214,7 +213,7 @@
                                                           <content>
                                                               <AnchorPane fx:id="spinner" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                   <children>
-                                                                      <VBox alignment="CENTER" layoutX="13.0" layoutY="32.0" prefHeight="45.0" prefWidth="210.0" spacing="10.0">
+                                                                      <VBox alignment="CENTER" layoutX="13.0" layoutY="32.0" prefHeight="201.0" prefWidth="226.0" spacing="10.0">
                                                                           <children>
                                                                               <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Méthode de détection">
                                                                                   <VBox.margin>
@@ -225,8 +224,16 @@
                                                                                   </font>
                                                                               </Label>
                                                                               <Button mnemonicParsing="false" onAction="#browserDetectionAction" text="Parcourir" />
-                                                                              <ComboBox fx:id="comboDetection" prefHeight="7.0" prefWidth="198.0" />
-                                                                              <HBox alignment="CENTER_RIGHT" prefHeight="21.0" prefWidth="210.0">
+                                                            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                                                               <children>
+                                                                  <Label prefHeight="17.0" prefWidth="62.0" text="Méthode:" />
+                                                                                    <ComboBox fx:id="comboDetection" prefHeight="25.0" prefWidth="151.0" />
+                                                               </children>
+                                                               <VBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </VBox.margin>
+                                                            </HBox>
+                                                                              <HBox alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="220.0">
                                                                                   <children>
                                                                                       <Label alignment="CENTER" prefHeight="25.0" prefWidth="64.0" text="Paramètre: ">
                                                                                           <font>
@@ -239,6 +246,9 @@
                                                                                           </HBox.margin>
                                                                                       </Spinner>
                                                                                   </children>
+                                                               <VBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </VBox.margin>
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                                                                   <children>
@@ -292,7 +302,7 @@
                                                                   <ListView fx:id="listView" minHeight="90.0" prefHeight="231.0" prefWidth="158.0" />
                                                                </children>
                                                             </HBox>
-                                                            <Button fx:id="launchCalculation" mnemonicParsing="false" onAction="#startCalculateAttributes" text="Calculate" />
+                                                            <Button fx:id="launchCalculation" mnemonicParsing="false" onAction="#startCalculateAttributes" text="Calculer" />
                                                          </children>
                                                       </VBox>
                                                    </children>
@@ -314,7 +324,7 @@
                                                                               <ComboBox fx:id="comboEvolution" prefHeight="25.0" prefWidth="217.0" />
                                                                               <HBox alignment="CENTER_RIGHT" spacing="5.0">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="51.0" text="Attributes:">
+                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="51.0" text="Attribute:">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
@@ -513,7 +523,7 @@
                                       <items>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                              <children>
-                                                <TabPane prefHeight="240.0" prefWidth="537.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <TabPane fx:id="tabPaneResults" prefHeight="240.0" prefWidth="537.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <tabs>
                                                       <Tab text="Résultats">
                                                         <content>
@@ -524,17 +534,13 @@
                                                       <content>
                                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                <children>
-                                                                  <TabPane layoutX="34.0" layoutY="-61.0" prefHeight="390.0" prefWidth="536.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                  <TabPane fx:id="tabPaneVisible" layoutX="34.0" layoutY="-61.0" prefHeight="390.0" prefWidth="536.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                     <tabs>
                                                                       <Tab text="Source de données">
                                                                         <content>
                                                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                                  <children>
-                                                                                    <Pane layoutX="24.0" layoutY="41.0" prefHeight="233.0" prefWidth="491.0">
-                                                                                       <children>
-                                                                                          <Group fx:id="groupFileVisualize" />
-                                                                                       </children>
-                                                                                    </Pane>
+                                                                                    <StackPane fx:id="paneVisualize" layoutX="137.0" layoutY="95.0" prefHeight="150.0" prefWidth="200.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                                                                                  </children>
                                                                               </AnchorPane>
                                                                         </content>
