@@ -18,10 +18,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
-import org.openide.util.Exceptions;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.FastVector;
@@ -300,14 +298,14 @@ public class PredictionUtils {
                         String newFichierEntrainement=AttributeSelector.useFilter(fichierEntrainement, searchMethod, evalMethod);
                         report= PredictionUtils.createClassifier(wekaClassifier,options,newFichierEntrainement, kfolds);
                 } catch (Exception ex) {
-                    Exceptions.printStackTrace(ex);
+                    ex.printStackTrace();
                 }
                 break;
             case "Wrapper":
                 try {
                         report= AttributeSelector.useClassifier(fichierEntrainement, wekaClassifier, options, searchMethod, evalMethod);
                 } catch (Exception ex) {
-                        Exceptions.printStackTrace(ex);
+                        ex.printStackTrace();
                 }
                 break;
             case "Manual":
@@ -315,7 +313,7 @@ public class PredictionUtils {
                 try {
                         report= PredictionUtils.createClassifier(wekaClassifier,options,fichierEntrainement, kfolds);
                 } catch (Exception ex) {
-                        Exceptions.printStackTrace(ex);
+                        ex.printStackTrace();
                 }
                 break;
         }
