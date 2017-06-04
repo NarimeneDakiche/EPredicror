@@ -221,7 +221,7 @@ public class EvaluationReport implements java.io.Serializable{
         }
     }
     
-    void saveReportTextFile(String filename, int networkName){
+    public void saveReportTextFile(String filename, int networkName){
         
         try{
             PrintWriter writer = new PrintWriter(filename, "UTF-8");
