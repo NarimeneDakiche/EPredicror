@@ -44,17 +44,17 @@ public class AttributesComputer {
          *
          */
         if (listAttributes.contains("size")) {
-            System.out.println("calculating size...");
+            //System.out.println("calculating size...");
             int i = comm.getNodeCount();
             double d = i;
             comm.addAttribute("size", d);
         }
         if (listAttributes.contains("averageDegree")) {
-            System.out.println("calculating average degree...");
+            //System.out.println("calculating average degree...");
             comm.addAttribute("averageDegree", Toolkit.averageDegree(comm));
         }
         if (listAttributes.contains("averageClusteringCoefficient")) {
-            System.out.println("calculating averageClusteringCoefficient...");
+            //System.out.println("calculating averageClusteringCoefficient...");
             comm.addAttribute("averageClusteringCoefficient", Toolkit.averageClusteringCoefficient(comm));
         }
         /*if (listAttributes.contains("averageClusteringCoefficients")) {
@@ -62,7 +62,7 @@ public class AttributesComputer {
             comm.addAttribute("averageClusteringCoefficients", Toolkit.clusteringCoefficients(comm));
         }*/
         if (listAttributes.contains("degreeAverageDeviation")) {
-            System.out.println("calculating degreeAverageDeviation...");
+            //System.out.println("calculating degreeAverageDeviation...");
             comm.addAttribute("degreeAverageDeviation", Toolkit.degreeAverageDeviation(comm));
         }
         /*if (listAttributes.contains("degreeDistribution")) {
@@ -70,15 +70,15 @@ public class AttributesComputer {
             comm.addAttribute("degreeDistribution", Toolkit.degreeDistribution(comm));
         }*/
         if (listAttributes.contains("density")) {
-            System.out.println("calculating density...");
+            //System.out.println("calculating density...");
             comm.addAttribute("density", Toolkit.density(comm));
         }
         if (listAttributes.contains("diameter")) {
-            System.out.println("calculating diameter...");
+            //System.out.println("calculating diameter...");
             comm.addAttribute("diameter", Toolkit.diameter(comm));
         }
         if (listAttributes.contains("Bc")) {
-            System.out.println("calculating Bc...");
+            //System.out.println("calculating Bc...");
             calculateBc(comm);
         }
 //        System.out.println("calculating Centroid...");
