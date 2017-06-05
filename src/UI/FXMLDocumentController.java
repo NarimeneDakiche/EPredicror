@@ -1428,8 +1428,15 @@ public class FXMLDocumentController implements Initializable {
                     EvaluationReport eReport = PredictionUtils.makePredictor(comboSelectionAttributes.getSelectionModel().getSelectedItem(),
                             comboSearchMethod.getSelectionModel().getSelectedItem(), comboEvaluationMethod.getSelectionModel().getSelectedItem(),
                             comboClassifier.getSelectionModel().getSelectedItem(), null, filePathPrediction, 10);
+                    writeLogLn(eReport.getnbInstances());
+                    printInReultsFile("resultats.txt", eReport.getnbInstances());
+                    
                     writeLogLn(eReport.getSummary());
                     printInReultsFile("resultats.txt", eReport.getSummary());
+                    
+                    writeLogLn(eReport.getDetailedAccuracy());
+                    printInReultsFile("resultats.txt", eReport.getDetailedAccuracy());
+                    
                     for (String str : eReport.getConfusionMatrix()) {
                         writeLogLn(str);
                         printInReultsFile("resultats.txt", str);
