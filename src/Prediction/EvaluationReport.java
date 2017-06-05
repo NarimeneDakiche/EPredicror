@@ -123,10 +123,6 @@ public class EvaluationReport implements java.io.Serializable{
             ConfusionMatrix.add(line); 
         }
         
-        /*this.Fmeasure=""+eval.fMeasure(attribute);
-        this.Accuracy=""+eval.precision(attribute);
-        this.Recall=""+eval.recall(attribute);*/
-        
     }
     
     void printReport(){
