@@ -25,6 +25,8 @@ import weka.core.DenseInstance;
 import weka.core.FastVector;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Normalize;
 
 /**
  *
@@ -33,7 +35,7 @@ import weka.core.converters.ArffSaver;
 public class PredictionUtils {
 
     /**
-     * Create the Arff file that contains the training data*
+     * Create the Arff file that contains History data of communities and its caracteristics*
      * @param filePath
      * @param filename
      * @param BDpath
@@ -53,18 +55,10 @@ public class PredictionUtils {
         try {
 
             FastVector atts;
-            FastVector attsRel;
             FastVector attVals = null;
-            FastVector attVals2;
-            FastVector attVals3;
             FastVector attVals1 = null;
-            FastVector attValsRel;
             Instances data;
-            Instances dataRel;
             double[] vals;
-            DenseInstance instance;
-            double[] valsRel;
-            int i;
             int nbFeatures;
             if (Features != null) {
                 nbFeatures = Features.size();
@@ -107,14 +101,14 @@ public class PredictionUtils {
                 }
             }
 
-            System.out.println("atts==" + atts.toString());
+            //System.out.println("atts==" + atts.toString());
             // 2. create Instances object
             data = new Instances("EvolutionChain", atts, 0);
             // 3. fill with data
 
             //Connect to the table and get the data
             String sql = "select group1,timeframe1,event_type from Chains";
-            System.out.println(sql);
+            //System.out.println(sql);
             try (Connection conn = connect(BDpath, BDfilename);
                     Statement stmt = conn.createStatement();
                     ResultSet rs = stmt.executeQuery(sql)) {
@@ -123,7 +117,7 @@ public class PredictionUtils {
                     String event_type = rs.getString("event_type");
                     String group1 = rs.getString("group1");
                     String timeframe1 = rs.getString("timeframe1");
-                    System.out.println(group1 + "\t" + timeframe1 + "\t" + event_type);
+                    //System.out.println(group1 + "\t" + timeframe1 + "\t" + event_type);
                     String[] events = event_type.split(",");
                     if (events.length > (nbevents - 1)) {
                         //Create data for Arff file
@@ -140,7 +134,7 @@ public class PredictionUtils {
                             for (int iparcours = 0; iparcours < nbevents; iparcours++) {
 
                                 String e = new String(events[ievents2]);
-                                System.out.println("Insert : events[" + ievents2 + "]==" + e);
+                                //System.out.println("Insert : events[" + ievents2 + "]==" + e);
                                 /*String g = new String(groups[ievents2]);
                                 String t = new String(timeframes[ievents2]);*/
 
@@ -157,19 +151,19 @@ public class PredictionUtils {
                                         int g = Integer.parseInt(groups[ievents2]);
                                         int t = Integer.parseInt(timeframes[ievents2]);
                                         
-                                        System.out.println("case not null==>Insert : Feature[" + k+ ","+ g +
+                                        /*System.out.println("case not null==>Insert : Feature[" + k+ ","+ g +
                                                                         ","+ t +"]==" + e);
                                         
                                 
                                         //Read Feature
-                                        System.out.println("Feature[k=="+ k + "]==" + Features.get(k)+"   for g=="+
-                                                            g +"   for t=="+ t);
+                                        /System.out.println("Feature[k=="+ k + "]==" + Features.get(k)+"   for g=="+
+                                                            g +"   for t=="+ t);*/
                                         
                                         try{
                                             vals[iInsertion] = dynamicNetwork.get(t).getCommunities().get(
                                                     g).getAttribute(Features.get(k));
                                         }catch(NullPointerException n){
-                                            System.err.println("Attribute: " + Features.get(k)+ "not calculated");
+                                            //System.err.println("Attribute: " + Features.get(k)+ "not calculated");
                                             vals[iInsertion] = 0;
                                         }
                                         
@@ -189,7 +183,7 @@ public class PredictionUtils {
                                     }
                                     //instance.setValue(ievents, e);
                                 } catch (ArrayIndexOutOfBoundsException ex) {
-                                    System.err.println("i  events==" + ievents + "   events==" + events.toString() + " groups==" + groups + "  timeframes==" + timeframes);
+                                    //System.err.println("i  events==" + ievents + "   events==" + events.toString() + " groups==" + groups + "  timeframes==" + timeframes);
                                     ex.printStackTrace();
                                     return;
                                 }
@@ -201,9 +195,9 @@ public class PredictionUtils {
                             try {
                                 data.add(new DenseInstance(1.0, vals));
                                 //data.add(instance);
-                                System.out.println("Completed Insertion");
+                                //System.out.println("Completed Insertion");
                             } catch (ArrayIndexOutOfBoundsException ex) {
-                                System.err.println("error data insertion, data size==" + data.size() + "   events==" + events.toString() + " groups==" + groups + "  timeframes==" + timeframes);
+                                //System.err.println("error data insertion, data size==" + data.size() + "   events==" + events.toString() + " groups==" + groups + "  timeframes==" + timeframes);
                                 ex.printStackTrace();
                                 return;
                             }
@@ -218,15 +212,20 @@ public class PredictionUtils {
             }
             // 4. output data
             //System.out.println(data);
-
+            
+            //Normalize Attributes 
+            Filter m_Filter = new Normalize();
+            m_Filter.setInputFormat(data);
+            data = Filter.useFilter(data, m_Filter);
+            
             //Write into Arff File
             ArffSaver saver = new ArffSaver();
             saver.setInstances(data);
             saver.setFile(new File(filePath + filename + ".arff"));
             saver.writeBatch();
             
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Erreur Génération Fichier ARFF");
         }
     }
 
@@ -255,7 +254,7 @@ public class PredictionUtils {
         //System.out.println("Taux d’erreurs par VC :" + eval.errorRate());
         //System.out.println("Summary :" + eval.toSummaryString());
         
-        EvaluationReport report=new EvaluationReport(eval,instances.numAttributes() - 1);
+        EvaluationReport report=new EvaluationReport(eval,instances.size());
         return report;
     }
     

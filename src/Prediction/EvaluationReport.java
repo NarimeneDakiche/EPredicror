@@ -92,18 +92,24 @@ public class EvaluationReport implements java.io.Serializable{
     
     /******Prediction Results//////////////////////////////////////////////////////////////**/
     Evaluation eval;
-    int predictedClass;
+    int nbInstances;
     String Summary;
-    String Fmeasure;
-    String Accuracy;
-    String Recall;
+    String DetailedAccuracy;
+
+    public String getDetailedAccuracy() {
+        return DetailedAccuracy;
+    }
     ArrayList<String> ConfusionMatrix= new ArrayList<>();
     
     
-    EvaluationReport(Evaluation eval, int attribute) {
+    EvaluationReport(Evaluation eval, int nbInstances) {
         this.eval=eval;
-        this.predictedClass=attribute;
-        
+        this.nbInstances=nbInstances;
+        try {
+            this.DetailedAccuracy=eval.toClassDetailsString();
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+        }
         this.Summary= eval.toSummaryString();
         
         double [][] matriceConfusion=eval.confusionMatrix();
@@ -117,21 +123,20 @@ public class EvaluationReport implements java.io.Serializable{
             ConfusionMatrix.add(line); 
         }
         
-        /*this.Fmeasure=""+eval.fMeasure(attribute);
-        this.Accuracy=""+eval.precision(attribute);
-        this.Recall=""+eval.recall(attribute);*/
-        
     }
     
     void printReport(){
+        System.out.println("Number of Instances :" + this.nbInstances);
         System.out.println("Summary :" + this.Summary);
-        System.out.println("Confusion Matrix :");
+        //System.out.println("Confusion Matrix :");
         for(String e: this.ConfusionMatrix){
             System.out.println(e);
         }
-        System.out.println(this.Fmeasure);
-        System.out.println(this.Accuracy);
-        System.out.println(this.Recall);
+        try {
+            System.out.println(eval.toClassDetailsString());
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
     
     void generateCurve1(String filename){
@@ -255,6 +260,7 @@ public class EvaluationReport implements java.io.Serializable{
             writer.println(EvolutionStats);//Tab Results
     
     /**Prediction**/
+            writer.println("Number of Instances: "+this.nbInstances);
             writer.println("Metrics list: "+Metrics);
             writer.println("Selection Method: "+selectionMethod);
             writer.println("------Evaluator Method: "+Evaluator);
@@ -469,9 +475,7 @@ public class EvaluationReport implements java.io.Serializable{
             addEmptyLine(preface, 3);
             subCatPart.add(preface);
             
-            subCatPart.add(new Paragraph("Fmeasure :" + this.Fmeasure));
-            subCatPart.add(new Paragraph("Accuracy :" + this.Accuracy));
-            subCatPart.add(new Paragraph("Recall :" + this.Recall));
+            subCatPart.add(new Paragraph("Accuracy :" + this.DetailedAccuracy));
             
             // now add all this to the document
             document.add(catPart);
@@ -628,6 +632,14 @@ public class EvaluationReport implements java.io.Serializable{
       }
         return report;
     }
+    
+    public String getnbInstances() {
+        return "Number of Instances: "+nbInstances;
+    }
+
+    /*public void setnbInstances(int nbInstances) {
+        this.nbInstances = nbInstances;
+    }*/
     
     public String getSummary() {
         return Summary;

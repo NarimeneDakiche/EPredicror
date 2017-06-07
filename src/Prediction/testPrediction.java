@@ -45,8 +45,8 @@ public class testPrediction {
         
         //e.printReport();
         //e.generateCurve1(/*filePath+filename+*/"f.png");
-        //e.generateROCcurve();
+        e.generateROCcurve();
         //e.saveReportTextFile("C:\\Users\\HADJER\\Desktop\\report.txt",0);
-        e.saveReportTextPDF("C:\\Users\\HADJER\\Desktop\\report.pdf", nbtimeframe);
+        //e.saveReportTextPDF("C:\\Users\\HADJER\\Desktop\\report.pdf", nbtimeframe);
     }
 }
