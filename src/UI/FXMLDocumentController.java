@@ -1239,6 +1239,7 @@ public class FXMLDocumentController implements Initializable {
             public Void call() throws Exception {
                 startProgressBar();
                 writeLogLn("Exécution de " + comboEvolution.getSelectionModel().getSelectedItem() + "...");
+                System.out.println("Hello");
                 if (directlyEvolution) {
                     /*Read file of structure: n1|n2|t|g */
                     dynamicNetwork = readDynamicNetwork();
@@ -1364,7 +1365,8 @@ public class FXMLDocumentController implements Initializable {
                 LinkedList<TimeFrame> dynamicNet = new LinkedList<TimeFrame>();
                 try (BufferedReader br = new BufferedReader(new FileReader(filePathEvolution))) {
                     String sCurrentLine;
-                    while ((sCurrentLine = br.readLine()) != null) {
+                    while ((sCurrentLine = br.readLine()) != null ) {
+                        //System.out.println(sCurrentLine);
                         String[] str = sCurrentLine.split(" ");
                         int snp = Integer.parseInt(str[2]);
                         int comm = Integer.parseInt(str[3]);

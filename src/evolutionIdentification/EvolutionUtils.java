@@ -17,25 +17,35 @@ import java.util.ArrayList;
  */
 public class EvolutionUtils {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         String BDpath = "./GED/";
-        String BDfilename = "flogs_50_50.db";
+        String BDfilename = "GED_detection_CPM_5.txt_CPM_5_50_50.db";
         String tabname = "GED_evolution";
-        int nbtimeframe = 44;
-        writeEvolutionChain(BDpath, BDfilename, tabname, nbtimeframe, 2/**
+        int nbtimeframe = 47;
+        writeEvolutionChain(BDpath, BDfilename, tabname, nbtimeframe, 3/**
          * nbre timeframes*
          */
         );
-        
+
     }
 
     /**
      * A method to generate evoltion chains tables*
      */
     public static void writeEvolutionChain(/*LinkedList<TimeFrame> dynamicNetwork,*/String BDpath, String BDfilename, String tabname, int nbtimeframe/**
-     * nbre timeframes**/, int chainLength/**chain's min lengh*/
-    ) {
+             * nbre timeframes*
+             */
+            , int chainLength/**
+     * chain's min lengh
+     */
+    ) throws SQLException {
+        String url = "jdbc:sqlite:" + BDpath + BDfilename;
 
+        Connection conn = DriverManager.getConnection(url);
+        String sql1 = "PRAGMA synchronous=OFF";
+        Statement st = conn.createStatement();
+        st.execute(sql1);
+        //conn.setAutoCommit(false);
         //Generating evolution chain for groups in Evolution identification method
         ArrayList<String> chains = new ArrayList<String>();
 
@@ -111,8 +121,8 @@ public class EvolutionUtils {
                             + "e2.group2 as group2, \n"
                             + "e2.timeframe2 as timeframe2 \n"
                             + "\n"
-                            + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=1) as e2 \n"
-                            + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=0) as e1 \n"
+                            + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from " + tabname + " where timeframe1=1) as e2 \n"
+                            + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from " + tabname + " where timeframe1=0) as e1 \n"
                             + "ON e1.group2=e2.group1 )\n"
                             + "\n"
                             + "UNION\n"
@@ -172,14 +182,14 @@ public class EvolutionUtils {
                             + "e2.group2 as group2, \n"
                             + "e2.timeframe2 as timeframe2 \n"
                             + "\n"
-                            + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=0) as e1 \n"
-                            + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=1) as e2 \n"
+                            + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from " + tabname + " where timeframe1=0) as e1 \n"
+                            + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from " + tabname + " where timeframe1=1) as e2 \n"
                             + "ON e1.group2=e2.group1 )  \n"
                             + "\n"
                             + ");";
                     //Execute Scripts
-                    executeStatement(BDpath, BDfilename, scriptJoinTab);
-                    executeStatement(BDpath, BDfilename, scriptJoin);
+                    executeStatement(conn, scriptJoinTab);
+                    executeStatement(conn, scriptJoin);
                     //Writing Completed chains (Group2==null)
                 } else {
                     if (ti == nbtimeframe - 3) {
@@ -237,7 +247,7 @@ public class EvolutionUtils {
                                 + "  END event_type,\n"
                                 + "e2.group2 as group2, \n"
                                 + "e2.timeframe2 as timeframe2 \n"
-                                + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=" + ti + ") as e2 \n"
+                                + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from " + tabname + " where timeframe1=" + ti + ") as e2 \n"
                                 + "LEFT JOIN (select * from Join" + ti + " where group2 is not null) as e1 \n"
                                 + "ON e1.group2=e2.group1 )\n"
                                 + "UNION\n"
@@ -292,15 +302,15 @@ public class EvolutionUtils {
                                 + "e2.group2 as group2, \n"
                                 + "e2.timeframe2 as timeframe2 \n"
                                 + "from ( (select * from Join" + ti + " where group2 is not null) as e1 \n"
-                                + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=" + ti + ") as e2 \n"
+                                + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from " + tabname + " where timeframe1=" + ti + ") as e2 \n"
                                 + "ON e1.group2=e2.group1 )  \n"
                                 + ");";
                         /*String scriptDeleteTab ="PRAGMA foreign_keys = OFF;\n" +
                          " DROP TABLE Join"+ti+";\n" +
                          "PRAGMA foreign_keys = ON;";*/
                         //Execute Scripts
-                        executeStatement(BDpath, BDfilename, scriptJoinTab);
-                        executeStatement(BDpath, BDfilename, scriptJoin);
+                        executeStatement(conn, scriptJoinTab);
+                        executeStatement(conn, scriptJoin);
                         //executeStatement(BDpath,BDfilename, scriptDeleteTab);
                         //Writing all chains 
                     } else {
@@ -369,7 +379,7 @@ public class EvolutionUtils {
                                 + "  \n"
                                 + "e2.group2 as group2, \n"
                                 + "e2.timeframe2 as timeframe2 \n"
-                                + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=" + ti + ") as e2 \n"
+                                + "from ( (select group1,timeframe1,event_type,group2,timeframe2 from " + tabname + " where timeframe1=" + ti + ") as e2 \n"
                                 + "LEFT JOIN (select * from Join" + ti + " where group2 is not null) as e1 \n"
                                 + "ON e1.group2=e2.group1 )\n"
                                 + "UNION\n"
@@ -424,13 +434,13 @@ public class EvolutionUtils {
                                 + "e2.group2 as group2, \n"
                                 + "e2.timeframe2 as timeframe2 \n"
                                 + "from ( (select * from Join" + ti + " where group2 is not null) as e1 \n"
-                                + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from "+tabname+" where timeframe1=" + ti + ") as e2 \n"
+                                + "LEFT JOIN (select group1,timeframe1,event_type,group2,timeframe2 from " + tabname + " where timeframe1=" + ti + ") as e2 \n"
                                 + "ON e1.group2=e2.group1 )  \n"
                                 + ");";
 
                         //Execute Scripts
-                        executeStatement(BDpath, BDfilename, scriptJoinTab);
-                        executeStatement(BDpath, BDfilename, scriptJoin);
+                        executeStatement(conn, scriptJoinTab);
+                        executeStatement(conn, scriptJoin);
 
                     }
                 }
@@ -447,25 +457,25 @@ public class EvolutionUtils {
                     + " timeframe2 integer\n"
                     + " );";
             //Execute Scripts
-            executeStatement(BDpath, BDfilename, scriptDelTab);
-            executeStatement(BDpath, BDfilename, scriptJoinTab);
-            int min=chainLength*7+(chainLength-1);
+            executeStatement(conn, scriptDelTab);
+            executeStatement(conn, scriptJoinTab);
+            int min = chainLength * 7 + (chainLength - 1);
             for (int temp = chainLength; temp < nbtimeframe - 1; temp++) {
                 String sql = "";
                 if (temp == nbtimeframe - 2) {
-                    sql = "INSERT INTO Chains select * from Join" + temp + " where LENGTH(event_type)>="+min+";";
+                    sql = "INSERT INTO Chains select * from Join" + temp + " where LENGTH(event_type)>=" + min + ";";
                 } else {
-                    sql = "INSERT INTO Chains select * from Join" + temp + " where (group2 is null) and LENGTH(event_type)>="+min+";";
+                    sql = "INSERT INTO Chains select * from Join" + temp + " where (group2 is null) and LENGTH(event_type)>=" + min + ";";
                 }
                 //Execute Scripts
-                executeStatement(BDpath, BDfilename, sql);
+                executeStatement(conn, sql);
             }
 
             //Deleting tables
             for (int temp = 2; temp < nbtimeframe - 1; temp++) {
                 String scriptDeleteTab = "DROP TABLE Join" + temp + ";";
                 //Execute Scripts
-                executeStatement(BDpath, BDfilename, scriptDeleteTab);
+                executeStatement(conn, scriptDeleteTab);
             }
 
         }
@@ -480,7 +490,26 @@ public class EvolutionUtils {
         try (Connection conn = DriverManager.getConnection(url);
                 Statement stmt = conn.createStatement()) {
             // create a new table
+            /*String sql1 = "PRAGMA synchronous=OFF";
+             Statement st = conn.createStatement();
+             st.execute(sql1);*/
+            /*conn.setAutoCommit(false);*/
             stmt.execute(sql);
+            //conn.commit();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void executeStatement(Connection conn, String sql) {
+        // SQLite connection string
+
+        try (
+                Statement stmt = conn.createStatement()) {
+            // create a new table
+
+            stmt.execute(sql);
+            //conn.commit();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
