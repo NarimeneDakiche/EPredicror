@@ -70,6 +70,8 @@ public class MyResult {
                     }
                 }
             }
+        }catch(Exception e){
+            return null;
         }
         /*String[] splitContent;
          int v, w;

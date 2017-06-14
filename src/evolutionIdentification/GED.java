@@ -17,7 +17,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  *
@@ -139,7 +141,7 @@ public class GED {
         }
     }
 
-    public void excuteGED(LinkedList<TimeFrame> dynamicNetwork, int alpha, int beta,  String totalPath) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
+    public Map<String, Integer> excuteGED(LinkedList<TimeFrame> dynamicNetwork, int alpha, int beta, String totalPath) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
 
         /**
          * 1. Calculer Mesure d'importance et ordre en selon (e.g. degree
@@ -552,8 +554,20 @@ public class GED {
         updateCounts = pstmt3.executeBatch();
         conn.commit();
 
-        conn.close();
-    }
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        sql = "select event_type, COUNT(event_type) from GED_evolution group by (event_type)";
+        stmt = conn.createStatement();
+        ResultSet rs = stmtCont.executeQuery(sql);
+        while (rs.next()) {
+          // System.out.println(rs.getString(1)+" "+ rs.getInt(2));
+            map.put(rs.getString(1), rs.getInt(2));
+            //System.out.println(rs.getString("event_type")+" "+  rs.getInt("count(event_type)"));
+        }
+            conn.close();
+            return map;
+        }
+
+    
 
     private LinkedList<Node> nodeInter(Collection<Node> gr1, Collection<Node> gr2) {
         LinkedList<Node> inter = new LinkedList<Node>();

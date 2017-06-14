@@ -19,10 +19,10 @@ public class EvolutionUtils {
 
     public static void main(String[] args) throws SQLException {
         String BDpath = "./GED/";
-        String BDfilename = "GED_detection_CPM_5.txt_CPM_5_50_50.db";
+        String BDfilename = "GED_DBLP - 1990-2000.txt_CPM_5_50_50.db";
         String tabname = "GED_evolution";
         int nbtimeframe = 47;
-        writeEvolutionChain(BDpath, BDfilename, tabname, nbtimeframe, 3/**
+        writeEvolutionChain(BDpath, BDfilename, tabname, nbtimeframe, 1/**
          * nbre timeframes*
          */
         );

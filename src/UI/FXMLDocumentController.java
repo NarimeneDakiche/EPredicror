@@ -42,11 +42,14 @@ import java.text.ParseException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -68,6 +71,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
@@ -120,6 +124,9 @@ public class FXMLDocumentController implements Initializable {
     private TextArea logTextArea;
 
     @FXML
+    private TextArea resultsTextArea;
+
+    @FXML
     private Accordion accordion1;
 
     @FXML
@@ -127,6 +134,9 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private StackPane paneVisualize;
+    
+    @FXML
+    private StackPane paneVisualizeIdent;
 
     @FXML
     private SwingNode swingNode;
@@ -192,8 +202,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TabPane tabPaneVisible;
 
-    @FXML
-    private TabPane tabPaneResults;
+    /*@FXML
+    private TabPane tabPaneResults;*/
 
     private boolean exists;
 
@@ -298,6 +308,7 @@ public class FXMLDocumentController implements Initializable {
     private String BDpath = directoryPath;
     private String BDfilename;
     private String tabname = "GED_evolution";
+    private Map<String, Integer> mapIdentification;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -632,11 +643,11 @@ public class FXMLDocumentController implements Initializable {
          }
          });*/
         //******* ListView Attributes *******//
-        String[] toppings = {"size", "averageDegree", "averageClusteringCoefficient", "degreeAverageDeviation", "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity", "InOutTotalDegree", "ClosenessCentrality"};
+        String[] attributes = {"size", "averageDegree", "averageClusteringCoefficient", "degreeAverageDeviation", "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity", "InOutTotalDegree", "ClosenessCentrality"};
 
         //***********************************//
-//        toppings = {"size", "averageDegree", "averageClusteringCoefficient", "degreeAverageDeviation", "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity", "InOutTotalDegree", "ClosenessCentrality"};
-        listView.getItems().addAll(toppings);
+//        attributes = {"size", "averageDegree", "averageClusteringCoefficient", "degreeAverageDeviation", "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity", "InOutTotalDegree", "ClosenessCentrality"};
+        listView.getItems().addAll(attributes);
         listView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
             @Override
             public ObservableValue<Boolean> call(String item) {
@@ -656,7 +667,7 @@ public class FXMLDocumentController implements Initializable {
                             observableListAttibutes.remove(item);
                         }
                     }
-                    //System.out.println(observableListAttibutes.size());
+                    System.out.println(observableListAttibutes.size());
 
                 });
                 observable.set(observableListAttibutes.contains(item));
@@ -672,6 +683,7 @@ public class FXMLDocumentController implements Initializable {
     ) {
 
         FileChooser chooser = new FileChooser();
+
         chooser.getExtensionFilters().addAll(
                 new ExtensionFilter("All Files", "*.*"),
                 new ExtensionFilter("Text Files", "*.txt"));
@@ -679,7 +691,7 @@ public class FXMLDocumentController implements Initializable {
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         chooser.setInitialDirectory(new File(currentPath));
 
-        file = chooser.showOpenDialog(new Stage());
+        file = chooser.showOpenDialog(snipperDetection.getScene().getWindow());
 
         if (file != null && file.exists()) {
             filePath = file.getAbsolutePath();
@@ -734,7 +746,7 @@ public class FXMLDocumentController implements Initializable {
         chooser.setInitialDirectory(new File(currentPath));
 
         Stage stage = (Stage) launchDetection.getScene().getWindow();
-        listFile = chooser.showOpenMultipleDialog(new Stage());
+        listFile = chooser.showOpenMultipleDialog(snipperDetection.getScene().getWindow());
 
         if (listFile != null) {
             for (File file : listFile) {
@@ -750,7 +762,7 @@ public class FXMLDocumentController implements Initializable {
 
         nbSnapshots = (listFile != null) ? listFile.size() : 0;
         attributesCalculated = false;
-        //fileDetection = chooser.showOpenDialog(new Stage());
+        //fileDetection = chooser.showOpenDialog(snipperDetection.getScene().getWindow());
     }
 
     @FXML
@@ -764,7 +776,7 @@ public class FXMLDocumentController implements Initializable {
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         chooser.setInitialDirectory(new File(currentPath));
 
-        fileEvolution = chooser.showOpenDialog(new Stage());
+        fileEvolution = chooser.showOpenDialog(snipperDetection.getScene().getWindow());
 
         if (fileEvolution != null && fileEvolution.exists()) {
             filePathEvolution = fileEvolution.getAbsolutePath();
@@ -786,7 +798,7 @@ public class FXMLDocumentController implements Initializable {
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         chooser.setInitialDirectory(new File(currentPath));
 
-        filePrediction = chooser.showOpenDialog(new Stage());
+        filePrediction = chooser.showOpenDialog(snipperDetection.getScene().getWindow());
 
         if (filePrediction != null && filePrediction.exists()) {
             filePathPrediction = filePrediction.getAbsolutePath();
@@ -820,7 +832,32 @@ public class FXMLDocumentController implements Initializable {
                 logTextArea.positionCaret(logTextArea.getText().length());
             }
         });
+    }
 
+    void writeResultsLn(String str
+    ) {
+        //javafx.application.Platform.runLater(() -> logTextArea.setText(logTextArea.getText() + str + "\n"));
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                resultsTextArea.setText(resultsTextArea.getText() + str + "\n");
+                resultsTextArea.positionCaret(resultsTextArea.getText().length());
+            }
+        });
+
+        /*logTextArea.setText(logTextArea.getText() + str + "\n");
+         logTextArea.positionCaret(logTextArea.getText().length());*/
+    }
+
+    void writeResultsLog(String str
+    ) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                resultsTextArea.setText(resultsTextArea.getText() + str);
+                resultsTextArea.positionCaret(resultsTextArea.getText().length());
+            }
+        });
     }
 
     @FXML
@@ -1212,11 +1249,13 @@ public class FXMLDocumentController implements Initializable {
                 }
 
             }
-
         };
         task.setOnSucceeded(e -> {
-
             launchDetection.setDisable(false);
+            //tabPaneResults.getSelectionModel().select(1);
+            tabPaneVisible.getSelectionModel().select(1);
+            //paneVisualize.getChildren().clear();
+
         });
 
         new Thread(task).start();
@@ -1313,7 +1352,8 @@ public class FXMLDocumentController implements Initializable {
                         writeLogLn("GED started...");
                         GED ged = new GED();
                         try {
-                            ged.excuteGED(dynamicNetwork, Integer.parseInt(para[0]), Integer.parseInt(para[1]), BDpath + BDfilename);
+                            mapIdentification = ged.excuteGED(dynamicNetwork, Integer.parseInt(para[0]), Integer.parseInt(para[1]), BDpath + BDfilename);
+                            //visualizeIdentificationResults(mapIdentification);
                         } catch (FileNotFoundException ex) {
                             ex.printStackTrace();
                         } catch (UnsupportedEncodingException ex) {
@@ -1365,7 +1405,7 @@ public class FXMLDocumentController implements Initializable {
                 LinkedList<TimeFrame> dynamicNet = new LinkedList<TimeFrame>();
                 try (BufferedReader br = new BufferedReader(new FileReader(filePathEvolution))) {
                     String sCurrentLine;
-                    while ((sCurrentLine = br.readLine()) != null ) {
+                    while ((sCurrentLine = br.readLine()) != null) {
                         //System.out.println(sCurrentLine);
                         String[] str = sCurrentLine.split(" ");
                         int snp = Integer.parseInt(str[2]);
@@ -1393,8 +1433,12 @@ public class FXMLDocumentController implements Initializable {
 
         };
         task.setOnSucceeded(e -> {
+            visualizeIdentificationResults(mapIdentification);
             stopProgressBar();
-            launchEvolution.setDisable(false);
+            launchPrediction.setDisable(false);
+            //tabPaneResults.getSelectionModel().select(1);
+            tabPaneVisible.getSelectionModel().select(2);
+            //paneVisualize.getChildren().clear();        
         });
         new Thread(task).start();
     }
@@ -1430,22 +1474,22 @@ public class FXMLDocumentController implements Initializable {
                     EvaluationReport eReport = PredictionUtils.makePredictor(comboSelectionAttributes.getSelectionModel().getSelectedItem(),
                             comboSearchMethod.getSelectionModel().getSelectedItem(), comboEvaluationMethod.getSelectionModel().getSelectedItem(),
                             comboClassifier.getSelectionModel().getSelectedItem(), null, filePathPrediction, 10);
-                    
-                    
-                    writeLogLn(eReport.getSummary());
+
+                    writeResultsLn(eReport.getSummary());
                     printInReultsFile("resultats.txt", eReport.getSummary());
-                    
-                    writeLogLn(eReport.getDetailedAccuracy());
+
+                    writeResultsLn(eReport.getDetailedAccuracy());
                     printInReultsFile("resultats.txt", eReport.getDetailedAccuracy());
-                    
+
                     for (String str : eReport.getConfusionMatrix()) {
-                        writeLogLn(str);
+                        writeResultsLn(str);
                         printInReultsFile("resultats.txt", str);
                     }
                     // eReport.saveReportTextFile("resultat", 0);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+                writeResultsLn("############################################################################");
                 writeLogLn("Prediction done.");
                 printInReultsFile("resultats.txt", "Prediction done.");
                 stopProgressBar();
@@ -1468,6 +1512,8 @@ public class FXMLDocumentController implements Initializable {
 
         task.setOnSucceeded(e -> {
             launchPrediction.setDisable(false);
+            //tabPaneResults.getSelectionModel().select(1);
+            tabPaneVisible.getSelectionModel().select(3);
             stopProgressBar();
         });
         new Thread(task).start();
@@ -1527,8 +1573,8 @@ public class FXMLDocumentController implements Initializable {
     void selectAttributes(ActionEvent event) {
 
         listView = new ListView<>();
-        String[] toppings = {"size", "averageDegree", "averageClusteringCoefficient", "degreeAverageDeviation", "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity", "InOutTotalDegree", "ClosenessCentrality"};
-        listView.getItems().addAll(toppings);
+        String[] attributes = {"size", "averageDegree", "averageClusteringCoefficient", "degreeAverageDeviation", "density", "diameter", "Bc", "Centroid", "Cohesion", "Leadership", "Reciprocity", "InOutTotalDegree", "ClosenessCentrality"};
+        listView.getItems().addAll(attributes);
         listView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
             @Override
             public ObservableValue<Boolean> call(String item) {
@@ -1674,49 +1720,48 @@ public class FXMLDocumentController implements Initializable {
                     FileInputStream stream = new FileInputStream(new File(filePath));
 
                     List<Integer> counters = new ArrayList<Integer>();
-                    int number = 100;
+                    int number = 500;
                     for (int i = 0; i < number; i++) {
                         counters.add(0);
                     }
 
-                    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                        String sCurrentLine;
-                        String[] splitContent;
-                        String v, w;
-                        long timestamp;
-                        while ((sCurrentLine = br.readLine()) != null) {
-                            if (sCurrentLine.charAt(0) != '%' && sCurrentLine.charAt(0) != '#') {
-                                splitContent = splitInput(sCurrentLine);
-                                v = splitContent[dataStructure.indexOf("V")];
-                                w = splitContent[dataStructure.indexOf("W")];
-                                timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
-                                //System.out.println(TimeLength.timestampToDate(timestamp));
-                                int step = (int) ((myResult.getMaxTS() - myResult.getMinTS()) / number);
-                                // System.out.println(duration.getSeconds()+" "+step);
-                                int index = (int) ((timestamp - myResult.getMinTS()) / step);
-                                if (index == number) {
-                                    index--;
-                                }
-                                //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
-                                //        + index);
-                                counters.set(index, counters.get(index) + 1);
+                    BufferedReader br = new BufferedReader(new FileReader(file));
+                    String sCurrentLine;
+                    String[] splitContent;
+                    String v, w;
+                    long timestamp;
+                    while ((sCurrentLine = br.readLine()) != null) {
+                        if (sCurrentLine.charAt(0) != '%' && sCurrentLine.charAt(0) != '#') {
+                            splitContent = splitInput(sCurrentLine);
+                            v = splitContent[dataStructure.indexOf("V")];
+                            w = splitContent[dataStructure.indexOf("W")];
+                            timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
+                            //System.out.println(TimeLength.timestampToDate(timestamp));
+                            int step = (int) ((myResult.getMaxTS() - myResult.getMinTS()) / number);
+                            // System.out.println(duration.getSeconds()+" "+step);
+                            int index = (int) ((timestamp - myResult.getMinTS()) / step);
+                            if (index == number) {
+                                index--;
                             }
+                            //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
+                            //        + index);
+                            counters.set(index, counters.get(index) + 1);
                         }
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                tabPaneResults.getSelectionModel().select(1);
-                                tabPaneVisible.getSelectionModel().select(0);
-                                paneVisualize.getChildren().clear();
-
-                                paneVisualize.getChildren().add(createChart(counters, number, myResult));
-                            }
-                        });
-
-                        /*for (int i : counters) {
-                         System.out.println(i);
-                         }*/
                     }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            //tabPaneResults.getSelectionModel().select(1);
+                            tabPaneVisible.getSelectionModel().select(0);
+                            paneVisualize.getChildren().clear();
+
+                            paneVisualize.getChildren().add(createChart(counters, number, myResult));
+                        }
+                    });
+
+                    /*for (int i : counters) {
+                     System.out.println(i);
+                     }*/
             //init(new Stage(), counters);
            /* Stage primaryStage = new Stage();
                      primaryStage.setScene(new Scene(root*/
@@ -1772,11 +1817,13 @@ public class FXMLDocumentController implements Initializable {
              int Result = r.nextInt(High - Low) + Low;
              max = Math.max(max, Result);*/
 
-            series1.getData().add(new XYChart.Data<String, Number>(TimeLength.timestampToDate(myResult.getMaxTS() + step * i), counters.get(i)));
+            series1.getData().add(new XYChart.Data<String, Number>(TimeLength.timestampToDate(myResult.getMinTS() + step * i), counters.get(i)));
+            System.out.println("");
             //series1.getData().add(new XYChart.Data<String, Number>(Integer.toString(i), counters.get(i)));
         }
         bc.getData().add(series1);
         //bc.getXAxis().setOpacity(0);
+        // Zoom here
 
         return bc;
     }
@@ -1870,5 +1917,48 @@ public class FXMLDocumentController implements Initializable {
 
             }
         });
+    }
+
+    private void visualizeIdentificationResults(Map<String, Integer> map) {
+        List<PieChart.Data> list = new ArrayList<PieChart.Data>();
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Integer> pair = (Map.Entry) it.next();
+            list.add(new PieChart.Data((String) pair.getKey(), (Integer) pair.getValue()));
+            System.out.println((String) pair.getKey() + " = " + (Integer) pair.getValue());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        ObservableList<PieChart.Data> pieChartData
+                = FXCollections.observableArrayList(list);
+        final PieChart chart = new PieChart(pieChartData);
+        pieChartData.forEach(data
+                -> data.nameProperty().bind(
+                        Bindings.concat(
+                                data.getName(), " ", data.pieValueProperty()
+                        )
+                )
+        );
+        chart.setTitle("Identified events");
+        paneVisualizeIdent.getChildren().add(chart);
+    }
+    
+    @FXML
+    void selectAllAttributes(){
+        for (String str: listView.getItems()){
+            if(!observableListAttibutes.contains(str)){
+                observableListAttibutes.add(str);
+            }
+            //observableListAttibutes.addAll(listView.getItems());
+        }
+    }
+    
+    @FXML
+    void deselectAllAttributes(){
+        for (String str: listView.getItems()){
+            if(observableListAttibutes.contains(str)){
+                observableListAttibutes.remove(str);
+            }
+            //observableListAttibutes.addAll(listView.getItems());
+        }
     }
 }

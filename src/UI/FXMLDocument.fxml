@@ -289,13 +289,19 @@
                                             <content>
                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
-                                                      <VBox alignment="CENTER" layoutX="-36.0" layoutY="-18.0" prefHeight="363.0" prefWidth="246.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <VBox alignment="CENTER" layoutX="-36.0" layoutY="-18.0" prefHeight="363.0" prefWidth="246.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <children>
                                                             <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Calcul d'attributs">
                                                                <font>
                                                                   <Font name="System Bold" size="12.0" />
                                                                </font>
                                                             </Label>
+                                                            <HBox alignment="CENTER" prefHeight="15.0" prefWidth="227.0" spacing="30.0">
+                                                               <children>
+                                                                  <Button mnemonicParsing="false" onAction="#selectAllAttributes" text="Select All" />
+                                                                  <Button mnemonicParsing="false" onAction="#deselectAllAttributes" text="Deselect all" />
+                                                               </children>
+                                                            </HBox>
                                                             <HBox alignment="CENTER_RIGHT" prefHeight="231.0" prefWidth="210.0" spacing="10.0">
                                                                <children>
                                                                   <Label text="Attributs:" />
@@ -389,16 +395,6 @@
                                                                </font>
                                                             </Label>
                                                             <Button mnemonicParsing="false" onAction="#browserPredictionAction" text="Parcourir" />
-                                                                              <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
-                                                                                  <children>
-                                                                                      <Label alignment="CENTER" prefHeight="20.0" prefWidth="161.0" text="Classificateur:">
-                                                                                          <font>
-                                                                                              <Font size="11.0" />
-                                                                                          </font>
-                                                                                      </Label>
-                                                                                      <ComboBox fx:id="comboClassifier" prefHeight="25.0" prefWidth="215.0" />
-                                                                                  </children>
-                                                                              </HBox>
                                                             <HBox alignment="CENTER_RIGHT">
                                                                <children>
                                                                   <Label alignment="CENTER" prefHeight="25.0" prefWidth="118.0" text="Longueur de chaine: ">
@@ -445,6 +441,16 @@
                                                                   <ComboBox fx:id="comboEvaluationMethod" prefHeight="25.0" prefWidth="118.0" />
                                                                </children>
                                                             </HBox>
+                                                                              <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
+                                                                                  <children>
+                                                                                      <Label alignment="CENTER" prefHeight="20.0" prefWidth="161.0" text="Classificateur:">
+                                                                                          <font>
+                                                                                              <Font size="11.0" />
+                                                                                          </font>
+                                                                                      </Label>
+                                                                                      <ComboBox fx:id="comboClassifier" prefHeight="25.0" prefWidth="215.0" />
+                                                                                  </children>
+                                                                              </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="23.0" prefWidth="210.0">
                                                                                   <children>
                                                                                       <CheckBox mnemonicParsing="false" text="Exporter les résultats" />
@@ -521,62 +527,68 @@
                                           <children>
                                     <SplitPane dividerPositions="0.8301075268817204" orientation="VERTICAL" prefHeight="489.0" prefWidth="539.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <items>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
-                                                <TabPane fx:id="tabPaneResults" prefHeight="240.0" prefWidth="537.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                  <tabs>
-                                                      <Tab text="Résultats">
-                                                        <content>
-                                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                                        </content>
-                                                      </Tab>
-                                                    <Tab text="Visualisation">
-                                                      <content>
-                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                <TabPane fx:id="tabPaneVisible" layoutX="34.0" layoutY="-61.0" prefHeight="390.0" prefWidth="536.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <tabs>
+                                                      <Tab text="Source de données">
+                                                         <content>
+                                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                <children>
-                                                                  <TabPane fx:id="tabPaneVisible" layoutX="34.0" layoutY="-61.0" prefHeight="390.0" prefWidth="536.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                    <tabs>
-                                                                      <Tab text="Source de données">
-                                                                        <content>
-                                                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                                  <StackPane fx:id="paneVisualize" layoutX="137.0" layoutY="95.0" prefHeight="150.0" prefWidth="200.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </content>
+                                                      </Tab>
+                                                      <Tab text="Communautés">
+                                                         <content>
+                                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                               <children>
+                                                                  <SplitPane dividerPositions="0.37009345794392523" prefHeight="353.0" prefWidth="536.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                     <items>
+                                                                        <AnchorPane maxWidth="-Infinity" prefWidth="200.0">
+                                                                           <children>
+                                                                              <TreeView fx:id="treeView" layoutY="36.0" maxWidth="200.0" minWidth="150.0" prefHeight="508.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                                           </children>
+                                                                        </AnchorPane>
+                                                                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                                                           <children>
+                                                                              <StackPane prefHeight="310.0" prefWidth="310.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                                                                  <children>
-                                                                                    <StackPane fx:id="paneVisualize" layoutX="137.0" layoutY="95.0" prefHeight="150.0" prefWidth="200.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                                                                    <SwingNode fx:id="swingNode" />
                                                                                  </children>
-                                                                              </AnchorPane>
-                                                                        </content>
-                                                                      </Tab>
-                                                                      <Tab text="Communautés">
-                                                                        <content>
-                                                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                                                                 <children>
-                                                                                    <SplitPane dividerPositions="0.37009345794392523" prefHeight="353.0" prefWidth="536.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                                       <items>
-                                                                                          <AnchorPane maxWidth="-Infinity" prefWidth="200.0">
-                                                                                             <children>
-                                                                                                <TreeView fx:id="treeView" layoutY="36.0" maxWidth="200.0" minWidth="150.0" prefHeight="508.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                                                             </children>
-                                                                                          </AnchorPane>
-                                                                                          <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                                                                                             <children>
-                                                                                                <StackPane prefHeight="310.0" prefWidth="310.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                                                                                                   <children>
-                                                                                                      <SwingNode fx:id="swingNode" />
-                                                                                                   </children>
-                                                                                                </StackPane>
-                                                                                             </children>
-                                                                                          </AnchorPane>
-                                                                                       </items>
-                                                                                    </SplitPane>
-                                                                                 </children>
-                                                                              </AnchorPane>
-                                                                        </content>
-                                                                      </Tab>
-                                                                    </tabs>
-                                                                  </TabPane>
-                                                               </children></AnchorPane>
-                                                      </content>
-                                                    </Tab>
-                                                  </tabs>
+                                                                              </StackPane>
+                                                                           </children>
+                                                                        </AnchorPane>
+                                                                     </items>
+                                                                  </SplitPane>
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </content>
+                                                      </Tab>
+                                                      <Tab text="Identification de l'évolution">
+                                                         <content>
+                                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                               <children>
+                                                                  <StackPane fx:id="paneVisualizeIdent" prefHeight="372.0" prefWidth="538.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </content>
+                                                      </Tab>
+                                                      <Tab text="Prédiction">
+                                                         <content>
+                                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                               <children>
+                                                                  <TextArea fx:id="resultsTextArea" editable="false" focusTraversable="false" prefHeight="401.0" prefWidth="538.0" style="-fx-border-color: black;" wrapText="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="12.0" />
+                                                                     </font>
+                                                                  </TextArea>
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </content>
+                                                      </Tab>
+                                                   </tabs>
                                                 </TabPane>
                                              </children>
                                           </AnchorPane>
