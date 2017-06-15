@@ -12,6 +12,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
@@ -27,7 +28,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="generalPane" maxHeight="600.0" maxWidth="800.0" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" stylesheets="@breeze.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UI.FXMLDocumentController">
+<AnchorPane fx:id="generalPane" maxHeight="600.0" maxWidth="800.0" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UI.FXMLDocumentController">
 
 
     <children>
@@ -35,19 +36,22 @@
          <children>
             <MenuBar>
               <menus>
-                <Menu mnemonicParsing="false" text="Fichier">
+                <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Fermer" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleImportPModel" text="Import model" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleExportPModel" text="Export model" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleExportEReport" text="Export evaluation report" />
+                    <MenuItem mnemonicParsing="false" text="close" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Afficher">
+                <Menu mnemonicParsing="false" text="View">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Supprimer" />
+                    <MenuItem mnemonicParsing="false" text="Delete" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Aide">
+                <Menu mnemonicParsing="false" text="Help">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="À propos" />
+                    <MenuItem mnemonicParsing="false" text="About EPrediction" />
                   </items>
                 </Menu>
               </menus>
@@ -62,26 +66,43 @@
                                           <children>
                                               <Accordion fx:id="accordion1" prefHeight="481.0" prefWidth="252.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <panes>
-                                                      <TitledPane fx:id="titledpane1" animated="false" prefHeight="385.0" prefWidth="283.0" text="Segmentation des Snapshots">
+                                                      <TitledPane animated="false" prefHeight="385.0" prefWidth="283.0" text="Snapshots segmentation">
                                                           <content>
                                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="394.0" prefWidth="263.0">
                                                                   <children>
                                                                       <VBox alignment="CENTER" layoutX="10.0" layoutY="6.0" prefHeight="336.0" prefWidth="247.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                           <children>
-                                                            <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Segmentation des Snapshots">
+                                                            <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Snapshots segmentation">
                                                                <font>
                                                                   <Font name="System Bold" size="12.0" />
                                                                </font>
                                                             </Label>
                                                             <HBox alignment="CENTER" prefHeight="21.0" prefWidth="227.0" spacing="20.0">
                                                                <children>
-                                                                                    <Button mnemonicParsing="false" onAction="#browserAction" prefHeight="19.0" prefWidth="66.0" text="Parcourir" />
-                                                                  <Button minWidth="20.0" mnemonicParsing="false" onAction="#visualizeDataStructure" prefHeight="27.0" prefWidth="70.0" text="Visualiser" />
+                                                                                    <Button mnemonicParsing="false" onAction="#browserAction" prefHeight="19.0" prefWidth="66.0" text="Browser" />
+                                                                  <Button minWidth="20.0" mnemonicParsing="false" onAction="#visualizeDataStructure" prefHeight="27.0" prefWidth="70.0" text="Visualize" />
                                                                </children>
                                                             </HBox>
+                                                                              <HBox alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="227.0">
+                                                                                  <children>
+                                                                                      <Label alignment="CENTER" prefHeight="24.0" prefWidth="110.0" text="Data structure">
+                                                                                          <font>
+                                                                                              <Font size="11.0" />
+                                                                                          </font>
+                                                                                      </Label>
+                                                                                      <ComboBox fx:id="comboStructDonnees" prefHeight="25.0" prefWidth="110.0">
+                                                                                          <HBox.margin>
+                                                                                              <Insets left="5.0" />
+                                                                                          </HBox.margin>
+                                                                                      </ComboBox>
+                                                                                  </children>
+                                                                                  <opaqueInsets>
+                                                                                      <Insets bottom="15.0" top="15.0" />
+                                                                                  </opaqueInsets>
+                                                                              </HBox>
                                                                               <HBox alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="227.0">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="16.0" prefWidth="85.0" text="Format du temp:">
+                                                                                      <Label alignment="CENTER" prefHeight="16.0" prefWidth="85.0" text="Time format">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
@@ -95,12 +116,12 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="227.0">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="20.0" prefWidth="91.0" text=" Nb de snapshots:">
+                                                                                      <Label alignment="CENTER" prefHeight="20.0" prefWidth="91.0" text="Snapshots number">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
                                                                                       </Label>
-                                                                                      <Spinner fx:id="spinnerNBClusters" editable="true" prefHeight="14.0" prefWidth="110.0">
+                                                                                      <Spinner fx:id="spinnerNbSnaps" editable="true" prefHeight="14.0" prefWidth="110.0">
                                                                                           <HBox.margin>
                                                                                               <Insets left="5.0" />
                                                                                           </HBox.margin>
@@ -109,7 +130,7 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="199.0">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="60.0" text="Duration(s):">
+                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="112.0" text="Snapshots duration(s):">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
@@ -123,7 +144,7 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="227.0">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="98.0" text="Nom de(s) fichier(s):">
+                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="98.0" text="File(s) name:">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
@@ -158,40 +179,15 @@
                                                                   </Label>
                                                                                   </children>
                                                                               </HBox>
-                                                                              <HBox alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="227.0">
-                                                                                  <children>
-                                                                                      <Label alignment="CENTER" prefHeight="24.0" prefWidth="110.0" text="Structure de données:">
-                                                                                          <font>
-                                                                                              <Font size="11.0" />
-                                                                                          </font>
-                                                                                      </Label>
-                                                                                      <ComboBox fx:id="comboStructDonnees" prefHeight="25.0" prefWidth="110.0">
-                                                                                          <HBox.margin>
-                                                                                              <Insets left="5.0" />
-                                                                                          </HBox.margin>
-                                                                                      </ComboBox>
-                                                                                  </children>
-                                                                                  <opaqueInsets>
-                                                                                      <Insets bottom="15.0" top="15.0" />
-                                                                                  </opaqueInsets>
-                                                                              </HBox>
                                                                               <VBox alignment="CENTER" prefHeight="43.0" prefWidth="229.0" spacing="10.0">
                                                                                   <children>
-                                                                                      <CheckBox fx:id="checkboxSplitMultiExport" alignment="CENTER" mnemonicParsing="false" prefHeight="17.0" prefWidth="173.0" selected="true" text="Export snapshots séparés" />
+                                                                                      <CheckBox fx:id="checkboxSplitMultiExport" alignment="CENTER" mnemonicParsing="false" prefHeight="17.0" prefWidth="132.0" selected="true" text="Export separate files" />
                                                                                     <HBox alignment="CENTER" prefHeight="25.0" prefWidth="229.0">
                                                                                         <children>
-                                                                                            <Button fx:id="launchSplit" mnemonicParsing="false" onAction="#startSplit" prefHeight="18.0" prefWidth="74.0" text="Lancer">
+                                                                                            <Button fx:id="launchSplit" mnemonicParsing="false" onAction="#startSplit" prefHeight="18.0" prefWidth="74.0" text="Launch">
                                                                                                 <font>
                                                                                                     <Font size="11.0" />
                                                                                                 </font>
-                                                                                            </Button>
-                                                                                            <Button mnemonicParsing="false" prefHeight="23.0" prefWidth="71.0" text="Annuler">
-                                                                                                <font>
-                                                                                                    <Font size="11.0" />
-                                                                                                </font>
-                                                                                                <HBox.margin>
-                                                                                                    <Insets left="20.0" />
-                                                                                                </HBox.margin>
                                                                                             </Button>
                                                                                         </children>
                                                                                         <VBox.margin>
@@ -215,7 +211,7 @@
                                                                   <children>
                                                                       <VBox alignment="CENTER" layoutX="13.0" layoutY="32.0" prefHeight="201.0" prefWidth="226.0" spacing="10.0">
                                                                           <children>
-                                                                              <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Méthode de détection">
+                                                                              <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Detection method">
                                                                                   <VBox.margin>
                                                                                       <Insets />
                                                                                   </VBox.margin>
@@ -223,10 +219,10 @@
                                                                                       <Font name="System Bold" size="12.0" />
                                                                                   </font>
                                                                               </Label>
-                                                                              <Button mnemonicParsing="false" onAction="#browserDetectionAction" text="Parcourir" />
+                                                                              <Button mnemonicParsing="false" onAction="#browserDetectionAction" text="Browser" />
                                                             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
                                                                <children>
-                                                                  <Label prefHeight="17.0" prefWidth="62.0" text="Méthode:" />
+                                                                  <Label prefHeight="17.0" prefWidth="49.0" text="Method:" />
                                                                                     <ComboBox fx:id="comboDetection" prefHeight="25.0" prefWidth="151.0" />
                                                                </children>
                                                                <VBox.margin>
@@ -235,7 +231,7 @@
                                                             </HBox>
                                                                               <HBox alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="220.0">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="64.0" text="Paramètre: ">
+                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="64.0" text="Parameter:">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
@@ -252,7 +248,7 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                                                                   <children>
-                                                                                      <CheckBox fx:id="checkboxDetection" mnemonicParsing="false" selected="true" text="Exporter les résultats">
+                                                                                      <CheckBox fx:id="checkboxDetection" mnemonicParsing="false" selected="true" text="Export results:">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
@@ -261,12 +257,12 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="29.0" prefWidth="210.0">
                                                                                   <children>
-                                                                                      <Button fx:id="launchDetection" cancelButton="true" mnemonicParsing="false" onAction="#startDetection" prefHeight="32.0" prefWidth="71.0" text="Lancer">
+                                                                                      <Button fx:id="launchDetection" cancelButton="true" mnemonicParsing="false" onAction="#startDetection" prefHeight="23.0" prefWidth="59.0" text="Launch">
                                                                                           <font>
                                                                                               <Font size="10.0" />
                                                                                           </font>
                                                                                       </Button>
-                                                                                      <Button fx:id="cancelDetection" mnemonicParsing="false" prefHeight="32.0" prefWidth="76.0" text="Annuler">
+                                                                                      <Button mnemonicParsing="false" onAction="#handleCancelDetection" prefHeight="23.0" prefWidth="56.0" text="Cancel">
                                                                                           <font>
                                                                                               <Font size="10.0" />
                                                                                           </font>
@@ -291,7 +287,7 @@
                                                    <children>
                                                       <VBox alignment="CENTER" layoutX="-36.0" layoutY="-18.0" prefHeight="363.0" prefWidth="246.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <children>
-                                                            <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Calcul d'attributs">
+                                                            <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Attributes calculation:">
                                                                <font>
                                                                   <Font name="System Bold" size="12.0" />
                                                                </font>
@@ -304,18 +300,23 @@
                                                             </HBox>
                                                             <HBox alignment="CENTER_RIGHT" prefHeight="231.0" prefWidth="210.0" spacing="10.0">
                                                                <children>
-                                                                  <Label text="Attributs:" />
+                                                                  <Label text="Attributes:" />
                                                                   <ListView fx:id="listView" minHeight="90.0" prefHeight="231.0" prefWidth="158.0" />
                                                                </children>
                                                             </HBox>
-                                                            <Button fx:id="launchCalculation" mnemonicParsing="false" onAction="#startCalculateAttributes" text="Calculer" />
+                                                            <HBox alignment="CENTER" prefHeight="29.0" prefWidth="227.0" spacing="20.0">
+                                                               <children>
+                                                                  <Button fx:id="launchCalculation" mnemonicParsing="false" onAction="#startCalculateAttributes" text="Calculate" />
+                                                                  <Button mnemonicParsing="false" onAction="#handleCancelCalculate" prefHeight="25.0" prefWidth="58.0" text="Cancel" />
+                                                               </children>
+                                                            </HBox>
                                                          </children>
                                                       </VBox>
                                                    </children>
                                                 </AnchorPane>
                                             </content>
                                           </TitledPane>
-                                                      <TitledPane fx:id="titledpane3" animated="false" text="Identification de l'évolution">
+                                                      <TitledPane fx:id="titledpane3" animated="false" text="Evolution Identification">
                                                           <content>
                                                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                   <children>
@@ -326,7 +327,7 @@
                                                                                       <Font name="System Bold" size="12.0" />
                                                                                   </font>
                                                                               </Label>
-                                                            <Button mnemonicParsing="false" onAction="#browserEvolutionAction" text="Parcourir" />
+                                                            <Button mnemonicParsing="false" onAction="#browserEvolutionAction" text="Browser" />
                                                                               <ComboBox fx:id="comboEvolution" prefHeight="25.0" prefWidth="217.0" />
                                                                               <HBox alignment="CENTER_RIGHT" spacing="5.0">
                                                                                   <children>
@@ -344,7 +345,7 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER_RIGHT" spacing="5.0">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="77.0" text="Paramètres (';'):">
+                                                                                      <Label alignment="CENTER" prefHeight="25.0" prefWidth="77.0" text="Parameter (';'):">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
@@ -354,17 +355,17 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                                                                   <children>
-                                                                                      <CheckBox fx:id="exportDetectionResults" mnemonicParsing="false" selected="true" text="Exporter les résultats" />
+                                                                                      <CheckBox fx:id="exportDetectionResults" mnemonicParsing="false" selected="true" text="Export results" />
                                                                                   </children>
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="31.0" prefWidth="171.0">
                                                                                   <children>
-                                                                                      <Button fx:id="launchEvolution" disable="true" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="69.0" text="Lancer">
+                                                                                      <Button fx:id="launchEvolution" disable="true" mnemonicParsing="false" onAction="#startEvolution" prefHeight="32.0" prefWidth="69.0" text="Launch">
                                                                                           <font>
                                                                                               <Font size="10.0" />
                                                                                           </font>
                                                                                       </Button>
-                                                                                      <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="76.0" text="Annuler">
+                                                                                      <Button mnemonicParsing="false" onAction="#handleCancelIdentification" prefHeight="32.0" prefWidth="76.0" text="Cancel">
                                                                                           <font>
                                                                                               <Font size="10.0" />
                                                                                           </font>
@@ -389,31 +390,37 @@
                                                                   <children>
                                                                       <VBox alignment="TOP_CENTER" layoutX="13.0" layoutY="14.0" prefHeight="347.0" prefWidth="210.0" spacing="10.0">
                                                                           <children>
-                                                            <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Prédiction">
+                                                            <Label alignment="CENTER" prefHeight="20.0" prefWidth="182.0" text="Prediction">
                                                                <font>
                                                                   <Font name="System Bold" size="12.0" />
                                                                </font>
                                                             </Label>
-                                                            <Button mnemonicParsing="false" onAction="#browserPredictionAction" text="Parcourir" />
+                                                            <Button mnemonicParsing="false" onAction="#browserPredictionAction" text="Browser" />
                                                             <HBox alignment="CENTER_RIGHT">
                                                                <children>
-                                                                  <Label alignment="CENTER" prefHeight="25.0" prefWidth="118.0" text="Longueur de chaine: ">
+                                                                  <Label alignment="CENTER" prefHeight="25.0" prefWidth="82.0" text="Chain length:">
                                                                      <font>
                                                                         <Font size="11.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <Spinner fx:id="chainLength" prefHeight="30.0" prefWidth="99.0" />
+                                                                  <Spinner fx:id="chainLength" editable="true" prefHeight="25.0" prefWidth="117.0" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER" prefHeight="15.0" prefWidth="227.0" spacing="15.0">
+                                                               <children>
+                                                                  <Button mnemonicParsing="false" onAction="#selectAllAttributesPrediction" text="Select All" />
+                                                                  <Button mnemonicParsing="false" onAction="#deselectAllAttributesPrediction" text="Deselect all" />
                                                                </children>
                                                             </HBox>
                                                                               <HBox alignment="CENTER_RIGHT" prefHeight="231.0" prefWidth="210.0" spacing="10.0">
                                                                                   <children>
-                                                                                      <Label text="Attributs:" />
+                                                                                      <Label text="Attributes:" />
                                                                                       <ListView fx:id="listViewAttributes" minHeight="90.0" prefHeight="90.0" prefWidth="143.0" />
                                                                                   </children>
                                                                               </HBox>
                                                             <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
                                                                <children>
-                                                                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="122.0" text="Sélection d'attributs">
+                                                                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="122.0" text="Attributes selection:">
                                                                      <font>
                                                                         <Font size="11.0" />
                                                                      </font>
@@ -423,7 +430,7 @@
                                                             </HBox>
                                                             <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
                                                                <children>
-                                                                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="161.0" text="Méthodes de recherche:">
+                                                                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="144.0" text="Search method:">
                                                                      <font>
                                                                         <Font size="11.0" />
                                                                      </font>
@@ -433,7 +440,7 @@
                                                             </HBox>
                                                             <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
                                                                <children>
-                                                                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="161.0" text="Méthodes dévaluation:">
+                                                                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="142.0" text="Evaluation method:">
                                                                      <font>
                                                                         <Font size="11.0" />
                                                                      </font>
@@ -443,7 +450,7 @@
                                                             </HBox>
                                                                               <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0">
                                                                                   <children>
-                                                                                      <Label alignment="CENTER" prefHeight="20.0" prefWidth="161.0" text="Classificateur:">
+                                                                                      <Label alignment="CENTER" prefHeight="20.0" prefWidth="161.0" text="Classifier:">
                                                                                           <font>
                                                                                               <Font size="11.0" />
                                                                                           </font>
@@ -453,17 +460,17 @@
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="23.0" prefWidth="210.0">
                                                                                   <children>
-                                                                                      <CheckBox mnemonicParsing="false" text="Exporter les résultats" />
+                                                                                      <CheckBox fx:id="checkEvaluationReport" mnemonicParsing="false" text="Evaluation report" />
                                                                                   </children>
                                                                               </HBox>
                                                                               <HBox alignment="CENTER" prefHeight="15.0" prefWidth="210.0">
                                                                                   <children>
-                                                                                      <Button fx:id="launchPrediction" disable="true" mnemonicParsing="false" onAction="#startPrediction" prefHeight="32.0" prefWidth="74.0" text="Lancer">
+                                                                                      <Button fx:id="launchPrediction" disable="true" mnemonicParsing="false" onAction="#startPrediction" prefHeight="32.0" prefWidth="74.0" text="Launch">
                                                                                           <font>
                                                                                               <Font size="10.0" />
                                                                                           </font>
                                                                                       </Button>
-                                                                                      <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="74.0" text="Annuler">
+                                                                                      <Button mnemonicParsing="false" onAction="#handleCancelPrediction" prefHeight="32.0" prefWidth="74.0" text="Cancel">
                                                                                           <font>
                                                                                               <Font size="10.0" />
                                                                                           </font>
@@ -505,20 +512,21 @@
                                   <items>
                                       <AnchorPane maxHeight="50.0" minHeight="40.0" minWidth="0.0" prefHeight="40.0" prefWidth="538.0">
                                           <children>
-                                    <HBox layoutX="379.0" layoutY="13.0" spacing="10.0" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="36.0" AnchorPane.topAnchor="13.0">
+                                    <HBox layoutX="391.0" layoutY="13.0" spacing="10.0" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="13.0">
                                        <children>
-                                                    <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Annuler" />
-                                                    <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startAll" style="color: ;" text="Lancer" textAlignment="CENTER" />
+                                                    <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
+                                                    <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startAll" style="color: ;" text="Launch" textAlignment="CENTER" />
                                        </children>
                                     </HBox>
-                                    <HBox alignment="CENTER" layoutY="10.0" prefHeight="20.0" prefWidth="181.0" spacing="10.0">
+                                    <HBox alignment="CENTER" layoutX="7.0" layoutY="11.0" prefHeight="25.0" prefWidth="284.0" spacing="10.0">
                                        <children>
-                                          <Button minWidth="20.0" mnemonicParsing="false" onAction="#visualizeFile" prefHeight="27.0" prefWidth="70.0" text="Visualiser">
+                                          <Button minWidth="20.0" mnemonicParsing="false" onAction="#visualizeFile" prefHeight="27.0" prefWidth="70.0" text="Visualize">
                                              <HBox.margin>
                                                 <Insets />
                                              </HBox.margin>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#selectAttributes" prefHeight="25.0" prefWidth="64.0" text="Attributs" />
+                                          <Button mnemonicParsing="false" onAction="#selectAttributes" prefHeight="25.0" prefWidth="70.0" text="Attributes" />
+                                          <RadioButton fx:id="radioLogFile" mnemonicParsing="false" text="Generate Log file" />
                                        </children>
                                     </HBox>
                                           </children>
@@ -531,7 +539,7 @@
                                              <children>
                                                 <TabPane fx:id="tabPaneVisible" layoutX="34.0" layoutY="-61.0" prefHeight="390.0" prefWidth="536.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <tabs>
-                                                      <Tab text="Source de données">
+                                                      <Tab text="Dataset">
                                                          <content>
                                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                <children>
@@ -540,7 +548,7 @@
                                                             </AnchorPane>
                                                          </content>
                                                       </Tab>
-                                                      <Tab text="Communautés">
+                                                      <Tab text="Communities">
                                                          <content>
                                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                <children>
@@ -566,7 +574,7 @@
                                                             </AnchorPane>
                                                          </content>
                                                       </Tab>
-                                                      <Tab text="Identification de l'évolution">
+                                                      <Tab text="Evolution Identification">
                                                          <content>
                                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                <children>
@@ -575,7 +583,7 @@
                                                             </AnchorPane>
                                                          </content>
                                                       </Tab>
-                                                      <Tab text="Prédiction">
+                                                      <Tab text="Prediction">
                                                          <content>
                                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                <children>

@@ -19,13 +19,18 @@ public class SampleXML extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLDocument.fxml"));
+        Parent root = (Parent) loader.load();
+
+        FXMLDocumentController controller = (FXMLDocumentController) loader.getController();
+        controller.setStageAndSetupListeners(stage); // or what you want to do
 
         Scene scene = new Scene(root);
         //scene.getStylesheets().add("C:\\Users\\ado_k\\Desktop\\11.css");
 
         stage.setScene(scene);
-        stage.setTitle("Application");
+        stage.setTitle("EPrediction");
         stage.setMinHeight(600);
         stage.setMinWidth(800);
         stage.show();
