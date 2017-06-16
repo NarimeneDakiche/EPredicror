@@ -1778,34 +1778,33 @@ public class FXMLDocumentController implements Initializable {
          }));*/
 
         /*listView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
-            @Override
-            public ObservableValue<Boolean> call(String item) {
-                BooleanProperty observable = new SimpleBooleanProperty();
-                /*for (int i = 0; i < selectedAttributes.size(); i++) {
-                 if (item.equals(selectedAttributes.get(i))) {
-                 observable.set(true);
-                 }
-                 }*/
-                /*observable.addListener((obs, wasSelected, isNowSelected) -> {
-                    if (isNowSelected) {
-                        if (!observableListAttibutes.contains(item)) {
-                            observableListAttibutes.add(item);
-                        }
-                    } else {
-                        if (observableListAttibutes.contains(item)) {
-                            observableListAttibutes.remove(item);
-                        }
-                    }
-                    System.out.println(observableListAttibutes.size());
+         @Override
+         public ObservableValue<Boolean> call(String item) {
+         BooleanProperty observable = new SimpleBooleanProperty();
+         /*for (int i = 0; i < selectedAttributes.size(); i++) {
+         if (item.equals(selectedAttributes.get(i))) {
+         observable.set(true);
+         }
+         }*/
+        /*observable.addListener((obs, wasSelected, isNowSelected) -> {
+         if (isNowSelected) {
+         if (!observableListAttibutes.contains(item)) {
+         observableListAttibutes.add(item);
+         }
+         } else {
+         if (observableListAttibutes.contains(item)) {
+         observableListAttibutes.remove(item);
+         }
+         }
+         System.out.println(observableListAttibutes.size());
 
-                });
-                observable.set(observableListAttibutes.contains(item));
-                observableListAttibutes.addListener((ListChangeListener.Change<? extends String> c)
-                        -> observable.set(observableListAttibutes.contains(item)));
-                return observable;
-            }
-        }));*/
-
+         });
+         observable.set(observableListAttibutes.contains(item));
+         observableListAttibutes.addListener((ListChangeListener.Change<? extends String> c)
+         -> observable.set(observableListAttibutes.contains(item)));
+         return observable;
+         }
+         }));*/
         // VBox
         VBox vb = new VBox();
         vb.setPadding(new Insets(10, 30, 30, 30));
