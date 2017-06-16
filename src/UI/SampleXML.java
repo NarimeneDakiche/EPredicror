@@ -30,8 +30,8 @@ public class SampleXML extends Application {
         //scene.getStylesheets().add("C:\\Users\\ado_k\\Desktop\\11.css");
 
         stage.setScene(scene);
-        stage.setTitle("EPrediction");
-        stage.setMinHeight(600);
+        stage.setTitle("EPredictor");
+        stage.setMinHeight(650);
         stage.setMinWidth(800);
         stage.show();
 

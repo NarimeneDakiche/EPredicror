@@ -344,6 +344,14 @@ public class FXMLDocumentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        Path path = Paths.get(directoryPath);
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         radioLogFile.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -1769,7 +1777,7 @@ public class FXMLDocumentController implements Initializable {
          }
          }));*/
 
-        listView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
+        /*listView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
             @Override
             public ObservableValue<Boolean> call(String item) {
                 BooleanProperty observable = new SimpleBooleanProperty();
@@ -1778,7 +1786,7 @@ public class FXMLDocumentController implements Initializable {
                  observable.set(true);
                  }
                  }*/
-                observable.addListener((obs, wasSelected, isNowSelected) -> {
+                /*observable.addListener((obs, wasSelected, isNowSelected) -> {
                     if (isNowSelected) {
                         if (!observableListAttibutes.contains(item)) {
                             observableListAttibutes.add(item);
@@ -1796,7 +1804,7 @@ public class FXMLDocumentController implements Initializable {
                         -> observable.set(observableListAttibutes.contains(item)));
                 return observable;
             }
-        }));
+        }));*/
 
         // VBox
         VBox vb = new VBox();
@@ -1815,7 +1823,7 @@ public class FXMLDocumentController implements Initializable {
         Scene scene = new Scene(vb, 300, 400);
         Stage dialog = new Stage();
         dialog.setTitle("Attributes");
-        dialog.initOwner((Stage) launchPrediction.getScene().getWindow());
+        dialog.initOwner(primaryStage);
         dialog.setScene(scene);
 
         dialog.show();
