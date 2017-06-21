@@ -122,9 +122,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javax.swing.JComponent;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.swingViewer.ViewPanel;
+import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.openide.util.Exceptions;
 //import org.openide.util.Exceptions;
@@ -342,6 +344,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private CheckBox checkEvaluationReport;
 
+//    private boolean segCorrectlyExecuted, commCorrectlyExecuted, calCorrectlyExecuted, evolCorrectlyExecuted, predCorrectlyExecuted;
+//    segCorrectlyExecuted  = commCorrectlyExecuted = calCorrectlyExecuted = evolCorrectlyExecuted = predCorrectlyExecuted = false;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Path path = Paths.get(directoryPath);
@@ -628,8 +632,20 @@ public class FXMLDocumentController implements Initializable {
                             String label = "id";
                             prefuse.data.Graph g = graphToGraph(go, label);
                             //pane.setAutosizeChildren(false);
+                            System.out.println(g.getNodeCount() + ";" + g.getEdgeCount());
                             swingNode.setContent(demoComp(g, label));
                         } catch (NumberFormatException | NullPointerException e) {
+                            try {
+                                indexSnap = Integer.parseInt(selectedItem.getValue().replaceAll("[^0-9]", "")) - 1;
+                                Graph go = dynamicNetwork.get(indexSnap).getTimGraph();
+                                Viewer viewer = new Viewer(go, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+                                viewer.enableAutoLayout();
+                                View view = viewer.addDefaultView(false);   // false indicates "no JFrame".
+
+                                swingNode.setContent((JComponent) view);
+                            } catch (NumberFormatException | NullPointerException e2) {
+                               // e2.printStackTrace();
+                            }
                         }
                     }
 
@@ -1876,6 +1892,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     void visualizeFile(ActionEvent event) throws FileNotFoundException, IOException, ParseException {
+
         //filePath
         /**
          * .getSplitSnapshots(overlapping, filePath, nbSnapshots,
@@ -1884,57 +1901,66 @@ public class FXMLDocumentController implements Initializable {
          * splitExportName.getText(), false,
          * checkboxSplitMultiExpogrt.isSelected());*
          */
-        Task<Void> task = new Task<Void>() {
-            @Override
-            public Void call() throws Exception {
-                try {
+        try {
+            Task<Void> task = new Task<Void>() {
+                @Override
+                public Void call() throws Exception {
+
+                    FileInputStream stream;
+                    List<Integer> counters;
+                    File f;
                     String dataStructure = comboStructDonnees.getSelectionModel().getSelectedItem();
 
                     MyResult myResult = new MyResult();
                     myResult.getResults(filePath, timeFormatCombo.getValue(), dataStructure);
 
                     //System.out.println("File read successfully");
-                    FileInputStream stream = new FileInputStream(new File(filePath));
+                    f = new File(filePath);
 
-                    List<Integer> counters = new ArrayList<Integer>();
-                    int number = 500;
-                    for (int i = 0; i < number; i++) {
-                        counters.add(0);
-                    }
-
-                    BufferedReader br = new BufferedReader(new FileReader(file));
-                    String sCurrentLine;
-                    String[] splitContent;
-                    String v, w;
-                    long timestamp;
-                    while ((sCurrentLine = br.readLine()) != null) {
-                        if (sCurrentLine.charAt(0) != '%' && sCurrentLine.charAt(0) != '#') {
-                            splitContent = splitInput(sCurrentLine);
-                            v = splitContent[dataStructure.indexOf("V")];
-                            w = splitContent[dataStructure.indexOf("W")];
-                            timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
-                            //System.out.println(TimeLength.timestampToDate(timestamp));
-                            int step = (int) ((myResult.getMaxTS() - myResult.getMinTS()) / number);
-                            // System.out.println(duration.getSeconds()+" "+step);
-                            int index = (int) ((timestamp - myResult.getMinTS()) / step);
-                            if (index == number) {
-                                index--;
+                    if (f != null) {
+                        stream = new FileInputStream(f);
+                        counters = new ArrayList<Integer>();
+                        int number = 500;
+                        for (int i = 0; i < number; i++) {
+                            counters.add(0);
+                        }
+                        if (file != null) {
+                            BufferedReader br = new BufferedReader(new FileReader(file));
+                            String sCurrentLine;
+                            String[] splitContent;
+                            String v, w;
+                            long timestamp;
+                            while ((sCurrentLine = br.readLine()) != null) {
+                                if (sCurrentLine.charAt(0) != '%' && sCurrentLine.charAt(0) != '#') {
+                                    splitContent = splitInput(sCurrentLine);
+                                    v = splitContent[dataStructure.indexOf("V")];
+                                    w = splitContent[dataStructure.indexOf("W")];
+                                    timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
+                                    //System.out.println(TimeLength.timestampToDate(timestamp));
+                                    int step = (int) ((myResult.getMaxTS() - myResult.getMinTS()) / number);
+                                    // System.out.println(duration.getSeconds()+" "+step);
+                                    int index = (int) ((timestamp - myResult.getMinTS()) / step);
+                                    if (index == number) {
+                                        index--;
+                                    }
+                                    //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
+                                    //        + index);
+                                    counters.set(index, counters.get(index) + 1);
+                                }
                             }
-                            //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
-                            //        + index);
-                            counters.set(index, counters.get(index) + 1);
                         }
-                    }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            //tabPaneResults.getSelectionModel().select(1);
-                            tabPaneVisible.getSelectionModel().select(0);
-                            paneVisualize.getChildren().clear();
 
-                            paneVisualize.getChildren().add(createChart(counters, number, myResult));
-                        }
-                    });
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                //tabPaneResults.getSelectionModel().select(1);
+                                tabPaneVisible.getSelectionModel().select(0);
+                                paneVisualize.getChildren().clear();
+
+                                paneVisualize.getChildren().add(createChart(counters, number, myResult));
+                            }
+                        });
+                    }
 
                     /*for (int i : counters) {
                      System.out.println(i);
@@ -1943,23 +1969,23 @@ public class FXMLDocumentController implements Initializable {
            /* Stage primaryStage = new Stage();
                      primaryStage.setScene(new Scene(root*/
                     //primaryStage.show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Information Dialog");
-                    alert.setHeaderText("Incomplete entry");
-                    alert.setContentText("Please make sure to enter the file and data structure correctly");
-
-                    alert.showAndWait();
+                    return null;
                 }
-                return null;
-            }
-        };
-        task.setOnSucceeded(e -> {
-            launchCalculation.setDisable(false);
-            stopProgressBar();
-        });
-        new Thread(task).start();
+            };
+            task.setOnSucceeded(e -> {
+                launchCalculation.setDisable(false);
+                stopProgressBar();
+            });
+            new Thread(task).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.setHeaderText("Incomplete entry");
+            alert.setContentText("Please make sure to enter the file and data structure correctly");
+
+            alert.showAndWait();
+        }
     }
 
     protected BarChart<String, Number> createChart(List<Integer> counters, int number, MyResult myResult) {
