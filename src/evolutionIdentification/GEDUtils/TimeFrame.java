@@ -145,8 +145,7 @@ public class TimeFrame {
 
                 n.setAttribute("ui.style", "shape:pie-chart;fill-color:" + getColorsRGB(nbComm));
                 n.setAttribute("ui.pie-values", getColors(nbComm.size()));
-                System.out.println(getColorsRGB(nbComm) + "+" + getColors(nbComm.size()));
-
+                //System.out.println(getColorsRGB(nbComm) + "+" + getColors(nbComm.size())); 
                 // System.out.println("Nodes added: "+node.getId());
             }
             for (Edge edge : com.getEdgeSet()) {

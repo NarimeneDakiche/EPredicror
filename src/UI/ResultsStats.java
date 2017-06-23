@@ -15,6 +15,7 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.Chart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.image.WritableImage;
 import javax.imageio.ImageIO;
@@ -37,36 +38,57 @@ public class ResultsStats {
     private double averageClusteringCoeff;
 //    private String diameter;
 
-    private String distribution;
+    private String distribution; /*PNG Distribution file name; Equals "" if the file wasn't generated.*/
 
     private int totalNbCommunities;
     private double averageNbCommunitiesPerSnap;
     private double averageCommSize;
 
-    private String evolutionResults;
+    private String evolutionResults;  /*PNG Evolution results file name; Equals "" if the file wasn't generated.*/
 
     private String predictionResults;
 
-    public void saveAsPng(BarChart barChart, PieChart pieChart) {
+    /*public void saveAsPng(BarChart barChart, PieChart pieChart) {
+     try {
+     WritableImage image = barChart.snapshot(new SnapshotParameters(), null);
+     // TODO: probably use a file chooser here
+     File file = new File("barchart.png");
+
+     ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+     } catch (IOException e) {
+     // TODO: handle exception here
+     //e.printStackTrace();
+     } catch (NullPointerException e) {
+
+     }
+     try {
+     WritableImage image = barChart.snapshot(new SnapshotParameters(), null);
+     image = pieChart.snapshot(new SnapshotParameters(), null);
+     // TODO: probably use a file chooser here
+     File file = new File("pieChart.png");
+     ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+     } catch (IOException e) {
+     //e.printStackTrace();
+     // TODO: handle exception here
+
+     } catch (NullPointerException e) {
+
+     }
+     }*/
+    public String saveAsPng(Chart chart, String pngName) {
         try {
-            WritableImage image = barChart.snapshot(new SnapshotParameters(), null);
+            WritableImage image = chart.snapshot(new SnapshotParameters(), null);
             // TODO: probably use a file chooser here
-            File file = new File("barchart.png");
+            File file = new File(pngName);
 
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+            return pngName;
         } catch (IOException e) {
             // TODO: handle exception here
             //e.printStackTrace();
-        }
-        try {
-            WritableImage image = barChart.snapshot(new SnapshotParameters(), null);
-            image = pieChart.snapshot(new SnapshotParameters(), null);
-            // TODO: probably use a file chooser here
-            File file = new File("pieChart.png");
-            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
-        } catch (IOException e) {
-            //e.printStackTrace();
-            // TODO: handle exception here
+            return "";
+        } catch (NullPointerException e) {
+            return "";
         }
     }
 
@@ -112,9 +134,8 @@ public class ResultsStats {
         this.maxDegree = maxDegree;
         //this.diameter = diameter;
 
-        saveAsPng(barChart, pieChart);
-        this.distribution = "barchart.png";
-        this.evolutionResults = "pieChart.png";
+        this.distribution = saveAsPng(barChart, "barchart.png");
+        this.evolutionResults = saveAsPng(barChart, "pieChart.png");
 
         List<Integer> size = new ArrayList<Integer>();
         List<Integer> nbCommPerSnap = new ArrayList<Integer>();

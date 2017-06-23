@@ -97,6 +97,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
@@ -130,7 +131,6 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
-import org.jfree.data.contour.ContourDataset;
 import org.openide.util.Exceptions;
 //import org.openide.util.Exceptions;
 import static prefuse.demos.AggregateDemo.demoComp;
@@ -261,6 +261,15 @@ public class FXMLDocumentController implements Initializable {
     private Button launchSplit;
 
     @FXML
+    private Button buttonEReport;
+
+    @FXML
+    private MenuItem menuItemEReport;
+
+    @FXML
+    private MenuItem menuItemClose;
+
+    @FXML
     private Button launchDetection;
 
     @FXML
@@ -350,9 +359,8 @@ public class FXMLDocumentController implements Initializable {
 
     String predictionResults = "";
 
-    @FXML
-    private CheckBox checkEvaluationReport;
-
+//    @FXML
+//    private CheckBox checkEvaluationReport;
 //    private boolean segCorrectlyExecuted, commCorrectlyExecuted, calCorrectlyExecuted, evolCorrectlyExecuted, predCorrectlyExecuted;
 //    segCorrectlyExecuted  = commCorrectlyExecuted = calCorrectlyExecuted = evolCorrectlyExecuted = predCorrectlyExecuted = false;
     @Override
@@ -651,7 +659,6 @@ public class FXMLDocumentController implements Initializable {
                                 Viewer viewer = new Viewer(go, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
                                 viewer.enableAutoLayout();
                                 View view = viewer.addDefaultView(false);   // false indicates "no JFrame".
-
                                 swingNode.setContent((JComponent) view);
                             } catch (NumberFormatException | NullPointerException e2) {
                                 // e2.printStackTrace();
@@ -1318,7 +1325,7 @@ public class FXMLDocumentController implements Initializable {
                     // System.out.println("\n");
                     if (checkboxDetection.isSelected()) {
                         try {
-                            writeLog("Export of results of snapshot " + i + "...");
+                            writeLog("Exporting results of snapshot " + i + "...");
                             exportCommunity(dynamicNetwork.get(dynamicNetwork.size() - 1), totalPath + "detection_" + comboDetection.getSelectionModel().getSelectedItem() + "_" + snipperDetection.getValue() + ".txt", i);
                             writeLogLn("done");
                         } catch (IOException ex) {
@@ -1639,6 +1646,7 @@ public class FXMLDocumentController implements Initializable {
             visualizeIdentificationResults(mapIdentification);
             stopProgressBar();
             launchPrediction.setDisable(false);
+            launchEvolution.setDisable(false);
             //tabPaneResults.getSelectionModel().select(1);
             tabPaneVisible.getSelectionModel().select(2);
             //paneVisualize.getChildren().clear();        
@@ -1700,6 +1708,10 @@ public class FXMLDocumentController implements Initializable {
                 }
                 writeResultsLn("############################################################################");
                 writeLogLn("Prediction done.");
+
+                buttonEReport.setDisable(false);
+                menuItemEReport.setDisable(false);
+
                 printlnResultsFile("resultats.txt", "Prediction done.");
                 stopProgressBar();
                 return null;
@@ -2355,6 +2367,21 @@ public class FXMLDocumentController implements Initializable {
                 comboClassifier.getValue(),
                 "k-fold cross-validation",
                 Integer.toString(10));
+    }
+
+    @FXML
+    private void handleAbout(ActionEvent event) {
+
+    }
+
+    @FXML
+    private void handleReset(ActionEvent event) {
+
+    }
+
+    @FXML
+    private void handleClose(ActionEvent event) {
+
     }
 
 }
