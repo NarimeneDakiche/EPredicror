@@ -32,7 +32,9 @@ public class SampleXML extends Application {
         stage.setScene(scene);
         stage.setTitle("EPredictor");
         stage.setMinHeight(650);
+        stage.setHeight(650);
         stage.setMinWidth(800);
+        stage.setWidth(800);
         stage.show();
 
     }

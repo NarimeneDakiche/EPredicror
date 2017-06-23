@@ -6,6 +6,7 @@
 package Prediction;
 
 import UI.PModel;
+import UI.ResultsStats;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
@@ -314,7 +315,7 @@ public class EvaluationReport implements java.io.Serializable {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public void saveReportTextPDF(String filename, PModel pModel) {
+    public void saveReportTextPDF(String filename, PModel pModel, ResultsStats rs) {
         try {
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream(filename));

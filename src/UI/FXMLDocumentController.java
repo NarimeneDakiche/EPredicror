@@ -74,12 +74,14 @@ import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -112,7 +114,6 @@ import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -120,6 +121,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javax.swing.JComponent;
@@ -128,6 +130,7 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
+import org.jfree.data.contour.ContourDataset;
 import org.openide.util.Exceptions;
 //import org.openide.util.Exceptions;
 import static prefuse.demos.AggregateDemo.demoComp;
@@ -225,6 +228,10 @@ public class FXMLDocumentController implements Initializable {
     private boolean exists;
 
     private int indexGraph;
+
+    private BarChart distBarChart;
+
+    private PieChart evolPieChart;
 
     private Viewer viewer;
 
@@ -340,6 +347,8 @@ public class FXMLDocumentController implements Initializable {
     private EvaluationReport eReport;
 
     Stage primaryStage;
+
+    String predictionResults = "";
 
     @FXML
     private CheckBox checkEvaluationReport;
@@ -579,7 +588,8 @@ public class FXMLDocumentController implements Initializable {
                 .select("GED");
 
         comboClassifier.getItems()
-                .addAll("naiveBayes", "bayesNet", "decisionTree", "svm", "randomForest", "decisionStump", "perceptron", "logisticRegression");
+                .addAll("naiveBayes", "bayesNet", "decisionTree", "svm", "randomForest", "decisionStump", "perceptron", "logisticRegression", "randomTree", "iBk",
+                        "oneR", "bagging");
         comboClassifier.getSelectionModel()
                 .select("decisionTree");
 
@@ -644,7 +654,7 @@ public class FXMLDocumentController implements Initializable {
 
                                 swingNode.setContent((JComponent) view);
                             } catch (NumberFormatException | NullPointerException e2) {
-                               // e2.printStackTrace();
+                                // e2.printStackTrace();
                             }
                         }
                     }
@@ -1113,6 +1123,8 @@ public class FXMLDocumentController implements Initializable {
                         throw new IllegalArgumentException("Entry error (snapshots number or durations must be entered)");
                     }
                 }
+                writeLogLn("Split done. Writing done. " + nbSnapshots + " snapshots created");
+
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -1120,7 +1132,6 @@ public class FXMLDocumentController implements Initializable {
             ex.printStackTrace();
         }
 
-        writeLogLn("Split done. Writing done.");
         if (checkboxSplitMultiExport.isSelected()) {
             launchSplit.setDisable(false);
             directlyDetection = false;
@@ -1667,17 +1678,21 @@ public class FXMLDocumentController implements Initializable {
                     eReport = PredictionUtils.makePredictor(comboSelectionAttributes.getSelectionModel().getSelectedItem(),
                             comboSearchMethod.getSelectionModel().getSelectedItem(), comboEvaluationMethod.getSelectionModel().getSelectedItem(),
                             comboClassifier.getSelectionModel().getSelectedItem(), null, filePathPrediction, 10);
+                    predictionResults = "";
 
                     writeResultsLn(eReport.getSummary());
+                    predictionResults += eReport.getSummary() + "\n";
 
-                    printInReultsFile("resultats.txt", eReport.getSummary());
+                    printlnResultsFile("resultats.txt", eReport.getSummary());
 
                     writeResultsLn(eReport.getDetailedAccuracy());
-                    printInReultsFile("resultats.txt", eReport.getDetailedAccuracy());
+                    printlnResultsFile("resultats.txt", eReport.getDetailedAccuracy());
+                    predictionResults += eReport.getDetailedAccuracy() + "\n";
 
                     for (String str : eReport.getConfusionMatrix()) {
                         writeResultsLn(str);
-                        printInReultsFile("resultats.txt", str);
+                        printlnResultsFile("resultats.txt", str);
+                        predictionResults += str + "\n";
                     }
 
                 } catch (Exception ex) {
@@ -1685,12 +1700,12 @@ public class FXMLDocumentController implements Initializable {
                 }
                 writeResultsLn("############################################################################");
                 writeLogLn("Prediction done.");
-                printInReultsFile("resultats.txt", "Prediction done.");
+                printlnResultsFile("resultats.txt", "Prediction done.");
                 stopProgressBar();
                 return null;
             }
 
-            private void printInReultsFile(String exportName, String stringToWrite) throws IOException {
+            private void printlnResultsFile(String exportName, String stringToWrite) throws IOException {
                 //private void exportCommunity(TimeFrame tf, String exportName, int snp) throws IOException {
                 //BufferedWriter writer = new BufferedWriter(new FileWriter(exportName));
 
@@ -1956,8 +1971,9 @@ public class FXMLDocumentController implements Initializable {
                                 //tabPaneResults.getSelectionModel().select(1);
                                 tabPaneVisible.getSelectionModel().select(0);
                                 paneVisualize.getChildren().clear();
-
-                                paneVisualize.getChildren().add(createChart(counters, number, myResult));
+                                distBarChart = createChart(counters, number, myResult);
+                                System.out.println("distBarChart" + (distBarChart == null));
+                                paneVisualize.getChildren().add(distBarChart);
                             }
                         });
                     }
@@ -2073,7 +2089,7 @@ public class FXMLDocumentController implements Initializable {
         }
         ObservableList<PieChart.Data> pieChartData
                 = FXCollections.observableArrayList(list);
-        final PieChart chart = new PieChart(pieChartData);
+        evolPieChart = new PieChart(pieChartData);
         pieChartData.forEach(data
                 -> data.nameProperty().bind(
                         Bindings.concat(
@@ -2099,9 +2115,9 @@ public class FXMLDocumentController implements Initializable {
                 tt.play();
             });
         });
-        chart.setTitle("Identified events");
+        evolPieChart.setTitle("Identified events");
         paneVisualizeIdent.getChildren().clear();
-        paneVisualizeIdent.getChildren().add(chart);
+        paneVisualizeIdent.getChildren().add(evolPieChart);
     }
 
     @FXML
@@ -2163,7 +2179,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void handleExportPModel(ActionEvent event) throws FileNotFoundException, IOException {
-
+        prepareModel();
         FileChooser fileChooser = new FileChooser();
 
         //Set extension filter
@@ -2176,8 +2192,6 @@ public class FXMLDocumentController implements Initializable {
         File file = fileChooser.showSaveDialog(primaryStage);
 
         if (file != null) {
-            prepareModel();
-
             FileOutputStream fos = new FileOutputStream(file.getAbsoluteFile());
             BufferedOutputStream bos = new BufferedOutputStream(fos);
             ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -2233,23 +2247,90 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void handleExportEReport(ActionEvent event) {
         try {
-            FileChooser fileChooser = new FileChooser();
-            //Set extension filter
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Evaluation report", "*.pdf");
-            fileChooser.getExtensionFilters().add(extFilter);
-            fileChooser.setTitle("Evaluation report export");
-            String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
-            fileChooser.setInitialDirectory(new File(currentPath));
-            //Show save file dialog
-            File file = fileChooser.showSaveDialog(primaryStage);
+            Benchmark tempBench = new Benchmark();
+            boolean okClicked = showPersonEditDialog(tempBench);
+            if (okClicked) {
+                ResultsStats rs = new ResultsStats();
+                rs.setDescription(tempBench.getDescription());
+                rs.setLinkReference(tempBench.getSourceLink());
 
-            if (file != null) {
-                prepareModel();
-                eReport.saveReportTextPDF(file.getAbsolutePath(), pModel);
+                rs.setResults(dynamicNetwork, distBarChart, evolPieChart, predictionResults);
+                //System.out.println("RS ready");
+
+                FileChooser fileChooser = new FileChooser();
+                //Set extension filter
+                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Evaluation report", "*.pdf");
+                fileChooser.getExtensionFilters().add(extFilter);
+                fileChooser.setTitle("Evaluation report export");
+                String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+                fileChooser.setInitialDirectory(new File(currentPath));
+                //Show save file dialog
+                File file = fileChooser.showSaveDialog(primaryStage);
+                if (file != null) {
+                    prepareModel();
+                    //System.out.println((file == null) + " " + (pModel == null) + (rs == null) + " ");
+                    eReport.saveReportTextPDF(file.getAbsolutePath(), pModel, rs);
+                }
+                writeLogLn("PDF Evaluation report is exported");
+                System.out.println("rs:" + rs.toString());
+                System.out.println("pModel:" + pModel.toString());
+
+                //deleting the exported pictures
+                try {
+
+                    File fileIm1 = new File("pieChart.png");
+                    File fileIm2 = new File("barchart.png");
+
+                    if (fileIm1.delete()) {
+                        System.out.println(fileIm1.getName() + " is deleted!");
+                    } else {
+                        System.out.println("Delete operation is failed.");
+                    }
+
+                    if (fileIm2.delete()) {
+                        System.out.println(fileIm1.getName() + " is deleted!");
+                    } else {
+                        System.out.println("Delete operation is failed.");
+                    }
+
+                } catch (Exception e) {
+
+                }
             }
-            writeLogLn("PDF Evaluation report is exported");
-        } catch (Exception e) {
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean showPersonEditDialog(Benchmark bench) {
+        try {
+
+            // Load the fxml file and create a new stage for the popup
+            Stage dialogStage = new Stage();
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("dialog.fxml"));
+            Parent root = (Parent) loader.load();
+
+            DialogTestController controller = (DialogTestController) loader.getController();
+
+            Scene scene = new Scene(root);
+
+            dialogStage.setScene(scene);
+            dialogStage.setTitle("Dataset info");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            controller.setBench(bench);
+            controller.setDialogStage(dialogStage);
+
+            dialogStage.showAndWait();
+
+            return controller.isOkClicked();
+
+        } catch (IOException e) {
+            // Exception gets thrown if the fxml file could not be loaded
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -2275,4 +2356,5 @@ public class FXMLDocumentController implements Initializable {
                 "k-fold cross-validation",
                 Integer.toString(10));
     }
+
 }

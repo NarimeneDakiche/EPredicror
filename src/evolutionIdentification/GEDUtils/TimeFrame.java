@@ -15,7 +15,7 @@ import org.graphstream.graph.implementations.*;
  */
 public class TimeFrame {
 
-    Graph timGraph = new SingleGraph("TimeFrame");
+    Graph timGraph;
     List<Graph> communities = new ArrayList<>();
 
     public TimeFrame(Graph timGraph) {
@@ -43,6 +43,8 @@ public class TimeFrame {
      */
     public TimeFrame(LinkedList<Graph> communities) {
         setCommunities(communities);
+        System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+        this.timGraph = new SingleGraph("TimeFrame");
         this.timGraph.setStrict(false);
         this.timGraph.setAutoCreate(true);
 
@@ -85,9 +87,9 @@ public class TimeFrame {
          listColor.add(new Color(0xFF232C16));*/
 //       
         listColor.add(new Color(200, 200, 0));
-        listColor.add(new Color(255, 200, 200));
+        listColor.add(new Color(255, 0, 127));
         //listColor.add(new Color(200, 255, 200));
-        listColor.add(new Color(200, 200, 255));
+        listColor.add(new Color(0, 127, 255));
         listColor.add(new Color(188, 23, 230));
         listColor.add(new Color(0xFFFFB300));
         listColor.add(new Color(0xFF803E75));
@@ -129,21 +131,21 @@ public class TimeFrame {
             for (Node node : com.getNodeSet()) {
                 Node n = (Node) timGraph.getNode(node.getId());
                 if (n == null) {
-                    timGraph.addNode(node.getId());
-                    n = (Node) timGraph.getNode(node.getId());
+                    n = timGraph.addNode(node.getId());
                     n.addAttribute("comm", new ArrayList<String>());
                 }
 
                 List<String> nbComm = (List<String>) n.getAttribute("comm");
                 nbComm.add(colors.get(communities.indexOf(com)));
+                //n.addAttribute("ui.label", n.getId());
+                n.setAttribute("ui.class", "marked");
 
                 n.setAttribute("comm", nbComm);
                 //System.out.println(n.getId() + " " + n.getAttribute("comm")+" "+ nbComm);
 
                 n.setAttribute("ui.style", "shape:pie-chart;fill-color:" + getColorsRGB(nbComm));
                 n.setAttribute("ui.pie-values", getColors(nbComm.size()));
-                System.out.println("damn:" + getColorsRGB(nbComm) + "+" + getColors(nbComm.size()));
-                n.addAttribute("ui.label", n.getId());
+                System.out.println(getColorsRGB(nbComm) + "+" + getColors(nbComm.size()));
 
                 // System.out.println("Nodes added: "+node.getId());
             }
@@ -163,6 +165,26 @@ public class TimeFrame {
 //            System.out.println("timGraphCount:" + timGraph.getNodeCount());
 //            System.out.println("getEdgeCount():" + timGraph.getEdgeCount());
 
+        }
+        int smaller = -1;
+        int greater = -1;
+        int maximumsize = 3;
+        int minimumsize = 2;
+        for (Node n : timGraph.getEachNode()) { //Karate is the GraphStream Graph Object.
+            if (n.getDegree() > greater || smaller == -1) {
+                greater = n.getDegree();
+            }
+            if (n.getDegree() < smaller || greater == -1) {
+                smaller = n.getDegree();
+            }
+        }
+        for (Node n : timGraph.getEachNode()) {
+            double scale = (double) (n.getDegree() - smaller) / (double) (greater - smaller);
+            if (null != n.getAttribute("ui.style")) {
+                n.setAttribute("ui.style", n.getAttribute("ui.style") + " size:" + Math.round((scale * maximumsize) + minimumsize) + "px;");
+            } else {
+                n.addAttribute("ui.style", " size:" + Math.round((scale * maximumsize) + minimumsize) + "px;");
+            }
         }
         this.timGraph.addAttribute("ui.quality");
         this.timGraph.addAttribute("ui.antialias");
