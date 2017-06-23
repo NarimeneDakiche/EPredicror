@@ -14,7 +14,7 @@ The process of predicting the evolution of communities consists of four steps:
 In their researchs, researchers perform each phase of the prediction process separately and they link manually between the inputs and outputs of the methods. The objective of EPredictor is to predict the evolution of communities within social networks. 
 
 ## Objective
-EPredictor allows the following functionalities: the snapshots segmentation, the communities detection, the communities evolution identification over time and the prediction of their future evolutions. Those steps are exectuted by dealing with the link between them, by starting the processus from any step, by importing and exporting all kinds of data and by visualizing results of different methods.
+EPredictor allows the following functionalities: snapshots segmentation, communities detection, communities evolution identification over time and prediction of their future evolutions. Those steps are exectuted by dealing with the link between them, by starting the processus from any step, by importing and exporting all kinds of data and by visualizing results of different methods.
 
 
 ## Contributing
@@ -23,4 +23,4 @@ Fork, implement, add tests, pull request, get our everlasting thanks and a respe
 
 ## Documentation
 
-View the [EPredictor User Guide](https://plot.ly/dash). 
+View the [EPredictor User Guide](https://esi.dz). 
