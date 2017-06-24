@@ -27,4 +27,4 @@ View the [EPredictor User Guide](https://esi.dz).
 
 ## License
 
-EPredictor is released under the [MIT License] (https://github.com/abdelouahab1/EPredictor/blob/master/LICENSE).
+EPredictor is released under the [MIT License](http://www.opensource.org/licenses/MIT).
