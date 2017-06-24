@@ -24,3 +24,7 @@ Fork, implement, add tests, pull request, get our everlasting thanks and a respe
 ## Documentation
 
 View the [EPredictor User Guide](https://esi.dz). 
+
+## License
+
+EPredictor is released under the MIT License.
