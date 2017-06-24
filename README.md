@@ -1,6 +1,6 @@
 # EPredictor
 
-EPredictor is a project that consists of a tool that does the prediction of community evolution in social networks using classification algorithms. 
+EPredictor is a tool that does the prediction of community evolution in social networks using classification algorithms. 
 
 EPredictor grants the following functionalities: snapshots segmentation, communities detection, communities evolution identification over time and prediction of their future evolutions. Those steps are exectuted by dealing with the link between them, by starting the processus from any step, by importing and exporting all kinds of data and by visualizing results of different methods.
 
