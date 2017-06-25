@@ -1443,8 +1443,15 @@ public class FXMLDocumentController implements Initializable {
         });
 
         threadDetection = new Thread(task);
+        Thread.UncaughtExceptionHandler h = new Thread.UncaughtExceptionHandler() {
+            public void uncaughtException(Thread th, Throwable ex) {
+                System.out.println("Uncaught exception: " + ex);
+            }
+        };
+        threadDetection.setUncaughtExceptionHandler(h);
         threadDetection.start();
-
+        
+        
 //        cancelDetection.setOnAction(new EventHandler<ActionEvent>() {
 //            @Override
 //            public void handle(ActionEvent e) {
