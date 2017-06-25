@@ -636,11 +636,6 @@
                                                                                                         <ComboBox fx:id="comboClassifier" prefHeight="25.0" prefWidth="215.0" />
                                                                                                     </children>
                                                                                                 </HBox>
-                                                                                                <HBox alignment="CENTER" prefHeight="23.0" prefWidth="210.0">
-                                                                                                    <children>
-                                                                                                        <CheckBox fx:id="checkEvaluationReport" mnemonicParsing="false" text="Evaluation report" />
-                                                                                                    </children>
-                                                                                                </HBox>
                                                                                                 <HBox alignment="CENTER" prefHeight="15.0" prefWidth="210.0">
                                                                                                     <children>
                                                                                                         <Button fx:id="launchPrediction" disable="true" mnemonicParsing="false" onAction="#startPrediction" prefHeight="32.0" prefWidth="74.0" text="Launch">

@@ -35,7 +35,10 @@ import weka.filters.unsupervised.attribute.Normalize;
 public class PredictionUtils {
 
     /**
-     * Create the Arff file that contains History data of communities and its caracteristics*
+     * Create the Arff file that contains History data of communities and its
+     * caracteristics
+     *
+     *
      * @param filePath
      * @param filename
      * @param BDpath
@@ -136,37 +139,36 @@ public class PredictionUtils {
                                 String e = new String(events[ievents2]);
                                 //System.out.println("Insert : events[" + ievents2 + "]==" + e);
                                 /*String g = new String(groups[ievents2]);
-                                String t = new String(timeframes[ievents2]);*/
+                                 String t = new String(timeframes[ievents2]);*/
 
                                 //Store data : instances
                                 //Features
                                 for (int k = 0; k < nbFeatures; k++) {
-                                    
+
                                     if ((groups[ievents2]).matches("null")) {
                                         //Case the group didn't exist before
                                         vals[iInsertion] = 0;
-                                        
+
                                     } else {
                                         //extract feature of group from dynamic graph
                                         int g = Integer.parseInt(groups[ievents2]);
                                         int t = Integer.parseInt(timeframes[ievents2]);
-                                        
+
                                         /*System.out.println("case not null==>Insert : Feature[" + k+ ","+ g +
-                                                                        ","+ t +"]==" + e);
+                                         ","+ t +"]==" + e);
                                         
                                 
-                                        //Read Feature
-                                        /System.out.println("Feature[k=="+ k + "]==" + Features.get(k)+"   for g=="+
-                                                            g +"   for t=="+ t);*/
-                                        
-                                        try{
+                                         //Read Feature
+                                         /System.out.println("Feature[k=="+ k + "]==" + Features.get(k)+"   for g=="+
+                                         g +"   for t=="+ t);*/
+                                        try {
                                             vals[iInsertion] = dynamicNetwork.get(t).getCommunities().get(
                                                     g).getAttribute(Features.get(k));
-                                        }catch(NullPointerException n){
+                                        } catch (NullPointerException n) {
                                             //System.err.println("Attribute: " + Features.get(k)+ "not calculated");
                                             vals[iInsertion] = 0;
                                         }
-                                        
+
                                     }
 
                                     iInsertion++;
@@ -212,18 +214,32 @@ public class PredictionUtils {
             }
             // 4. output data
             //System.out.println(data);
-            
+
             //Normalize Attributes 
             Filter m_Filter = new Normalize();
             m_Filter.setInputFormat(data);
             data = Filter.useFilter(data, m_Filter);
-            
+
             //Write into Arff File
             ArffSaver saver = new ArffSaver();
             saver.setInstances(data);
+            File file = new File(filePath + filename + ".arff");
+            //deleting the file if exists
+            try {
+
+                if (file.delete()) {
+                    System.out.println(file.getName() + " is deleted!");
+                } else {
+                    System.out.println("Delete operation is failed.");
+                }
+
+            } catch (Exception e) {
+
+            }
+
             saver.setFile(new File(filePath + filename + ".arff"));
             saver.writeBatch();
-            
+
         } catch (Exception e) {
             System.err.println("Erreur Génération Fichier ARFF");
         }
@@ -253,11 +269,11 @@ public class PredictionUtils {
         //Result result = eval.evaluateModel(
         //System.out.println("Taux d’erreurs par VC :" + eval.errorRate());
         //System.out.println("Summary :" + eval.toSummaryString());
-        
-        EvaluationReport report=new EvaluationReport(eval,instances.size());
+
+        EvaluationReport report = new EvaluationReport(eval, instances.size());
         return report;
     }
-    
+
     public static Evaluation createClassifier2(Classifier classifieur, String[] options, String fichierEntrainement, int kfolds) throws FileNotFoundException, IOException, Exception {
         Instances instances;
         //création des exemples d'apprentissage à partir du fichier
@@ -284,36 +300,34 @@ public class PredictionUtils {
         System.out.println("Summary :" + eval.toSummaryString());
         return eval;
     }
-    
-    
-    
+
     public static EvaluationReport makePredictor(String selectionMethod, String searchMethod, String evalMethod,
-            String wekaClassifier, String[] options, String fichierEntrainement, int kfolds){
-        
+            String wekaClassifier, String[] options, String fichierEntrainement, int kfolds) throws Exception {
+
         EvaluationReport report = null;
-        switch(selectionMethod){
+        switch (selectionMethod) {
             case "Filter":
-                try {
-                        String newFichierEntrainement=AttributeSelector.useFilter(fichierEntrainement, searchMethod, evalMethod);
-                        report= PredictionUtils.createClassifier(wekaClassifier,options,newFichierEntrainement, kfolds);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+//                try {
+                    String newFichierEntrainement = AttributeSelector.useFilter(fichierEntrainement, searchMethod, evalMethod);
+                    report = PredictionUtils.createClassifier(wekaClassifier, options, newFichierEntrainement, kfolds);
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
                 break;
             case "Wrapper":
-                try {
-                        report= AttributeSelector.useClassifier(fichierEntrainement, wekaClassifier, options, searchMethod, evalMethod);
-                } catch (Exception ex) {
-                        ex.printStackTrace();
-                }
+//                try {
+                    report = AttributeSelector.useClassifier(fichierEntrainement, wekaClassifier, options, searchMethod, evalMethod);
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
                 break;
             case "Manual":
-            default :
-                try {
-                        report= PredictionUtils.createClassifier(wekaClassifier,options,fichierEntrainement, kfolds);
-                } catch (Exception ex) {
-                        ex.printStackTrace();
-                }
+            default:
+//                try {
+                    report = PredictionUtils.createClassifier(wekaClassifier, options, fichierEntrainement, kfolds);
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
                 break;
         }
 

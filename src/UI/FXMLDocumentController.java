@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -115,7 +116,9 @@ import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -349,7 +352,7 @@ public class FXMLDocumentController implements Initializable {
     Logger logger = Logger.getLogger("MyLog");
     FileHandler fh;
 
-    Thread threadDetection, threadCalculate, threadIdentification, threadPrediction;
+    private Thread threadDetection, threadCalculate, threadIdentification, threadPrediction;
 
     private PModel pModel;
 
@@ -991,9 +994,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void handleCancelDetection(ActionEvent event
     ) {
-        writeLogLn("\nCancelling detection...\n");
+        writeLog("\nCancelling detection...");
         try {
             threadDetection.stop();
+            writeLogLn("Done\n");
         } catch (Exception e) {
 
         }
@@ -1004,9 +1008,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void handleCancelCalculate(ActionEvent event
     ) {
-        writeLogLn("\nCancelling attributes calculation...\n");
+        writeLog("\nCancelling attributes calculation...");
         try {
             threadCalculate.stop();
+            writeLogLn("Done\n");
 
         } catch (Exception e) {
 
@@ -1018,9 +1023,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void handleCancelIdentification(ActionEvent event
     ) {
-        writeLogLn("\nCancelling Identification...\n");
+        writeLog("\nCancelling Identification...");
         try {
             threadIdentification.stop();
+            writeLogLn("Done\n");
         } catch (Exception e) {
 
         }
@@ -1031,9 +1037,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void handleCancelPrediction(ActionEvent event
     ) {
-        writeLogLn("\nCancelling prediction...\n");
+        writeLogLn("\nCancelling prediction...");
         try {
             threadPrediction.stop();
+            writeLogLn("Done\n");
         } catch (Exception e) {
 
         }
@@ -1080,7 +1087,7 @@ public class FXMLDocumentController implements Initializable {
         //System.out.println("spinnerNbSnaps.getValue()= " + spinnerNbSnaps.getValue());
         //directoryPath = directoryPath + splitExportName.getText() + "/";
         totalPath = directoryPath + fileString + "_" + spinnerNbSnaps.getValue() + "_" + durationsLabel.getText() + "/";
-        System.out.println(totalPath);
+        //System.out.println(totalPath);
         Path path = Paths.get(totalPath);
         if (!Files.exists(path)) {
             try {
@@ -1103,7 +1110,7 @@ public class FXMLDocumentController implements Initializable {
 
         try {
             float overlapping = (float) sliderOverlapping.getValue() / 100f;
-            System.out.println("overlapping:" + overlapping);
+            //System.out.println("overlapping:" + overlapping);
             if (spinnerNbSnaps.getValue() > 0) {
                 System.out.println("1");
                 nbSnapshots = spinnerNbSnaps.getValue();
@@ -1355,7 +1362,7 @@ public class FXMLDocumentController implements Initializable {
                     //System.out.println("comm: " + tf.getCommunities().size());
                     for (Graph com : tf.getCommunities()) {
                         //TreeItem<String>vf child2 = new TreeItem<>(Integer.toString(tf.getCommunities().indexOf(com) + 1));
-                        TreeItem<String> child2 = new TreeItem<>("Communauté " + (tf.getCommunities().indexOf(com) + 1));
+                        TreeItem<String> child2 = new TreeItem<>("Community " + (tf.getCommunities().indexOf(com) + 1));
                         treeView.getRoot().getChildren().get(k).getChildren().add(child2);
                     }
                 }
@@ -1496,7 +1503,7 @@ public class FXMLDocumentController implements Initializable {
                     );
 
                     if (!attributesCalculated) {
-                        writeLogLn("Calculating attributes...");
+                        writeLog("Calculating attributes...");
                         AttributesComputer.calculateAttributes(dynamicNetwork, observableListAttibutes);
                         attributesCalculated = true;
                         writeLogLn(" done.");
@@ -1663,17 +1670,18 @@ public class FXMLDocumentController implements Initializable {
             @Override
             public Void call() throws Exception {
                 startProgressBar();
-                if (!directlyPrediction) {
-                    String filePath = "./LibPrediction/";
-                    String filename = "trainData";
-                    String extension = ".arff";
+                String filePath = "./ExportedResults/Prediction/";
+                String filename = "trainData_len=" + chainLength.getValue();
+                String extension = ".arff";
 
-                    filePathPrediction = filePath + filename + extension;
+                filePathPrediction = filePath + filename + extension;
+                if (!directlyPrediction) {
 
                     //EvolutionUtils.writeEvolutionChain(BDpath, BDfilename, tabname,/**nbre timeframes**/);
                     //PredictionUtils.createClassifierJ48(filePath+filename+extension,10);
                     //PredictionUtils.createArff(filePath, filename,BDpath,BDfilename,nbtimeframe, "", "");
                     //PredictionUtils.createArff(filePath, filename, BDpath, BDfilename, dynamicNetwork.size(), "", "", 4);
+                    System.out.println(chainLength.getValue());
                     PredictionUtils.createArffAttribute(filePath, filename, BDpath, BDfilename, dynamicNetwork.size(),
                             chainLength.getValue(), (ArrayList<String>) selectedAttributes1, dynamicNetwork);
 
@@ -1691,28 +1699,75 @@ public class FXMLDocumentController implements Initializable {
                     writeResultsLn(eReport.getSummary());
                     predictionResults += eReport.getSummary() + "\n";
 
-                    printlnResultsFile("resultats.txt", eReport.getSummary());
+                    printlnResultsFile("results_" + filename + ".txt", eReport.getSummary());
 
                     writeResultsLn(eReport.getDetailedAccuracy());
-                    printlnResultsFile("resultats.txt", eReport.getDetailedAccuracy());
+                    printlnResultsFile("results_" + ".txt", eReport.getDetailedAccuracy());
                     predictionResults += eReport.getDetailedAccuracy() + "\n";
 
                     for (String str : eReport.getConfusionMatrix()) {
                         writeResultsLn(str);
-                        printlnResultsFile("resultats.txt", str);
+                        printlnResultsFile("results.txt", str);
                         predictionResults += str + "\n";
                     }
+                    writeResultsLn("############################################################################");
+                    writeLogLn("Prediction done.");
+                    printlnResultsFile("results.txt", "Prediction done.");
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    System.out.println("1");
+                    try {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Alert alert = new Alert(AlertType.ERROR);
+                                System.out.println("2");
+
+                                alert.setTitle("Exception Dialog");
+                                alert.setHeaderText("Look, an Exception Dialog");
+                                alert.setContentText("Exception");
+
+                                // Create expandable Exception.
+                                System.out.println("1");
+
+                                StringWriter sw = new StringWriter();
+                                PrintWriter pw = new PrintWriter(sw);
+                                //ex.printStackTrace(pw);
+                                String exceptionText = sw.toString();
+
+                                Label label = new Label("The exception stacktrace was:");
+
+                                TextArea textArea = new TextArea(exceptionText);
+                                textArea.setEditable(false);
+                                textArea.setWrapText(true);
+
+                                textArea.setMaxWidth(Double.MAX_VALUE);
+                                textArea.setMaxHeight(Double.MAX_VALUE);
+                                GridPane.setVgrow(textArea, Priority.ALWAYS);
+                                GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+                                GridPane expContent = new GridPane();
+                                expContent.setMaxWidth(Double.MAX_VALUE);
+                                expContent.add(label, 0, 0);
+                                expContent.add(textArea, 0, 1);
+
+// Set expandable Exception into the dialog pane.
+                                alert.getDialogPane().setExpandableContent(expContent);
+                                alert.initOwner(primaryStage);
+                                alert.showAndWait();
+                                //System.out.println("Hello");
+                            }
+                        });
+                        //ex.printStackTrace();
+                    } catch (Exception ex33) {
+                        ex33.printStackTrace();
+                    }
                 }
-                writeResultsLn("############################################################################");
-                writeLogLn("Prediction done.");
 
                 buttonEReport.setDisable(false);
                 menuItemEReport.setDisable(false);
 
-                printlnResultsFile("resultats.txt", "Prediction done.");
                 stopProgressBar();
                 return null;
             }
@@ -1984,7 +2039,7 @@ public class FXMLDocumentController implements Initializable {
                                 tabPaneVisible.getSelectionModel().select(0);
                                 paneVisualize.getChildren().clear();
                                 distBarChart = createChart(counters, number, myResult);
-                                System.out.println("distBarChart" + (distBarChart == null));
+                                // System.out.println("distBarChart" + (distBarChart == null));
                                 paneVisualize.getChildren().add(distBarChart);
                             }
                         });
@@ -2022,6 +2077,8 @@ public class FXMLDocumentController implements Initializable {
         final NumberAxis yAxis = new NumberAxis();
         yAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(yAxis));
         final BarChart<String, Number> bc = new BarChart<String, Number>(xAxis, yAxis);
+      //  bc.setStyle(".default-color0.chart-series-line { -fx-stroke: #e9967a; }");
+
         // setup chart
         bc.setTitle("Activity distribution");
         bc.setCategoryGap(0);
@@ -2033,7 +2090,7 @@ public class FXMLDocumentController implements Initializable {
         XYChart.Series<String, Number> series1 = new XYChart.Series<String, Number>();
         series1.setName("Activity distribution");
 
-        /*series1.getData().add(new XYChart.Data<String, Number>("0", 567));
+        /* series1.set /*series1.getData().add(new XYChart.Data<String, Number>("0", 567));
          series1.getData().add(new XYChart.Data<String, Number>("1", 1292));
          series1.getData().add(new XYChart.Data<String, Number>("2", 2180));*/
         int step = (int) ((myResult.getMaxTS() - myResult.getMinTS()) / number);
@@ -2047,12 +2104,22 @@ public class FXMLDocumentController implements Initializable {
              int High = 3000;
              int Result = r.nextInt(High - Low) + Low;
              max = Math.max(max, Result);*/
-
-            series1.getData().add(new XYChart.Data<String, Number>(TimeLength.timestampToDate(myResult.getMinTS() + step * i), counters.get(i)));
-            System.out.println("");
+            XYChart.Data<String, Number> data = new XYChart.Data<String, Number>(TimeLength.timestampToDate(myResult.getMinTS() + step * i), counters.get(i));
+            /*data.nodeProperty().addListener(new ChangeListener<Node>() {
+             @Override
+             public void changed(ObservableValue<? extends Node> ov, Node oldNode, Node newNode) {
+             if (newNode != null) {
+             newNode.setStyle("-fx-bar-fill: navy;");
+             }
+             }
+             });*/
+            series1.getData().add(data);
+            // series1.getNode().setStyle("-fx-bar-fill: navy;");
+            //System.out.println("");
             //series1.getData().add(new XYChart.Data<String, Number>(Integer.toString(i), counters.get(i)));
         }
         bc.getData().add(series1);
+        bc.setStyle("");
         //bc.getXAxis().setOpacity(0);
         // Zoom here
 
@@ -2382,6 +2449,22 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void handleClose(ActionEvent event) {
 
+    }
+
+    public Thread getThreadDetection() {
+        return threadDetection;
+    }
+
+    public Thread getThreadCalculate() {
+        return threadCalculate;
+    }
+
+    public Thread getThreadIdentification() {
+        return threadIdentification;
+    }
+
+    public Thread getThreadPrediction() {
+        return threadPrediction;
     }
 
 }
