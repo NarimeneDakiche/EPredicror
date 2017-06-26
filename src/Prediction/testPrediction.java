@@ -5,6 +5,8 @@
  */
 package Prediction;
 
+import UI.PModel;
+import UI.ResultsStats;
 import evolutionIdentification.EvolutionUtils;
 import evolutionIdentification.GEDUtils.TimeFrame;
 import java.util.ArrayList;
@@ -45,8 +47,18 @@ public class testPrediction {
         
         //e.printReport();
         //e.generateCurve1(/*filePath+filename+*/"f.png");
-        e.generateROCcurve();
+        //e.generateROCcurve();
         //e.saveReportTextFile("C:\\Users\\HADJER\\Desktop\\report.txt",0);
         //e.saveReportTextPDF("C:\\Users\\HADJER\\Desktop\\report.pdf", nbtimeframe);
+        
+        String filenamePDF="C:\\Users\\HADJER\\Desktop\\report.pdf"; 
+        PModel pModel = new PModel();
+        ResultsStats rs = new ResultsStats();
+
+        ///
+        
+        ///
+        
+        e.saveReportTextPDF(filenamePDF, pModel, rs);
     }
 }

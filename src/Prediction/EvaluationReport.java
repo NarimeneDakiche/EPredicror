@@ -114,6 +114,7 @@ public class EvaluationReport implements java.io.Serializable {
     int nbInstances;
     String Summary;
     String DetailedAccuracy;
+    PModel pModel; ResultsStats rs;
 
     public String getDetailedAccuracy() {
         return DetailedAccuracy;
@@ -317,6 +318,8 @@ public class EvaluationReport implements java.io.Serializable {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void saveReportTextPDF(String filename, PModel pModel, ResultsStats rs) {
         try {
+            this.pModel=pModel;
+            this.rs=rs;
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream(filename));
             document.open();
@@ -354,7 +357,7 @@ public class EvaluationReport implements java.io.Serializable {
         document.addSubject("");
         document.addKeywords("Community Evolution, , DYNAMIC SOCIAL NETWORKS, Predicting Community Evolution");
         document.addAuthor("Author");
-        document.addCreator("ESI PREDICTION TOOL for COMMUNITY EVOLUTION IN DYNAMIC SOCIAL NETWORKS");
+        document.addCreator("EPredictor: Evolution Prediction tool for communities in dynamic social networks");
     }
 
     private static void addTitlePage(Document document)
@@ -408,10 +411,21 @@ public class EvaluationReport implements java.io.Serializable {
             // Second parameter is the number of the chapter
             Chapter catPart = new Chapter(new Paragraph(anchor), 1);
             Paragraph preface = new Paragraph();
-
+            
+            
+            // We add Network description
+            if(!(rs.getDescription().matches("")) /*|| (rs.getDescription() != null)*/ ){
+                // We add one empty line
+                addEmptyLine(preface, 3);
+                catPart.add(preface);
+                
+                catPart.add(new Paragraph(rs.getDescription()));
+            }
+            
             // We add one empty line
             addEmptyLine(preface, 3);
             catPart.add(preface);
+            
             //Paragraph subPara = new Paragraph("", subFont);
             //Section subCatPart = catPart.addSection(subPara);
             /*subCatPart.add(new Paragraph("Hello"));
@@ -440,15 +454,21 @@ public class EvaluationReport implements java.io.Serializable {
             // now add all this to the document
             //document.add(catPart);
             //Time Distribution
-            Image image = Image.getInstance("C:\\Users\\HADJER\\Documents\\TEXMaker\\"
-                    + "Plan de test\\time_histogram-facebook-wosn-wall-small.png");
-            image.scaleAbsolute(150f, 150f);
-            image.setAlignment(Element.ALIGN_CENTER);
+            if(!(rs.getDistribution().matches(""))){
 
-            //image.setAbsolutePosition(0f, 0f);
-            //document.add(image);
-            catPart.add(decorateImage(image, "Fig. 1: Temporel Distribution of the network"));
-            document.add(catPart);
+                Image image = Image.getInstance(rs.getDistribution());
+                /*Image image = Image.getInstance("C:\\Users\\HADJER\\Documents\\TEXMaker\\"
+                + "Plan de test\\time_histogram-facebook-wosn-wall-small.png");*/
+                image.scaleAbsolute(150f, 150f);
+                image.setAlignment(Element.ALIGN_CENTER);
+
+                //image.setAbsolutePosition(0f, 0f);
+                //document.add(image);
+                catPart.add(decorateImage(image, "Fig. 1: Temporel Distribution of the network"));
+                    
+            }
+            //add data to doc
+            document.add(catPart);  
             /*Image image2 = Image.getInstance("C:\\Users\\HADJER\\Documents\\TEXMaker\\"
              + "Plan de test\\time_histogram-facebook-wosn-wall-small.png");
              image2.scalePercent(300f);
@@ -467,36 +487,113 @@ public class EvaluationReport implements java.io.Serializable {
 
             Paragraph subPara = new Paragraph("Step 1: Snapshots Creation (Data Segmentation)", subFont);
             Section subCatPart = catPart.addSection(subPara);
-            subCatPart.add(new Paragraph("Snapshot Durations: " + SnapshotPeriod));
-            subCatPart.add(new Paragraph("Number of Snapshots : " + nbSnapshots));
-            subCatPart.add(new Paragraph("Overlapping: " + Overlapping));
+            if(!(pModel.getSnapshotDuration().matches(""))){
+                subCatPart.add(new Paragraph("Snapshot Durations: " + pModel.getSnapshotDuration()));
+            }
+            
+            if(!(pModel.getNbSnapshots()==0)){
+                subCatPart.add(new Paragraph("Number of Snapshots : " + pModel.getNbSnapshots()));
+            }
+            
+            if(!(pModel.getOverlapping()==0)){
+                subCatPart.add(new Paragraph("Overlapping: " + pModel.getOverlapping()));
+            }
+            /**Results1**/
+            subCatPart.add(new Paragraph("Results: "));
+            
+            if(!(rs.getNbSnaps()==0)){
+                subCatPart.add(new Paragraph("Number of Snapshot: "+ rs.getNbSnaps()));
+            }
+            
+            if(!(rs.getAverageSnapSize()==0)){
+                subCatPart.add(new Paragraph("Average snapshot size: "+ rs.getAverageSnapSize()));
+            }
 
             subPara = new Paragraph("Step 2: Community Detection", subFont);
             subCatPart = catPart.addSection(subPara);
-            subCatPart.add(new Paragraph("Detection Method: " + DetectionMethod));
-            subCatPart.add(new Paragraph("Detection Method Parameters: " + DetectionParameters));
-            subCatPart.add(new Paragraph("Detection Stats: " + DetectionStats));
-
+            if(!(pModel.getDetectionMethod().matches(""))){
+                subCatPart.add(new Paragraph("Detection Method: " + pModel.getDetectionMethod()));
+            }
+            if(!(pModel.getDetectionParameters()==0)){
+                subCatPart.add(new Paragraph("Detection Method Parameters: " + pModel.getDetectionParameters()));
+            }
+            /**Results2**/
+            subCatPart.add(new Paragraph("Results: "));
+            
+            if(!(rs.getTotalNbCommunities()==0)){
+                subCatPart.add(new Paragraph("Number of communities: "+ rs.getTotalNbCommunities()));
+            }
+            if(!(rs.getAverageNbCommunitiesPerSnap()==0)){
+                subCatPart.add(new Paragraph("Average number of communities per snapshot: "+ rs.getAverageNbCommunitiesPerSnap()));
+            }
+            if(!(rs.getAverageCommSize()==0)){
+                subCatPart.add(new Paragraph("Average community size: "+ rs.getAverageCommSize()));
+            }
+            
+            if(!(pModel.getAttributesList().length==0)){
+                subCatPart.add(new Paragraph("Attributes: " + Arrays.toString(pModel.getAttributesList())));
+            }
             subPara = new Paragraph("Step 3: Evolution Identification", subFont);
             subCatPart = catPart.addSection(subPara);
-            subCatPart.add(new Paragraph("Evolution Method: " + EvolutionMethod));
-            subCatPart.add(new Paragraph("Evolution Parameters: " + EvolutionParameters));
-            subCatPart.add(new Paragraph("Evolution Stats: " + EvolutionStats));
+            if(!(pModel.getEvolutionMethod().matches(""))){
+                subCatPart.add(new Paragraph("Evolution Method: " + pModel.getEvolutionMethod()));
+            }
+            if(!(pModel.getEvolutionParameters().matches(""))){
+                subCatPart.add(new Paragraph("Evolution Parameters: " + pModel.getEvolutionParameters()));
+            }
+            
+            
+            /**Results3**/
+            
+            if(!(rs.getEvolutionResults().matches(""))){
+                subCatPart.add(new Paragraph("Results: "));
+                
+                Image image = Image.getInstance(rs.getEvolutionResults());
+                /*image = Image.getInstance("C:\\Users\\HADJER\\Documents\\TEXMaker\\"
+                + "Plan de test\\time_histogram-facebook-wosn-wall-small.png");*/
+                image.scaleAbsolute(150f, 150f);
+                image.setAlignment(Element.ALIGN_CENTER);
 
+                //image.setAbsolutePosition(0f, 0f);
+                //document.add(image);
+                subCatPart.add(decorateImage(image, "Fig. 2: Number of evolution events"));
+                //document.add(catPart);      
+            }
+            
             subPara = new Paragraph("Step 4: Prediction", subFont);
             subCatPart = catPart.addSection(subPara);
-            subCatPart.add(new Paragraph("Metrics: " + Arrays.toString(Metrics)));
-            subCatPart.add(new Paragraph("selectionMethod: " + selectionMethod));
-            subCatPart.add(new Paragraph("Evaluator:" + Evaluator));
-            subCatPart.add(new Paragraph("Search:" + Search));
-            subCatPart.add(new Paragraph("validationMethod:" + validationMethod));
-
+            if(!(pModel.getattributesPrediction().length==0)){
+                subCatPart.add(new Paragraph("Metrics: " + Arrays.toString(pModel.getattributesPrediction())));
+            }
+            if(!(pModel.getChainLength()==0)){
+                subCatPart.add(new Paragraph("Lengh of the evolution chain: " + pModel.getChainLength()));
+            }
+            if(!(pModel.getSelectionMethod().matches(""))){
+                subCatPart.add(new Paragraph("Selection Method: " + pModel.getSelectionMethod()));
+            }
+            if(!(pModel.getEvaluator().matches(""))){
+                subCatPart.add(new Paragraph("Evaluator: " + pModel.getEvaluator()));
+            }
+            if(!(pModel.getSearch().matches(""))){
+                subCatPart.add(new Paragraph("Search: " + pModel.getSearch()));
+            }
+            if(!(pModel.getClassifier().matches(""))){
+                subCatPart.add(new Paragraph("Classifier: " + pModel.getClassifier()));
+            }
+            if(!(pModel.getSearch().matches(""))){
+                subCatPart.add(new Paragraph("validation Method:" + pModel.getSearch()));
+            }
+            if(!(pModel.getValidationParam().matches(""))){
+                subCatPart.add(new Paragraph("validation Parameters:" + pModel.getValidationParam()));
+            }
+            /**Results4**/
+            subCatPart.add(new Paragraph("Results: " + rs.getPredictionResults()));
             // We add one empty line
             preface = new Paragraph();
             addEmptyLine(preface, 3);
             subCatPart.add(preface);
 
-            subCatPart.add(new Paragraph("Summary :" + this.Summary));
+            /*subCatPart.add(new Paragraph("Summary :" + this.Summary));
             //subCatPart.add(new Paragraph("Confusion Matrix :"));
             for (String e : this.ConfusionMatrix) {
                 subCatPart.add(new Paragraph(e));
@@ -508,7 +605,7 @@ public class EvaluationReport implements java.io.Serializable {
             subCatPart.add(preface);
 
             subCatPart.add(new Paragraph("Accuracy :" + this.DetailedAccuracy));
-
+            */
             // now add all this to the document
             document.add(catPart);
 
@@ -543,22 +640,51 @@ public class EvaluationReport implements java.io.Serializable {
          table.addCell(c1);*/
         table.setHeaderRows(1);
 
-        table.addCell("lien");
-        table.addCell("site");
-        table.addCell("Format des données");
-        table.addCell("{Noeud1, Noeud2, multiplicité du lien, date de création du lien}");
-        table.addCell("Nombre de noeuds");
-        table.addCell(dataSizeNode + " utilisateurs");
-        table.addCell("Nombre de liens");
-        table.addCell(dataSizeEdge + " liens");
-        table.addCell("Degré moyen");
-        table.addCell("");
-        table.addCell("Degré maximal");
-        table.addCell("" + " liens/nœud");
-        table.addCell("Coefficient de Clustering");
-        table.addCell("" + "% liens/nœud");
-        table.addCell("Diamètre");
-        table.addCell("" + " liens");
+        table.addCell("link");
+        if(rs.getLinkReference().matches("")){
+            table.addCell("/");
+        }else{
+            table.addCell(rs.getLinkReference());
+        }
+        
+        table.addCell("Data file structure");
+        table.addCell("{Node1, Node2, Timestamp, Others}");
+        table.addCell("Number of nodes");
+        if(rs.getNbNodes()==0){
+            table.addCell("/");
+        }else{
+            table.addCell(rs.getNbNodes() + " users");
+        }
+        
+        table.addCell("Number of edges");
+        if(rs.getNbEdges()==0){
+            table.addCell("/");
+        }else{
+            table.addCell(rs.getNbEdges() + " edges");
+        }
+        
+        table.addCell("Average degree");
+        if(rs.getAverageDegree().matches("")){
+            table.addCell("/");
+        }else{
+            table.addCell(rs.getAverageDegree());
+        }
+        table.addCell("Maximal degree");
+        if(rs.getMaxDegree().matches("")){
+            table.addCell("/");
+        }else{
+            table.addCell(rs.getMaxDegree() + " edge/node");
+        }
+        
+        table.addCell("Average Clustering coefficient");
+        if(rs.getAverageClusteringCoeff()==0){
+            table.addCell("/");
+        }else{
+            table.addCell(rs.getAverageClusteringCoeff() + " edge/node");
+        }
+        
+        /*table.addCell("Diameter");
+        table.addCell("" + " edges");*/
 
         subCatPart.add(table);
 

@@ -29,39 +29,39 @@ public class PModel implements Serializable {
 //                + this.validationMethod + this.validationParam;
 //        return value;
 //    }
-    String snapshotDuration;
-    int nbSnapshots;
-    double overlapping;
+    String snapshotDuration ="";
+    int nbSnapshots=0;
+    double overlapping=0;
     //Include temporelDistributionImg
 
     /**
      * Detection*
      */
-    String detectionMethod;
-    int detectionParameters;
+    String detectionMethod="";
+    int detectionParameters=0;
 
     /**
      * Calculated attributes*
      */
-    String[] attributesList;
+    String[] attributesList = new String[1]; // <--initialized statement;
 
     /**
      * Evolution*
      */
-    String evolutionMethod;
-    String evolutionParameters;
+    String evolutionMethod="";
+    String evolutionParameters="";
 
     /**
      * Prediction*
      */
-    String[] attributesPrediction;
-    int chainLength;
-    String selectionMethod;
-    String Evaluator;
-    String Search;
-    String classifier;
-    String validationMethod;
-    String validationParam;
+    String[] attributesPrediction = new String[1]; // <--initialized statement;
+    int chainLength=0;
+    String selectionMethod="";
+    String Evaluator="";
+    String Search="";
+    String classifier="";
+    String validationMethod="";
+    String validationParam="";
 
     public PModel() {
 

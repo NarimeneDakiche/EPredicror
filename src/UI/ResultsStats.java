@@ -27,26 +27,26 @@ import org.graphstream.graph.Graph;
  */
 public class ResultsStats {
 
-    private int nbSnaps;
-    private double averageSnapSize;
-    private int nbNodes;
-    private int nbEdges;
-    private String linkReference;
-    private String description;
-    private String averageDegree;
-    private String maxDegree;
-    private double averageClusteringCoeff;
+    private int nbSnaps=0;
+    private double averageSnapSize=0;
+    private int nbNodes=0;
+    private int nbEdges=0;
+    private String linkReference="";
+    private String description="";
+    private String averageDegree="";
+    private String maxDegree="";
+    private double averageClusteringCoeff=0;
 //    private String diameter;
 
-    private String distribution; /*PNG Distribution file name; Equals "" if the file wasn't generated.*/
+    private String distribution=""; /*PNG Distribution file name; Equals "" if the file wasn't generated.*/
 
-    private int totalNbCommunities;
-    private double averageNbCommunitiesPerSnap;
-    private double averageCommSize;
+    private int totalNbCommunities=0;
+    private double averageNbCommunitiesPerSnap=0;
+    private double averageCommSize=0;
 
-    private String evolutionResults;  /*PNG Evolution results file name; Equals "" if the file wasn't generated.*/
+    private String evolutionResults="";  /*PNG Evolution results file name; Equals "" if the file wasn't generated.*/
 
-    private String predictionResults;
+    private String predictionResults="";
 
     /*public void saveAsPng(BarChart barChart, PieChart pieChart) {
      try {
