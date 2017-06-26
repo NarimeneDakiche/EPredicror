@@ -354,7 +354,7 @@ public class FXMLDocumentController implements Initializable {
 
     private Thread threadDetection, threadCalculate, threadIdentification, threadPrediction;
 
-    private PModel pModel;
+    private PModel pModel=new PModel();
 
     private EvaluationReport eReport;
 
@@ -2355,7 +2355,11 @@ public class FXMLDocumentController implements Initializable {
                 if (file != null) {
                     prepareModel();
                     //System.out.println((file == null) + " " + (pModel == null) + (rs == null) + " ");
-                    eReport.saveReportTextPDF(file.getAbsolutePath(), pModel, rs);
+                    try{
+                        eReport.saveReportTextPDF(file.getAbsolutePath(), pModel, rs);
+                    }catch(NullPointerException e){
+                        System.err.println("eReport is null, Prediction had an exception");
+                    }
                 }
                 writeLogLn("PDF Evaluation report is exported");
                 System.out.println("rs:" + rs.toString());
