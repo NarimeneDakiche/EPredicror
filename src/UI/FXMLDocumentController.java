@@ -2429,6 +2429,10 @@ public class FXMLDocumentController implements Initializable {
     }
 
     void prepareModel() {
+        String evolutionParam="50;50";
+        if(evolutionParameters.getText().matches("")){
+            evolutionParam = evolutionParameters.getText();
+        }
         pModel = new PModel(durationsLabel.getText(),
                 spinnerNbSnaps.getValue(),
                 sliderOverlapping.getValue(),
@@ -2436,7 +2440,7 @@ public class FXMLDocumentController implements Initializable {
                 snipperDetection.getValue(),
                 (String[]) selectedAttributes.toArray(new String[0]),
                 comboEvolution.getValue(),
-                evolutionParameters.getText(),
+                evolutionParam,
                 (String[]) selectedAttributes1.toArray(new String[0]),
                 chainLength.getValue(),
                 comboSelectionAttributes.getValue(),

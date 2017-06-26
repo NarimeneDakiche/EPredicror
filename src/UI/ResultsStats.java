@@ -135,7 +135,7 @@ public class ResultsStats {
         //this.diameter = diameter;
 
         this.distribution = saveAsPng(barChart, "barchart.png");
-        this.evolutionResults = saveAsPng(barChart, "pieChart.png");
+        this.evolutionResults = saveAsPng(pieChart, "pieChart.png");
 
         List<Integer> size = new ArrayList<Integer>();
         List<Integer> nbCommPerSnap = new ArrayList<Integer>();

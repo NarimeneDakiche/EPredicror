@@ -459,7 +459,7 @@ public class EvaluationReport implements java.io.Serializable {
                 Image image = Image.getInstance(rs.getDistribution());
                 /*Image image = Image.getInstance("C:\\Users\\HADJER\\Documents\\TEXMaker\\"
                 + "Plan de test\\time_histogram-facebook-wosn-wall-small.png");*/
-                image.scaleAbsolute(150f, 150f);
+                image.scaleAbsolute(300f, 300f);
                 image.setAlignment(Element.ALIGN_CENTER);
 
                 //image.setAbsolutePosition(0f, 0f);
@@ -551,7 +551,7 @@ public class EvaluationReport implements java.io.Serializable {
                 Image image = Image.getInstance(rs.getEvolutionResults());
                 /*image = Image.getInstance("C:\\Users\\HADJER\\Documents\\TEXMaker\\"
                 + "Plan de test\\time_histogram-facebook-wosn-wall-small.png");*/
-                image.scaleAbsolute(150f, 150f);
+                image.scaleAbsolute(300f, 300f);
                 image.setAlignment(Element.ALIGN_CENTER);
 
                 //image.setAbsolutePosition(0f, 0f);
