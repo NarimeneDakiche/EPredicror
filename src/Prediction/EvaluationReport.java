@@ -446,7 +446,6 @@ public class EvaluationReport implements java.io.Serializable {
             createTableNetworkData(catPart);
 
             preface = new Paragraph();
-
             // We add one empty line
             addEmptyLine(preface, 3);
             catPart.add(preface);
@@ -508,7 +507,12 @@ public class EvaluationReport implements java.io.Serializable {
             if(!(rs.getAverageSnapSize()==0)){
                 subCatPart.add(new Paragraph("Average snapshot size: "+ rs.getAverageSnapSize()));
             }
-
+            
+            preface = new Paragraph();
+            // We add one empty line
+            addEmptyLine(preface, 2);
+            subCatPart.add(preface);
+            
             subPara = new Paragraph("Step 2: Community Detection", subFont);
             subCatPart = catPart.addSection(subPara);
             if(!(pModel.getDetectionMethod().matches(""))){
@@ -533,6 +537,12 @@ public class EvaluationReport implements java.io.Serializable {
             if(!(pModel.getAttributesList().length==0)){
                 subCatPart.add(new Paragraph("Attributes: " + Arrays.toString(pModel.getAttributesList())));
             }
+            
+            preface = new Paragraph();
+            // We add one empty line
+            addEmptyLine(preface, 2);
+            subCatPart.add(preface);
+            
             subPara = new Paragraph("Step 3: Evolution Identification", subFont);
             subCatPart = catPart.addSection(subPara);
             if(!(pModel.getEvolutionMethod().matches(""))){
@@ -559,6 +569,13 @@ public class EvaluationReport implements java.io.Serializable {
                 subCatPart.add(decorateImage(image, "Fig. 2: Number of evolution events"));
                 //document.add(catPart);      
             }
+            
+            
+            preface = new Paragraph();
+            // We add one empty line
+            addEmptyLine(preface, 2);
+            subCatPart.add(preface);
+            
             
             subPara = new Paragraph("Step 4: Prediction", subFont);
             subCatPart = catPart.addSection(subPara);
