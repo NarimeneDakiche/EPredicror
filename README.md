@@ -1,5 +1,5 @@
 # EPredictor
-![Logo](https://goo.gl/photos/yeKpvu8w1KreYjc76)
+![Logo](./logo.jpg)
 
 EPredictor is a tool that does the prediction of community evolution in social networks using classification algorithms. 
 
