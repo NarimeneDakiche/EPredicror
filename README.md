@@ -1,4 +1,4 @@
-<div align="center"><img src="./logo.jpg" width="300"/></div>
+<div align="center"><img src="./logo.png" width="300"/></div>
 
 # EPredictor
 
