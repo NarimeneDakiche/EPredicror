@@ -4,7 +4,7 @@
 
 EPredictor is a tool of community evolution prediction in social networks using classification algorithms. 
 
-EPredictor grants the execution of prediction steps while dealing with the link between them, by starting the processus from any step, by importing and exporting all kinds of data and by visualizing results of different methods.
+EPredictor grants the execution of prediction steps while dealing with the link between them, by starting the processus from any step, by importing and exporting multiple kinds of data and by visualizing results of different methods.
 
 
 ## Prediction Process
