@@ -606,6 +606,16 @@
                                                                                                         <ComboBox fx:id="comboSelectionAttributes" prefHeight="25.0" prefWidth="120.0" />
                                                                                                     </children>
                                                                                                 </HBox>
+                                                                        <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0" spacing="5.0">
+                                                                           <children>
+                                                                              <Label alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="144.0" text="Folds number:">
+                                                                                 <font>
+                                                                                    <Font size="11.0" />
+                                                                                 </font>
+                                                                              </Label>
+                                                                              <Spinner fx:id="kFoldsSpinner" editable="true" prefHeight="25.0" prefWidth="117.0" />
+                                                                           </children>
+                                                                        </HBox>
                                                                                                 <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="210.0" spacing="5.0">
                                                                                                     <children>
                                                                                                         <Label alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="144.0" text="Search method:">

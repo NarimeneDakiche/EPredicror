@@ -177,6 +177,9 @@ public class FXMLDocumentController implements Initializable {
     private Spinner<Integer> chainLength;
 
     @FXML
+    private Spinner<Integer> kFoldsSpinner;
+
+    @FXML
     private ComboBox<String> comboSelectionAttributes;
 
     @FXML
@@ -517,6 +520,8 @@ public class FXMLDocumentController implements Initializable {
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 5));
         chainLength.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 100, 4));
+        kFoldsSpinner.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 100, 10));
 
         //kDetectionSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 3));
         comboStructDonnees.getItems()
@@ -1704,7 +1709,7 @@ public class FXMLDocumentController implements Initializable {
                 try {
                     eReport = PredictionUtils.makePredictor(comboSelectionAttributes.getSelectionModel().getSelectedItem(),
                             comboSearchMethod.getSelectionModel().getSelectedItem(), comboEvaluationMethod.getSelectionModel().getSelectedItem(),
-                            comboClassifier.getSelectionModel().getSelectedItem(), null, filePathPrediction, 10);
+                            comboClassifier.getSelectionModel().getSelectedItem(), null, filePathPrediction, kFoldsSpinner.getValue());
                     predictionResults = "";
 
                     writeResultsLn(eReport.getSummary());
@@ -2462,7 +2467,33 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void handleReset(ActionEvent event) {
+        try {
+            try {
+                threadDetection.stop();
+                threadCalculate.stop();
+                threadIdentification.stop();
+                threadPrediction.stop();
+            } catch (NullPointerException nullEx) {
 
+            }
+
+            primaryStage.close();
+            primaryStage = new Stage();
+            SampleXML sX = new SampleXML();
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        sX.start(primaryStage);
+                    } catch (Exception ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
+            });
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     @FXML
