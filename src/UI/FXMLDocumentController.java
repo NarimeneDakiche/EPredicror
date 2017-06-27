@@ -354,13 +354,15 @@ public class FXMLDocumentController implements Initializable {
 
     private Thread threadDetection, threadCalculate, threadIdentification, threadPrediction;
 
-    private PModel pModel=new PModel();
+    private PModel pModel = new PModel();
 
     private EvaluationReport eReport;
 
     Stage primaryStage;
 
     String predictionResults = "";
+
+    private int startingStep = 1;
 
 //    @FXML
 //    private CheckBox checkEvaluationReport;
@@ -800,7 +802,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void browserAction(ActionEvent event
     ) {
-
+        startingStep = 1;
         FileChooser chooser = new FileChooser();
 
         chooser.getExtensionFilters().addAll(
@@ -856,6 +858,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void browserDetectionAction(ActionEvent event
     ) {
+        startingStep = 2;
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
                 new ExtensionFilter("All Files", "*.*"),
@@ -887,6 +890,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void browserEvolutionAction(ActionEvent event
     ) {
+        startingStep = 3;
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
                 new ExtensionFilter("All Files", "*.*"),
@@ -909,6 +913,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void browserPredictionAction(ActionEvent event
     ) {
+        startingStep = 4;
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
                 new ExtensionFilter("All Files", "*.*"),
@@ -1450,8 +1455,7 @@ public class FXMLDocumentController implements Initializable {
         };
         threadDetection.setUncaughtExceptionHandler(h);
         threadDetection.start();
-        
-        
+
 //        cancelDetection.setOnAction(new EventHandler<ActionEvent>() {
 //            @Override
 //            public void handle(ActionEvent e) {
@@ -1740,7 +1744,7 @@ public class FXMLDocumentController implements Initializable {
 
                                 StringWriter sw = new StringWriter();
                                 PrintWriter pw = new PrintWriter(sw);
-                                //ex.printStackTrace(pw);
+                                ex.printStackTrace(pw);
                                 String exceptionText = sw.toString();
 
                                 Label label = new Label("The exception stacktrace was:");
@@ -2355,9 +2359,9 @@ public class FXMLDocumentController implements Initializable {
                 if (file != null) {
                     prepareModel();
                     //System.out.println((file == null) + " " + (pModel == null) + (rs == null) + " ");
-                    try{
-                        eReport.saveReportTextPDF(file.getAbsolutePath(), pModel, rs);
-                    }catch(NullPointerException e){
+                    try {
+                        eReport.saveReportTextPDF(file.getAbsolutePath(), pModel, rs, startingStep);
+                    } catch (NullPointerException e) {
                         System.err.println("eReport is null, Prediction had an exception");
                     }
                 }
@@ -2429,8 +2433,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     void prepareModel() {
-        String evolutionParam="50;50";
-        if(evolutionParameters.getText().matches("")){
+        String evolutionParam = "50;50";
+        if (evolutionParameters.getText().matches("")) {
             evolutionParam = evolutionParameters.getText();
         }
         pModel = new PModel(durationsLabel.getText(),
