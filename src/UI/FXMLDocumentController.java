@@ -2498,7 +2498,11 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void handleClose(ActionEvent event) {
-
+        threadDetection.stop();
+        threadCalculate.stop();
+        threadIdentification.stop();
+        threadPrediction.stop();
+        Platform.exit();
     }
 
     public Thread getThreadDetection() {
@@ -2515,6 +2519,11 @@ public class FXMLDocumentController implements Initializable {
 
     public Thread getThreadPrediction() {
         return threadPrediction;
+    }
+
+    @FXML
+    public void exitApplication(ActionEvent event) {
+        Platform.exit();
     }
 
 }

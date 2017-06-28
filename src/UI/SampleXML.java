@@ -19,13 +19,15 @@ import javafx.stage.WindowEvent;
  */
 public class SampleXML extends Application {
 
+    FXMLDocumentController controller;
+
     @Override
     public void start(Stage stage) throws Exception {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLDocument.fxml"));
         Parent root = (Parent) loader.load();
 
-        FXMLDocumentController controller = (FXMLDocumentController) loader.getController();
+        controller = (FXMLDocumentController) loader.getController();
         controller.setStageAndSetupListeners(stage); // or what you want to do
 
         Scene scene = new Scene(root);
@@ -50,6 +52,32 @@ public class SampleXML extends Application {
                 }
             }
         });
+
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Stage is closing");
+        try {
+            controller.getThreadDetection().stop();
+        } catch (Exception e) {
+
+        }
+        try {
+            controller.getThreadCalculate().stop();
+        } catch (Exception e) {
+
+        }
+        try {
+            controller.getThreadIdentification().stop();
+        } catch (Exception e) {
+
+        }
+        try {
+            controller.getThreadPrediction().stop();
+        } catch (Exception e) {
+
+        }
 
     }
 

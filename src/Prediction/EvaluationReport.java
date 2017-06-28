@@ -138,7 +138,7 @@ public class EvaluationReport implements java.io.Serializable {
         for (int i = 0; i < matriceConfusion.length; i++) {
             String line = "";
             for (int j = 0; j < matriceConfusion[i].length; j++) {
-                line = line + "  " + matriceConfusion[i][j];
+                line = line + "\t" + matriceConfusion[i][j];
             }
             ConfusionMatrix.add(line);
         }
@@ -387,7 +387,7 @@ public class EvaluationReport implements java.io.Serializable {
         //Contenu
         preface.add(new Paragraph(
                 "This document describes test results of a Prediction Model  created by  "
-                + "\"ESI PREDICTION TOOL for COMMUNITY EVOLUTION IN DYNAMIC SOCIAL NETWORKS\"",
+                + "\"EPredictor Evolution Prediction tool for communnity dynamic social networks.\"",
                 smallBold));
 
         //Remarks
