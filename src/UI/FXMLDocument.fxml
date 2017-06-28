@@ -129,27 +129,43 @@
                                                                                     </font>
                                                                                 </Label>
                                                                                 <HBox alignment="CENTER" prefHeight="21.0" prefWidth="227.0" spacing="20.0">
-                                                                                    <children>
-                                                                                        <Button mnemonicParsing="false" onAction="#browserAction" prefHeight="28.0" prefWidth="85.0" text="Browser">
-                                                                                            <graphic>
-                                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                                    <image>
-                                                                                                        <Image url="@images/find.png" />
-                                                                                                    </image>
-                                                                                                </ImageView>
-                                                                                            </graphic>
-                                                                                        </Button>
-                                                                                        <Button minWidth="20.0" mnemonicParsing="false" onAction="#visualizeDataStructure" prefHeight="18.0" prefWidth="89.0" text="Visualize">
-                                                                                            <graphic>
-                                                                                                <ImageView fitHeight="20.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                                                                                    <image>
-                                                                                                        <Image url="@images/visual.png" />
-                                                                                                    </image>
-                                                                                                </ImageView>
-                                                                                            </graphic>
-                                                                                        </Button>
-                                                                                    </children>
+                                                               <children>
+                                                                  <Button mnemonicParsing="false" onAction="#browserAction" prefHeight="28.0" prefWidth="85.0" text="Browser">
+                                                                     <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@images/find.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </graphic>
+                                                                  </Button>
+                                                               </children>
                                                                                 </HBox>
+                                                            <HBox alignment="CENTER" prefHeight="21.0" prefWidth="227.0" spacing="20.0">
+                                                               <children>
+                                                                  <Button minWidth="20.0" mnemonicParsing="false" onAction="#visualizeDataStructure" prefHeight="18.0" prefWidth="89.0" text="Dataset">
+                                                                     <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@images/visual.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </graphic>
+                                                                  </Button>
+                                                                                <Button graphicTextGap="2.0" minWidth="20.0" mnemonicParsing="false" onAction="#visualizeFile" prefHeight="28.0" prefWidth="101.0" text="Distribution">
+                                                                                    <HBox.margin>
+                                                                                        <Insets />
+                                                                                    </HBox.margin>
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@dist.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                               </children>
+                                                            </HBox>
                                                                                 <HBox alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="227.0">
                                                                                     <children>
                                                                                         <Label alignment="CENTER" prefHeight="24.0" prefWidth="80.0" text="Data structure:">
@@ -726,21 +742,27 @@
                                     <items>
                                         <AnchorPane maxHeight="50.0" minHeight="40.0" minWidth="0.0" prefHeight="40.0" prefWidth="538.0">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" layoutX="315.0" layoutY="11.0" prefHeight="28.0" prefWidth="217.0" spacing="10.0" AnchorPane.rightAnchor="10.0">
+                                                <HBox alignment="CENTER_RIGHT" layoutX="315.0" layoutY="11.0" prefHeight="28.0" prefWidth="368.0" spacing="10.0" AnchorPane.rightAnchor="10.0">
                                                     <children>
+                                          <Button mnemonicParsing="false" onAction="#handleImportPModel" prefHeight="26.0" prefWidth="116.0" text="Import Model">
+                                             <graphic>
+                                                <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@images/import.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button mnemonicParsing="false" onAction="#handleExportPModel" text="Export Model">
+                                             <graphic>
+                                                <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@images/export.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
                                                         <RadioButton fx:id="radioLogFile" mnemonicParsing="false" text="Generate Log file" />
-                                                        <Button graphicTextGap="1.0" minWidth="20.0" mnemonicParsing="false" onAction="#visualizeFile" prefHeight="30.0" prefWidth="85.0" text=" Dataset">
-                                                            <HBox.margin>
-                                                                <Insets />
-                                                            </HBox.margin>
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@images/visual.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
                                                     </children>
                                                 </HBox>
                                             </children>
