@@ -266,10 +266,7 @@ public class PredictionUtils {
         //Evaluation par validation croisée (avec k = 10)
         Evaluation eval = new Evaluation(instances);
         eval.crossValidateModel(classifieur, instances, kfolds, new Random());
-        //Result result = eval.evaluateModel(
-        //System.out.println("Taux d’erreurs par VC :" + eval.errorRate());
-        //System.out.println("Summary :" + eval.toSummaryString());
-
+        //Create evaliuation report 
         EvaluationReport report = new EvaluationReport(eval, instances.size());
         return report;
     }
@@ -288,46 +285,36 @@ public class PredictionUtils {
 
         //choix de la classe à apprendre
         instances.setClassIndex(instances.numAttributes() - 1);
-
-        //Instanciation d’un classifieur de type C4.5 (appelé ici J48) et apprentissage
-        //J48 classifieur = new J48();
-        //Classifier classifieur = WekaUtils.makeClassifier(wekaClassifier, options);//if no options put null
         //Evaluation par validation croisée (avec k = 10)
         Evaluation eval = new Evaluation(instances);
         eval.crossValidateModel(classifieur, instances, kfolds, new Random());
-        //Result result = eval.evaluateModel(
-        //System.out.println("Taux d’erreurs par VC :" + eval.errorRate());
+        //Result 
         System.out.println("Summary :" + eval.toSummaryString());
         return eval;
     }
 
+    /**Create prediction model and return its evaluation report**/
     public static EvaluationReport makePredictor(String selectionMethod, String searchMethod, String evalMethod,
             String wekaClassifier, String[] options, String fichierEntrainement, int kfolds) throws Exception {
 
         EvaluationReport report = null;
         switch (selectionMethod) {
             case "Filter":
-//                try {
+
                     String newFichierEntrainement = AttributeSelector.useFilter(fichierEntrainement, searchMethod, evalMethod);
                     report = PredictionUtils.createClassifier(wekaClassifier, options, newFichierEntrainement, kfolds);
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
+
                 break;
             case "Wrapper":
-//                try {
+
                     report = AttributeSelector.useClassifier(fichierEntrainement, wekaClassifier, options, searchMethod, evalMethod);
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
+
                 break;
             case "Manual":
             default:
-//                try {
+
                     report = PredictionUtils.createClassifier(wekaClassifier, options, fichierEntrainement, kfolds);
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
+
                 break;
         }
 

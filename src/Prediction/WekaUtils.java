@@ -35,6 +35,7 @@ public class WekaUtils {
     public static final String CLASSES_ATTR_NAME = "classes";
     public static final String FEATURE_PREFIX = "feature-";
 
+    /**Creates a classifier of the entered Weka Classifier name**/
     public static Classifier makeClassifier(String wekaClassifier, String[] options) throws Exception {
 
         switch (WekaClassificationAlgorithms.valueOf(wekaClassifier)) {
@@ -42,7 +43,6 @@ public class WekaUtils {
                 NaiveBayes naive=new NaiveBayes();
                 setOptionsForWekaPredictor(options, naive);
                 return naive;
-                //NaiveBayesUpdateable nb = new NaiveBayesUpdateable();
                 
             case bayesNet:
                 BayesNet bayes=new BayesNet();
@@ -99,6 +99,7 @@ public class WekaUtils {
         }
     }
 
+    /**Creates a clusterer of the entered Weka Classifier name**/
     public static Clusterer makeClusterer(String wekaClassifier, int numClusters, String[] options) throws Exception {
         try {
             switch (WekaClusterers.valueOf(wekaClassifier)) {

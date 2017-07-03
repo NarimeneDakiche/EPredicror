@@ -5,7 +5,6 @@
  */
 package communityDetection.ExternMethods;
 
-import graphclasses1.Community;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,6 +23,10 @@ import org.graphstream.graph.implementations.SingleGraph;
 /**
  *
  * @author HADJER
+  * 
+ * This class executes the .jar of the community detection method GN. 
+ * The method is not ours, it belongs to its developper
+ * For further information, please refer to the application help file
  */
 public class GN extends CommunityMiner {
 

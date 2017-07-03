@@ -16,14 +16,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import javax.swing.JFrame;
 import org.openide.util.Exceptions;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.ThresholdCurve;
 import weka.core.Instances;
 import weka.core.Utils;
 import weka.gui.visualize.JComponentWriter;
-import weka.gui.visualize.JPEGWriter;
 import weka.gui.visualize.PNGWriter;
 import weka.gui.visualize.PlotData2D;
 import weka.gui.visualize.ThresholdVisualizePanel;
@@ -59,8 +57,8 @@ import java.util.Arrays;
 public class EvaluationReport implements java.io.Serializable {
 
     /**
-     * ****Prediction Model
-     * Info//////////////////////////////////////////////////////////////*
+     * ****Prediction Model parameters and evaluation results
+     * //////////////////////////////////////////////////////////////*
      */
     /**
      * Segmentation*
@@ -121,7 +119,7 @@ public class EvaluationReport implements java.io.Serializable {
         return DetailedAccuracy;
     }
     ArrayList<String> ConfusionMatrix = new ArrayList<>();
-
+    /**Constructor: get Weka evaluation results for the prediction model**/
     EvaluationReport(Evaluation eval, int nbInstances) {
         this.eval = eval;
         this.nbInstances = nbInstances;
@@ -144,7 +142,7 @@ public class EvaluationReport implements java.io.Serializable {
         }
 
     }
-
+    /**Print the report in the console**/
     void printReport() {
         System.out.println("Number of Instances :" + this.nbInstances);
         System.out.println("Summary :" + this.Summary);
@@ -158,7 +156,7 @@ public class EvaluationReport implements java.io.Serializable {
             Exceptions.printStackTrace(ex);
         }
     }
-
+    /**Generate Precision/Recall Curve**/
     void generateCurve1(String filename) {
         try {
             // generate curve
@@ -205,7 +203,7 @@ public class EvaluationReport implements java.io.Serializable {
             ex.printStackTrace();
         }
     }
-
+    /**Generate ROC Curve**/
     void generateROCcurve() {
         try {
             // generate curve
@@ -247,7 +245,7 @@ public class EvaluationReport implements java.io.Serializable {
             ex.printStackTrace();
         }
     }
-
+    /**Generate evaluation report .txt**/
     public void saveReportTextFile(String filename, int networkName) {
 
         try {
@@ -317,6 +315,7 @@ public class EvaluationReport implements java.io.Serializable {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**Generate complete evaluation report .pdf**/
     public void saveReportTextPDF(String filename, PModel pModel, ResultsStats rs, int startingStep) {
         try {
             this.pModel = pModel;
@@ -361,6 +360,7 @@ public class EvaluationReport implements java.io.Serializable {
         document.addCreator("EPredictor: Evolution Prediction tool for communities in dynamic social networks");
     }
 
+    /**Customize Report title page**/
     private static void addTitlePage(Document document)
             throws DocumentException {
         Paragraph preface = new Paragraph();
@@ -401,6 +401,7 @@ public class EvaluationReport implements java.io.Serializable {
         document.newPage();
     }
 
+    /**Add evaluation report body**/
     private void addContent(Document document, int startingStep) throws DocumentException {
 
         try {
@@ -426,21 +427,6 @@ public class EvaluationReport implements java.io.Serializable {
             addEmptyLine(preface, 3);
             catPart.add(preface);
 
-            //Paragraph subPara = new Paragraph("", subFont);
-            //Section subCatPart = catPart.addSection(subPara);
-            /*subCatPart.add(new Paragraph("Hello"));
-            
-             subPara = new Paragraph("Step 2: Community Detection", subFont);
-             subCatPart = catPart.addSection(subPara);
-             subCatPart.add(new Paragraph("Paragraph 1"));
-             subCatPart.add(new Paragraph("Paragraph 2"));
-             subCatPart.add(new Paragraph("Paragraph 3"));
-            
-             // add a list
-             createList(subCatPart);
-             Paragraph paragraph = new Paragraph();
-             addEmptyLine(paragraph, 5);
-             subCatPart.add(paragraph);*/
             // add a table
             createTableNetworkData(catPart);
 
@@ -449,33 +435,18 @@ public class EvaluationReport implements java.io.Serializable {
             addEmptyLine(preface, 3);
             catPart.add(preface);
 
-            // now add all this to the document
-            //document.add(catPart);
             //Time Distribution
             if (!(rs.getDistribution().matches(""))) {
 
                 Image image = Image.getInstance(rs.getDistribution());
-                /*Image image = Image.getInstance("C:\\Users\\HADJER\\Documents\\TEXMaker\\"
-                 + "Plan de test\\time_histogram-facebook-wosn-wall-small.png");*/
                 image.scaleAbsolute(300f, 300f);
                 image.setAlignment(Element.ALIGN_CENTER);
-
-                //image.setAbsolutePosition(0f, 0f);
-                //document.add(image);
                 catPart.add(decorateImage(image, "Fig. 1: Temporel Distribution of the network"));
 
             }
             //add data to doc
             document.add(catPart);
-            /*Image image2 = Image.getInstance("C:\\Users\\HADJER\\Documents\\TEXMaker\\"
-             + "Plan de test\\time_histogram-facebook-wosn-wall-small.png");
-             image2.scalePercent(300f);
-             document.add(image2);*/
-
-            //anchor = new Anchor("Model Description", catFont);
-            //anchor.setName("Model Description");
-            // Second parameter is the number of the chapter
-            //catPart = new Chapter(new Paragraph(anchor), 1);
+            
             // Next section
             anchor = new Anchor("Second Chapter", catFont);
             anchor.setName("Second Chapter");
@@ -570,12 +541,8 @@ public class EvaluationReport implements java.io.Serializable {
                     subCatPart.add(new Paragraph("Results: "));
 
                     Image image = Image.getInstance(rs.getEvolutionResults());
-                    /*image = Image.getInstance("C:\\Users\\HADJER\\Documents\\TEXMaker\\"
-                     + "Plan de test\\time_histogram-facebook-wosn-wall-small.png");*/
                     image.scaleAbsolute(300f, 300f);
                     image.setAlignment(Element.ALIGN_CENTER);
-
-                    //image.setAbsolutePosition(0f, 0f);
                     //document.add(image);
                     subCatPart.add(decorateImage(image, "Fig. 2: Number of evolution events"));
                     //document.add(catPart);      
@@ -623,21 +590,8 @@ public class EvaluationReport implements java.io.Serializable {
                 addEmptyLine(preface, 3);
                 subCatPart.add(preface);
             }
-            /*subCatPart.add(new Paragraph("Summary :" + this.Summary));
-             //subCatPart.add(new Paragraph("Confusion Matrix :"));
-             for (String e : this.ConfusionMatrix) {
-             subCatPart.add(new Paragraph(e));
-             }
-
-             // We add one empty line
-             preface = new Paragraph();
-             addEmptyLine(preface, 3);
-             subCatPart.add(preface);
-
-             subCatPart.add(new Paragraph("Accuracy :" + this.DetailedAccuracy));
-             */ // now add all this to the document
-            document
-                    .add(catPart);
+            // now add all this to the document
+            document.add(catPart);
 
         } catch (BadElementException ex) {
             ex.printStackTrace();
@@ -653,10 +607,6 @@ public class EvaluationReport implements java.io.Serializable {
         String NetworkType = "NetworkType";
         PdfPTable table = new PdfPTable(2);
 
-        // t.setBorderColor(BaseColor.GRAY);
-        // t.setPadding(4);
-        // t.setSpacing(4);
-        // t.setBorderWidth(1);
         PdfPCell c1 = new PdfPCell(new Phrase("Category"));
         c1.setHorizontalAlignment(Element.ALIGN_CENTER);
         table.addCell(c1);
@@ -665,9 +615,6 @@ public class EvaluationReport implements java.io.Serializable {
         c1.setHorizontalAlignment(Element.ALIGN_CENTER);
         table.addCell(c1);
 
-        /*c1 = new PdfPCell(new Phrase("Table Header 3"));
-         c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-         table.addCell(c1);*/
         table.setHeaderRows(1);
 
         table.addCell("link");
@@ -713,8 +660,6 @@ public class EvaluationReport implements java.io.Serializable {
             table.addCell(rs.getAverageClusteringCoeff() + " edge/node");
         }
 
-        /*table.addCell("Diameter");
-         table.addCell("" + " edges");*/
         subCatPart.add(table);
 
     }
@@ -730,51 +675,9 @@ public class EvaluationReport implements java.io.Serializable {
         p.add(i);
         Paragraph captionP = new Paragraph(caption, IMAGE_CAPTION);
         captionP.setAlignment(Element.ALIGN_CENTER);
-        //p.add(Chunk.NEWLINE);
+        
         p.add(captionP);
-
-        //p.setKeepTogether(true);
         return p;
-    }
-
-    private static void createTable(Section subCatPart)
-            throws BadElementException {
-        PdfPTable table = new PdfPTable(3);
-
-        // t.setBorderColor(BaseColor.GRAY);
-        // t.setPadding(4);
-        // t.setSpacing(4);
-        // t.setBorderWidth(1);
-        PdfPCell c1 = new PdfPCell(new Phrase("Table Header 1"));
-        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-        table.addCell(c1);
-
-        c1 = new PdfPCell(new Phrase("Table Header 2"));
-        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-        table.addCell(c1);
-
-        c1 = new PdfPCell(new Phrase("Table Header 3"));
-        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-        table.addCell(c1);
-        table.setHeaderRows(1);
-
-        table.addCell("1.0");
-        table.addCell("1.1");
-        table.addCell("1.2");
-        table.addCell("2.1");
-        table.addCell("2.2");
-        table.addCell("2.3");
-
-        subCatPart.add(table);
-
-    }
-
-    private static void createList(Section subCatPart) {
-        List list = new List(true, false, 10);
-        list.add(new ListItem("First point"));
-        list.add(new ListItem("Second point"));
-        list.add(new ListItem("Third point"));
-        subCatPart.add(list);
     }
 
     private static void addEmptyLine(Paragraph paragraph, int number) {
@@ -819,9 +722,7 @@ public class EvaluationReport implements java.io.Serializable {
         return "Number of Instances: " + nbInstances;
     }
 
-    /*public void setnbInstances(int nbInstances) {
-     this.nbInstances = nbInstances;
-     }*/
+
     public String getSummary() {
         return Summary;
     }

@@ -15,6 +15,10 @@ import java.util.LinkedList;
 /**
  *
  * @author HADJER
+ * 
+ * This file contains the headers of most of the methods implemented in this package 
+ * so that other developper can see an example on how to call methods in this package
+ * 
  */
 public class testPrediction {
 
@@ -49,11 +53,10 @@ public class testPrediction {
         //e.generateROCcurve();
         //e.saveReportTextFile("C:\\Users\\HADJER\\Desktop\\report.txt",0);
         //e.saveReportTextPDF("C:\\Users\\HADJER\\Desktop\\report.pdf", nbtimeframe);
-        String filenamePDF = "C:\\Users\\HADJER\\Desktop\\report.pdf";
+        String filenamePDF = "C:\\report.pdf";
         PModel pModel = new PModel();
         ResultsStats rs = new ResultsStats();
 
-        ///
         ///
         e.saveReportTextPDF(filenamePDF, pModel, rs, 1);
     }
