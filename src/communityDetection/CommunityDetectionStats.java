@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UI;
+package communityDetection;
 
 import Attributes.AttributesComputer;
 import evolutionIdentification.GEDUtils.TimeFrame;
@@ -22,7 +22,7 @@ import org.graphstream.graph.implementations.SingleGraph;
  *
  * @author ado_k
  */
-public class Draft {
+public class CommunityDetectionStats {
 
     public static double calculateAverage(List<Integer> marks) {
         Integer sum = 0;
@@ -81,7 +81,7 @@ public class Draft {
         selectedAttributes.add("averageClusteringCoefficient");
         ObservableList<String> observableListAttibutes = FXCollections.observableList(selectedAttributes);
 
-        LinkedList<TimeFrame> o = Draft.readDynamicNetwork("communities_links");
+        LinkedList<TimeFrame> o = CommunityDetectionStats.readDynamicNetwork("communities_links");
         AttributesComputer.calculateAttributes(o, observableListAttibutes);
         int[] commeTailleList = new int[7];
 

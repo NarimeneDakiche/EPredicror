@@ -5,8 +5,8 @@
  */
 package Prediction;
 
-import UI.PModel;
-import UI.ResultsStats;
+import EvaluationReport.PModel;
+import EvaluationReport.ResultsStats;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;

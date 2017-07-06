@@ -17,7 +17,7 @@ import javafx.stage.WindowEvent;
  *
  * @author< ado_k
  */
-public class SampleXML extends Application {
+public class EPredictor extends Application {
 
     FXMLDocumentController controller;
 

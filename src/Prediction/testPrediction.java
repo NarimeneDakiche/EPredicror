@@ -5,8 +5,8 @@
  */
 package Prediction;
 
-import UI.PModel;
-import UI.ResultsStats;
+import EvaluationReport.PModel;
+import EvaluationReport.ResultsStats;
 import evolutionIdentification.EvolutionUtils;
 import evolutionIdentification.GEDUtils.TimeFrame;
 import java.util.ArrayList;

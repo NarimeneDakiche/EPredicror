@@ -33,14 +33,6 @@ public class TimeFrame {
         return str.substring(0, str.length() - 1);
     }
 
-    /* public String getColors(String int i) {
-     String str = "";
-     for (int j = 0; j < i; j++) {
-     str += (float) 1 / i + ",";
-     }
-     return str.substring(0, str.length() - 1);
-     }
-     */
     List<Color> listColor = new ArrayList<Color>();
 
     public TimeFrame(LinkedList<Graph> communities) {
@@ -53,42 +45,9 @@ public class TimeFrame {
         Random rand = new Random();
         List<String> colors = new ArrayList<String>();
         String colorsIO = "";
-        /*for (int i = 0; i < 10; i++) {
-         float r = rand.nextFloat();
-         float g = rand.nextFloat();
-         float b = rand.nextFloat();
-
-         Color c1 = new Color(r, g, b);*/
-
-        //listColor.add(new Color(126, 230, 23));
-        //listColor.add(new Color(23, 230 168));
-//        listColor.add(new Color(230, 209, 23));
-        //listColor.add(new Color(23, 44, 230));
-        //listColor.add(new Color(126, 23, 230));
-        /*listColor.add(new Color(0xFFFFB300));
-         listColor.add(new Color(0xFF803E75));
-         listColor.add(new Color(0xFFFF6800));
-         listColor.add(new Color(0xFFA6BDD7));
-         listColor.add(new Color(0xFFC10020));
-         listColor.add(new Color(0xFFCEA262));
-         listColor.add(new Color(0xFF817066));
-         listColor.add(new Color(0xFF007D34));
-         listColor.add(new Color(0xFFF6768E));
-         listColor.add(new Color(0xFF00538A));
-         listColor.add(new Color(0xFFFF7A5C));
-         listColor.add(new Color(0xFF53377A));
-         listColor.add(new Color(0xFFFF8E00));
-         listColor.add(new Color(0xFFB32851));
-         listColor.add(new Color(0xFFF4C800));
-         listColor.add(new Color(0xFF7F180D));
-         listColor.add(new Color(0xFF93AA00));
-         listColor.add(new Color(0xFF593315));
-         listColor.add(new Color(0xFFF13A13));
-         listColor.add(new Color(0xFF232C16));*/
-//       
+         
         listColor.add(new Color(200, 200, 0));
         listColor.add(new Color(255, 0, 127));
-        //listColor.add(new Color(200, 255, 200));
         listColor.add(new Color(0, 127, 255));
         listColor.add(new Color(188, 23, 230));
         listColor.add(new Color(0xFFFFB300));
@@ -114,11 +73,6 @@ public class TimeFrame {
 
         generateColors(communities.size());
 
-//            float hue = rand.nextFloat();
-//            // Saturation between 0.1 and 0.3
-//            float saturation = (rand.nextInt(2000) + 1000) / 10000f;
-//            float luminance = 0.9f;
-        //Color c1 = Color.getHSBColor(hue, saturation, luminance);
         for (Color c1 : listColor) {
             int r1 = c1.getRed();
             int g1 = c1.getGreen();
@@ -126,7 +80,6 @@ public class TimeFrame {
             colors.add("rgb(" + r1 + "," + g1 + "," + b1 + ")");
             colorsIO += colors.get(colors.size() - 1) + ",";
         }
-        //}
         colorsIO = colorsIO.substring(0, colorsIO.length() - 1);
         colorsIO += ";";
 
@@ -168,26 +121,6 @@ public class TimeFrame {
 //            System.out.println("getEdgeCount():" + timGraph.getEdgeCount());
 
         }
-        /*int smaller = -1;
-         int greater = -1;
-         int maximumsize = 3;
-         int minimumsize = 2;
-         for (Node n : timGraph.getEachNode()) { //Karate is the GraphStream Graph Object.
-         if (n.getDegree() > greater || smaller == -1) {
-         greater = n.getDegree();
-         }
-         if (n.getDegree() < smaller || greater == -1) {
-         smaller = n.getDegree();
-         }
-         }
-         for (Node n : timGraph.getEachNode()) {
-         double scale = (double) (n.getDegree() - smaller) / (double) (greater - smaller);
-         if (null != n.getAttribute("ui.style")) {
-         n.setAttribute("ui.style", n.getAttribute("ui.style") + " size:" + Math.round((scale * maximumsize) + minimumsize) + "px;");
-         } else {
-         n.addAttribute("ui.style", " size:" + Math.round((scale * maximumsize) + minimumsize) + "px;");
-         }
-         }*/
         System.out.println("Hello");
         this.timGraph.addAttribute("ui.quality");
         this.timGraph.addAttribute("ui.antialias");

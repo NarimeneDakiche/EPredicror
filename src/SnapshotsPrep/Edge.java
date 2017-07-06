@@ -1,4 +1,4 @@
-package graphclasses1;
+package SnapshotsPrep;
 
 /**
  * The {@code Edge} class represents a timestamped edge in an

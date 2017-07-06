@@ -58,17 +58,17 @@ public class AttributesComputer {
             comm.addAttribute("averageClusteringCoefficient", Toolkit.averageClusteringCoefficient(comm));
         }
         /*if (listAttributes.contains("averageClusteringCoefficients")) {
-            System.out.println("calculating averageClusteringCoefficient...");
-            comm.addAttribute("averageClusteringCoefficients", Toolkit.clusteringCoefficients(comm));
-        }*/
+         System.out.println("calculating averageClusteringCoefficient...");
+         comm.addAttribute("averageClusteringCoefficients", Toolkit.clusteringCoefficients(comm));
+         }*/
         if (listAttributes.contains("degreeAverageDeviation")) {
             //System.out.println("calculating degreeAverageDeviation...");
             comm.addAttribute("degreeAverageDeviation", Toolkit.degreeAverageDeviation(comm));
         }
         /*if (listAttributes.contains("degreeDistribution")) {
-            System.out.println("calculating degreeDistribution...");
-            comm.addAttribute("degreeDistribution", Toolkit.degreeDistribution(comm));
-        }*/
+         System.out.println("calculating degreeDistribution...");
+         comm.addAttribute("degreeDistribution", Toolkit.degreeDistribution(comm));
+         }*/
         if (listAttributes.contains("density")) {
             //System.out.println("calculating density...");
             comm.addAttribute("density", Toolkit.density(comm));

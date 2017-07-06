@@ -13,10 +13,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MyResult {
+public class MinMaxResults {
 
     // etc
-        /*public MyResult(int minTS, int maxTS) {
+        /*public MinMaxResults(int minTS, int maxTS) {
      this.minTS = minTS;
      this.maxTS = maxTS;
      }*/
@@ -39,7 +39,7 @@ public class MyResult {
         this.maxTS = maxTS;
     }
 
-    public MyResult getResults(String file, String timeFormat, String dataStructure) throws FileNotFoundException, IOException, ParseException {
+    public MinMaxResults getResults(String file, String timeFormat, String dataStructure) throws FileNotFoundException, IOException, ParseException {
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String sCurrentLine;
@@ -70,7 +70,7 @@ public class MyResult {
                     }
                 }
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
         /*String[] splitContent;
@@ -107,7 +107,7 @@ public class MyResult {
          }
          }*/
 
-        MyResult myResult = new MyResult();
+        MinMaxResults myResult = new MinMaxResults();
         myResult.setMaxTS(0);
         myResult.setMinTS(0);
         return myResult;

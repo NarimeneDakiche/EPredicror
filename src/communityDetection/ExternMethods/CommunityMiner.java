@@ -9,7 +9,6 @@ package communityDetection.ExternMethods;
  *
  * @author HADJER
  */
-import graphclasses1.Community;
 import java.util.LinkedList;
 import org.graphstream.graph.Graph;
 

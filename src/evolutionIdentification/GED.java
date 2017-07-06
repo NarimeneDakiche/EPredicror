@@ -114,7 +114,7 @@ public class GED {
         this.sqlInsert = "INSERT INTO GED_evolution(event_type,group1,timeframe1,group2,timeframe2,alpha,beta,threshold) VALUES (?,?,?,?,?,?,?,?);";
         this.url = "jdbc:sqlite:" + fileName;
 
-// SQL statement for creating a new table
+        // SQL statement for creating a new table
         /*this.sql = "DROP TABLE IF EXISTS GED_evolution"
          + "CREATE TABLE IF NOT EXISTS GED_evolution( "*/
         String sql1 = "DROP TABLE IF EXISTS GED_evolution";
@@ -185,8 +185,6 @@ public class GED {
         System.out.println("GED started!");
         //PrintWriter writer = new PrintWriter("GEDTemp.txt", "UTF-8");
         //writer.println("event,G1,timeframe,G2,timeframe+1,inclusion1,inclusion2,threshold");
-        /*while (a_tres < 110) {
-         while (b_tres < 110) {*/
 
         tres = a_tres + "_" + b_tres;
 
@@ -236,14 +234,7 @@ public class GED {
                         dynamicNetwork.get(i_timeFrame + 1).getCommunities());
 
                 while (group2 < listG2.size()) {
-                    //System.out.println("Group2: " + group2 + " " + listG2.size());
-                    //Gr2 est dynamicNetwork.get(i_timeFrame+1).get(group2)
-                    //Collection<Node> gr2 = dynamicNetwork.get(i_timeFrame + 1).getCommunities().get(group2).getNodeSet();
                     Collection<Node> gr2 = listG2.get(group2).getNodeSet();
-//                    list = new ArrayList(gr2);
-//                    Collections.sort(list, new NodeCompare());
-//                    gr2 = new HashSet(list);
-//                    list.clear();
 
                     g1_size = gr1.size();
                     g2_size = gr2.size();
@@ -254,17 +245,10 @@ public class GED {
                     tr1 = sumMesure(gr1);
                     tr2 = sumMesure(gr2);
 
-                    //calculating inclusion
                     a = (int) ((1.0 * g1g2 / g1_size) * (1.0 * sr1 / tr1) * 100);
-                    //System.out.println((1.0 * g1g2 / g1_size) * (1.0 * sr1 / tr1) *100 + " " +a);
 
-//                    if (a > 10) {
-//                        System.out.println("Inclusion: a=" + a + ", g1g2=" + g1g2 + ", g1_size=" + g1_size + ", sr1=" + sr1 + ", tr1=" + tr1);
-//                    }
                     b = (int) ((1.0 * g1g2 / g2_size) * (1.0 * sr2 / tr2) * 100);
 
-                    // System.out.println("g1g2:" + g1g2 + " g1_size:" + g1_size + " sr1:" + sr1 + " tr1:" + tr1 + " a:" + a + " b:" + b);
-                    //looking for dissolving
                     if (dissolve == 1 && (a > fd_tres || b > fd_tres)) {
                         dissolve = 0;
                     }
@@ -312,12 +296,8 @@ public class GED {
                     a = b = 0;
                 }
 
-                //dissolving
                 if (dissolve == 1) {
-                    //writer.println("dissolving," + group1 + "," + i_timeFrame + "," + null + "," + (i_timeFrame + 1) + "," + a + "," + b + "," + tres);
                     insert("dissolving", group1, i_timeFrame, (Integer) null, (i_timeFrame + 1), (int) a, (int) b, tres);
-                    //   System.out.println();
-
                 }
 
                 group1++;
@@ -390,15 +370,6 @@ public class GED {
             group1 = group2 = 0;
 
         }
-        /* b_tres += 10;
-         i_timeFrame = 0;
-         }
-         a_tres += 10;
-         b_tres = 50;
-         }*/
-        //writer.close();
-        // splitting/shrinking and merging/growing update
-        // update growing and shrinking SET continue when size is the same
         int[] updateCounts = pstmt.executeBatch();
         conn.commit();
         // conn.setAutoCommit(true);
@@ -421,17 +392,12 @@ public class GED {
         //System.out.println("Point 0 " + tres);
 
         String spl = "SELECT group1, timeframe1 FROM GED_evolution WHERE threshold = '" + tres + "' AND event_type = 'splitting/shrinking';";
-                //String sql = "SELECT group1, timeframe1 FROM GED_evolution WHERE threshold = '" + Integer.toString(a_tres) + "_" + Integer.toString(b_tres) + "' AND event_type = 'forming';";
 
-        ///_________
         Statement stmt = conn.createStatement();
         ResultSet rsSpl = stmt.executeQuery(spl);
-        // System.out.println("Point 1 " + spl);
+
         // loop through the result set
         while (rsSpl.next()) {
-            //  System.out.println("Point 2");
-            // System.out.println("rsSpl: " + rsSpl.getInt("group1") + " "
-            //  + rsSpl.getString("timeframe1"));
             g1 = rsSpl.getInt("group1");
             t1 = rsSpl.getInt("timeframe1");
 
@@ -439,9 +405,6 @@ public class GED {
             String cdt1 = "SELECT COUNT(group1) FROM GED_evolution WHERE threshold = '" + tres + "' AND event_type = 'splitting/shrinking' AND group1 = '" + Integer.toString(g1) + "' AND timeframe1 = '" + Integer.toString(t1) + "';";
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(cdt1);
-            /*while (rs1.next()) {
-             System.out.println("count(group1): " + rs1.getInt("count(group1)"));
-             }*/
 
             // Condition 2
             String cdt2 = "SELECT COUNT(group1) FROM GED_evolution WHERE threshold = '" + tres + "' AND event_type IN ('shrinking', 'growing') AND group1 = '" + Integer.toString(g1) + "' AND timeframe1 = '" + Integer.toString(t1) + "';";
@@ -469,21 +432,15 @@ public class GED {
         ResultSet rsMer = stmt.executeQuery(mer);
         // loop through the result set
         while (rsMer.next()) {
-            //System.out.println("Point 3" + mer);
 
             g2 = rsMer.getInt("group2");
             t2 = rsMer.getInt("timeframe2");
-           // System.out.println("Mer: " + g2 + " "
-            // + t2);
 
             // Condition 1
             String cdt1 = "SELECT COUNT(group2) FROM GED_evolution WHERE threshold = '" + tres + "' AND event_type = 'merging/growing' AND group2 = '" + Integer.toString(g2) + "' AND timeframe2 = '" + Integer.toString(t2) + "';";
 
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(cdt1);
-            /*while (rs1.next()) {
-             System.out.println("count(group1): " + rs1.getInt("count(group1)"));
-             }*/
 
             // Condition 2
             String cdt2 = "SELECT COUNT(group2) FROM GED_evolution WHERE threshold = '" + tres + "' AND event_type IN ('shrinking', 'growing') AND group2 = '" + Integer.toString(g2) + "' AND timeframe2 = '" + Integer.toString(t2) + "';";
@@ -495,22 +452,14 @@ public class GED {
             int count1 = rs1.getInt("count(group2)");
             int count2 = rs2.getInt("count(group2)");
 
-            //  System.out.println("Counts: " + count1 + " " + count2);
-            //update("splitting", "50_50", 1, 1, "splitting/shrinking");
             if (count1 > 1 || count2 > 0) {
-                //  System.out.println(tres + "," + g2 + "," + t2 + ",");
+
                 update("merging", tres, g2, t2, "merging/growing", 2);
             } else {
                 update("growing", tres, g2, t2, "merging/growing", 2);
                 cpt++;
             }
         }
-        ///_________
-        /*b_tres += 10;
-         }
-         a_tres += 10;
-         b_tres = b_tres_tmp;
-         }*/
         updateCounts = pstmt1.executeBatch();
         updateCounts = pstmt2.executeBatch();
         conn.commit();
@@ -519,14 +468,11 @@ public class GED {
         String cont = "SELECT group1, timeframe1, group2, timeframe2, event_type FROM GED_evolution WHERE event_type IN ('shrinking', 'growing');";
         Statement stmtCont = conn.createStatement();
         ResultSet rsCont = stmtCont.executeQuery(cont);
-       // System.out.println("I am here!");
 
         // loop through the result set
         int i = 0, last = 0;
         while (rsCont.next()) {
-//            if ((i / cpt) != last) {
-//                System.out.print(i / cpt + "(" + i++ + "/" + cpt + ")");
-//            }
+
             g1 = rsCont.getInt("group1");
             t1 = rsCont.getInt("timeframe1");
             g2 = rsCont.getInt("group2");
@@ -559,15 +505,13 @@ public class GED {
         stmt = conn.createStatement();
         ResultSet rs = stmtCont.executeQuery(sql);
         while (rs.next()) {
-          // System.out.println(rs.getString(1)+" "+ rs.getInt(2));
+            // System.out.println(rs.getString(1)+" "+ rs.getInt(2));
             map.put(rs.getString(1), rs.getInt(2));
             //System.out.println(rs.getString("event_type")+" "+  rs.getInt("count(event_type)"));
         }
-            conn.close();
-            return map;
-        }
-
-    
+        conn.close();
+        return map;
+    }
 
     private LinkedList<Node> nodeInter(Collection<Node> gr1, Collection<Node> gr2) {
         LinkedList<Node> inter = new LinkedList<Node>();
@@ -624,10 +568,8 @@ public class GED {
                     break;
                 }
             }
-            //if (found) System.out.println("yay!");
             found = false;
         }
-
         return listGroupsWithSharedNodes;
     }
 

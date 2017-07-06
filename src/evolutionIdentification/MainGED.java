@@ -1,9 +1,8 @@
 package evolutionIdentification;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Read communities contained in "AllData.txt" and calls GED method
+ *
  */
 import evolutionIdentification.GEDUtils.TimeFrame;
 import java.io.BufferedReader;
@@ -56,13 +55,13 @@ public class MainGED {
         List<LinkedList<Graph>> communities = new ArrayList<LinkedList<Graph>>();
 
         try (BufferedReader br = new BufferedReader(new FileReader("etc/All_Data.txt"))) {
+            
             LinkedList comms = new LinkedList();
             String line = br.readLine();
             while ((line = br.readLine()) != null) {
                 // process the line.
                 String[] splitContent = line.split(" ");
 
-                //System.out.println(line);
                 int group_id, num_timeframe;
                 group_id = Integer.parseInt(splitContent[0]);
                 num_timeframe = Integer.parseInt(splitContent[2]);
@@ -82,14 +81,10 @@ public class MainGED {
             for (int i = 0; i < communities.size(); i++) {
                 network.add(new TimeFrame(communities.get(i)));
                 cpm += communities.get(i).size();
-                /*System.out.println(network.size()+" "+network.get(i).getCommunities().size());
-                 for (Graph g: communities.get(i)){
-                 cpm+= g.getNodeCount();
-                 }*/
 
             }
             System.out.println(cpm + " groups");
-            // System.out.println(cpm);
+
         }
 
         GED ged1 = new GED();

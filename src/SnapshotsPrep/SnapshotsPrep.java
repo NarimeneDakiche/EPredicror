@@ -1,6 +1,5 @@
 package SnapshotsPrep;
 
-import graphclasses1.Edge;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -106,7 +105,7 @@ public class SnapshotsPrep {
     private int getSplitSnapshots(String file, Duration duration, String timeFormat, String dataStructure, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
         boolean bool = false;
         List<List<Edge>> parts = new ArrayList<>();
-        MyResult myResult = new MyResult();
+        MinMaxResults myResult = new MinMaxResults();
         myResult.getResults(file, timeFormat, dataStructure);
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
         long snapSpan = (myResult.getMaxTS() - myResult.getMinTS());
@@ -179,7 +178,7 @@ public class SnapshotsPrep {
         if (overlapping >= 1 || overlapping < 0) {
             throw new IllegalArgumentException("Illegal overlapping value (must be between 0 and 1)");
         }
-        MyResult myResult = new MyResult();
+        MinMaxResults myResult = new MinMaxResults();
         myResult.getResults(file, timeFormat, dataStructure);
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
         List<LongRange> list = new ArrayList<LongRange>();
@@ -265,7 +264,7 @@ public class SnapshotsPrep {
     }
 
     private int getSplitSnapshots(String file, List<Duration> listDuration, String timeFormat, String dataStructure, String exportName, boolean directed, boolean multipleExport) throws IOException, FileNotFoundException, ParseException {
-        MyResult myResult = new MyResult();
+        MinMaxResults myResult = new MinMaxResults();
         myResult.getResults(file, timeFormat, dataStructure);
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
         int nbSnap = listDuration.size();
@@ -350,7 +349,7 @@ public class SnapshotsPrep {
             throw new IllegalArgumentException("Illegal overlapping value (must be between 0 and 1)");
         }
         try {
-            MyResult myResult = new MyResult();
+            MinMaxResults myResult = new MinMaxResults();
 
             myResult.getResults(file, timeFormat, dataStructure);
             //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
@@ -446,7 +445,7 @@ public class SnapshotsPrep {
     }
 
     public void getSplitSnapshots(float overlapping, String file, int nbSnap, String timeFormat, String dataStructure, String exportName, boolean directed, boolean multipleExport) throws FileNotFoundException, IOException, ParseException {
-        MyResult myResult = new MyResult();
+        MinMaxResults myResult = new MinMaxResults();
         myResult.getResults(file, timeFormat, dataStructure);
         long range = myResult.getMaxTS() - myResult.getMinTS();
         long duration = (long) (range / (1 + (1 - overlapping) * (nbSnap - 1))) + 1;
@@ -454,7 +453,7 @@ public class SnapshotsPrep {
     }
 
     private void getSplitSnapshots(String file, int nbSnap, String timeFormat, String dataStructure, String exportName, boolean directed, boolean multipleExport) throws FileNotFoundException, IOException, ParseException {
-        MyResult myResult = new MyResult();
+        MinMaxResults myResult = new MinMaxResults();
         myResult.getResults(file, timeFormat, dataStructure);
         //System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS());
         if (multipleExport) {
