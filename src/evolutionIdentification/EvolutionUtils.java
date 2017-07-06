@@ -14,11 +14,11 @@ import java.util.ArrayList;
 /**
  *
  * @author HADJER
- * 
+ *
  * This class contains methods that are needed for evolution identification
- * 
- * It contains a method to generate evolution chains
- * and methods to manipulate database and tables
+ *
+ * It contains a method to generate evolution chains and methods to manipulate
+ * database and tables
  */
 public class EvolutionUtils {
 

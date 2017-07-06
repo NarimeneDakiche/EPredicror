@@ -471,15 +471,20 @@
                                                                                         <Font name="System Bold" size="12.0" />
                                                                                     </font>
                                                                                 </Label>
-                                                                                <Button mnemonicParsing="false" onAction="#browserEvolutionAction" text="Browser">
-                                                                                    <graphic>
-                                                                                        <ImageView fitHeight="21.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                                                                                            <image>
-                                                                                                <Image url="@images/find.png" />
-                                                                                            </image>
-                                                                                        </ImageView>
-                                                                                    </graphic>
-                                                                                </Button>
+                                                            <HBox prefHeight="100.0" prefWidth="200.0">
+                                                               <children>
+                                                                                      <Button mnemonicParsing="false" onAction="#browserEvolutionAction" text="Browser">
+                                                                                          <graphic>
+                                                                                              <ImageView fitHeight="21.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                                                                                                  <image>
+                                                                                                      <Image url="@images/find.png" />
+                                                                                                  </image>
+                                                                                              </ImageView>
+                                                                                          </graphic>
+                                                                                      </Button>
+                                                                  <Button mnemonicParsing="false" onAction="#loadSnapshot" text="Button" />
+                                                               </children>
+                                                            </HBox>
                                                                                 <ComboBox fx:id="comboEvolution" prefHeight="25.0" prefWidth="217.0" />
                                                                                 <HBox alignment="CENTER_RIGHT" spacing="5.0">
                                                                                     <children>

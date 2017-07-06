@@ -48,6 +48,7 @@ public class AttributesComputer {
             int i = comm.getNodeCount();
             double d = i;
             comm.addAttribute("size", d);
+            
         }
         if (listAttributes.contains("averageDegree")) {
             //System.out.println("calculating average degree...");

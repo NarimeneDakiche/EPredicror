@@ -3,18 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UI;
+package EvaluationReport;
 
 import java.lang.reflect.Field;
-import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 
 /**
  *
  * @author ado_k
  */
-class Benchmark {
+public class Benchmark {
 
     private String sourceLink;
 
@@ -55,7 +52,7 @@ class Benchmark {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public String toString() {
         StringBuilder result = new StringBuilder();
         String newLine = System.getProperty("line.separator");

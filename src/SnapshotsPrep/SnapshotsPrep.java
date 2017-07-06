@@ -390,7 +390,7 @@ public class SnapshotsPrep {
                             v = splitContent[dataStructure.indexOf("V")];
                             w = splitContent[dataStructure.indexOf("W")];
                             timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
-                        //System.out.println(TimeLength.timestampToDate(timestamp));
+                            //System.out.println(TimeLength.timestampToDate(timestamp));
                             // System.out.println(duration.getSeconds()+" "+step);
                             for (int j = 0; j < list.size(); j++) {
                                 //System.out.println(list.get(j).contains(timestamp) + " " + timestamp +" "+list.get(j).getMin()+" "+list.get(j).getMax());
@@ -422,7 +422,7 @@ public class SnapshotsPrep {
                             w = splitContent[dataStructure.indexOf("W")];
                             timestamp = Long.parseLong(splitContent[dataStructure.indexOf("T")]);
 
-                        // System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
+                            // System.out.println(myResult.getMaxTS() + " " + myResult.getMinTS() + " " + step + " " + timestamp + " "
                             //  + index);
                             for (int j = 0; j < list.size(); j++) {
                                 //System.out.println(list.get(j).contains(timestamp) + " " + timestamp +" "+list.get(j).getMin()+" "+list.get(j).getMax());
@@ -667,89 +667,6 @@ public class SnapshotsPrep {
          }*/
     }
 
-    /*public GraphModel[] getSplitSnapshots(String file, int nbSnap, String period) {
-
-     //Init a project - and therefore a workspace
-     ProjectController[] pcT = new ProjectController[nbSnap];
-     Workspace[] workspaceT = new Workspace[nbSnap];
-     GraphModel graphModel[] = new GraphModel[nbSnap];
-
-     for (int i = 0; i < pcT.length; i++) {
-
-     pcT[i] = Lookup.getDefault().lookup(ProjectController.class);
-     pcT[i].newProject();
-     workspaceT[i] = pcT[i].getCurrentWorkspace();
-     }
-
-     //Import first file
-     ImportController importController = Lookup.getDefault().lookup(ImportController.class);
-     Container[] containers = new Container[nbSnap];
-     Container container;
-
-     try {
-     for (int i = 0; i < containers.length; i++) {
-     /*URL url = getClass().getResource("ListStopWords.txt");
-     File file = new File(url.getPath());*/
-    /*File file1 = new File(getClass().getResource("timeframe" + (i + 1) + ".gexf").toURI());
-
-     container = importController.importFile(file1);
-     container.getLoader().setEdgeDefault(org.gephi.io.importer.api.EdgeDirectionDefault.DIRECTED);
-     importController.process(container, new DefaultProcessor(), workspace);
-
-     containers[i] = importController.importFile(file1);
-     //Process the container using the MergeProcessor
-     importController.process(containers[i], new MergeProcessor(), workspaceT[i]);
-     graphModel[i] = Lookup.getDefault().lookup(GraphController.class).getGraphModel(workspaceT[i]);
-     }
-     } catch (Exception ex) {
-     ex.printStackTrace();
-     return null;
-     }
-
-     /*Get the price attribute
-     Graph graph = graphModel.getGraph();
-     for (Node n : graph.getNodes()) {
-     TimestampIntegerMap value = (TimestampIntegerMap) n.getAttribute("price");
-     System.out.println("'" + n.getLabel() + "': " + value.toString());
-     }*/
-
-    /*//Get the price attribute in average - learn more about ESTIMATOR
-     for (Node n : graph.getNodes()) {
-     TimestampIntegerMap value = (TimestampIntegerMap) n.getAttribute("price");
-
-     Double priceFrom2007to2009Avg = (Double) value.get(new Interval(2007, 2009), Estimator.AVERAGE);
-     System.out.println("With AVERAGE estimator: '" + n.getLabel() + "': " + priceFrom2007to2009Avg);
-
-     Integer priceFrom2007to2009Max = (Integer) value.get(new Interval(2007, 2009), Estimator.MAX);
-     System.out.println("With MAX estimator: '" + n.getLabel() + "': " + priceFrom2007to2009Max);
-     }
-
-     //Create a dynamic range filter query
-     FilterController filterController = Lookup.getDefault().lookup(FilterController.class);
-     DynamicRangeBuilder.DynamicRangeFilter dynamicRangeFilter = new DynamicRangeBuilder.DynamicRangeFilter(graphModel);
-     Query dynamicQuery = filterController.createQuery(dynamicRangeFilter);
-
-     //Create a attribute range filter query - on the price column
-     Column priceCol = graphModel.getNodeTable().getColumn("price");
-     AttributeRangeBuilder.AttributeRangeFilter.Node attributeRangeFilter = new AttributeRangeBuilder.AttributeRangeFilter.Node(priceCol);
-     Query priceQuery = filterController.createQuery(attributeRangeFilter);
-
-     //Set dynamic query as child of price query
-     filterController.add(priceQuery);
-     filterController.add(dynamicQuery);
-     filterController.setSubQuery(priceQuery, dynamicQuery);
-
-     //Set the filters parameters - Keep nodes between 2007-2008 which have average price >= 7
-     dynamicRangeFilter.setRange(new Range(2007.0, 2008.0));
-     attributeRangeFilter.setRange(new Range(7, Integer.MAX_VALUE));
-
-     //Execute the filter query
-     GraphView view = filterController.filter(priceQuery);*/
-    //Graph filteredGraph = graphModel.getGraph(view);
-//Node 3 shoudln't be in this graph
-//System.out.println("Node 3 in the filtered graph: " + filteredGraph.contains(graph.getNode("3")));
-        /*return graphModel;
-     }*/
     public static String[] splitInput(String input) {
         String[] splitContent = input.split("\\W");
 

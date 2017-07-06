@@ -20,6 +20,7 @@ public class TimeFrame {
 
     public TimeFrame(Graph timGraph) {
         this.timGraph = timGraph;
+
         this.communities = null;
     }
 
@@ -44,10 +45,10 @@ public class TimeFrame {
         Random rand = new Random();
         List<String> colors = new ArrayList<String>();
         String colorsIO = "";
-       
+
         listColor.add(new Color(200, 200, 0));
         listColor.add(new Color(255, 0, 127));
-        
+
         listColor.add(new Color(0, 127, 255));
         listColor.add(new Color(188, 23, 230));
         listColor.add(new Color(0xFFFFB300));
@@ -80,7 +81,7 @@ public class TimeFrame {
             colors.add("rgb(" + r1 + "," + g1 + "," + b1 + ")");
             colorsIO += colors.get(colors.size() - 1) + ",";
         }
-        
+
         colorsIO = colorsIO.substring(0, colorsIO.length() - 1);
         colorsIO += ";";
 
@@ -94,7 +95,7 @@ public class TimeFrame {
 
                 List<String> nbComm = (List<String>) n.getAttribute("comm");
                 nbComm.add(colors.get(communities.indexOf(com)));
-                
+
                 n.setAttribute("ui.class", "marked");
 
                 n.setAttribute("comm", nbComm);
@@ -103,7 +104,7 @@ public class TimeFrame {
                 n.setAttribute("ui.pie-values", getColors(nbComm.size()));
             }
             for (Edge edge : com.getEdgeSet()) {
-                
+
                 timGraph.addEdge(edge.getId(), edge.getSourceNode().getId(), edge.getTargetNode().getId());
 
             }
