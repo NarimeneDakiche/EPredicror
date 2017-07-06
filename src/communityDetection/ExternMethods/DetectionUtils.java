@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 /**
  *
  * @author HADJER
+ * 
+ * The DetectionUtils contains methods that are needed in the package
  */
 public class DetectionUtils {
 

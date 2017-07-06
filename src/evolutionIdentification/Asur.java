@@ -20,6 +20,10 @@ import org.graphstream.graph.Node;
 /**
  *
  * @author HADJER
+ * 
+ * This class  implements the evolution identification method Asur
+ * The method is not ours, it belongs to its Creator, we just used Java and SQLite to rearrage his code
+ * For further information, please refer to the application help file
  */
 public class Asur {
 

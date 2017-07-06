@@ -14,6 +14,11 @@ import java.util.ArrayList;
 /**
  *
  * @author HADJER
+ * 
+ * This class contains methods that are needed for evolution identification
+ * 
+ * It contains a method to generate evolution chains
+ * and methods to manipulate database and tables
  */
 public class EvolutionUtils {
 
@@ -30,7 +35,7 @@ public class EvolutionUtils {
     }
 
     /**
-     * A method to generate evoltion chains tables*
+     * This is a method to generate evoltion chains tables that we implemented*
      */
     public static void writeEvolutionChain(/*LinkedList<TimeFrame> dynamicNetwork,*/String BDpath, String BDfilename, String tabname, int nbtimeframe/**
              * nbre timeframes*

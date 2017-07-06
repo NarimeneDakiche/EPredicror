@@ -32,7 +32,6 @@ public class TimeFrame {
         }
         return str.substring(0, str.length() - 1);
     }
-
     List<Color> listColor = new ArrayList<Color>();
 
     public TimeFrame(LinkedList<Graph> communities) {
@@ -45,9 +44,10 @@ public class TimeFrame {
         Random rand = new Random();
         List<String> colors = new ArrayList<String>();
         String colorsIO = "";
-         
+       
         listColor.add(new Color(200, 200, 0));
         listColor.add(new Color(255, 0, 127));
+        
         listColor.add(new Color(0, 127, 255));
         listColor.add(new Color(188, 23, 230));
         listColor.add(new Color(0xFFFFB300));
@@ -80,6 +80,7 @@ public class TimeFrame {
             colors.add("rgb(" + r1 + "," + g1 + "," + b1 + ")");
             colorsIO += colors.get(colors.size() - 1) + ",";
         }
+        
         colorsIO = colorsIO.substring(0, colorsIO.length() - 1);
         colorsIO += ";";
 
@@ -93,39 +94,24 @@ public class TimeFrame {
 
                 List<String> nbComm = (List<String>) n.getAttribute("comm");
                 nbComm.add(colors.get(communities.indexOf(com)));
-                //n.addAttribute("ui.label", n.getId());
+                
                 n.setAttribute("ui.class", "marked");
 
                 n.setAttribute("comm", nbComm);
-                //System.out.println(n.getId() + " " + n.getAttribute("comm")+" "+ nbComm);
 
                 n.setAttribute("ui.style", "shape:pie-chart;fill-color:" + getColorsRGB(nbComm));
                 n.setAttribute("ui.pie-values", getColors(nbComm.size()));
-                //System.out.println(getColorsRGB(nbComm) + "+" + getColors(nbComm.size())); 
-                // System.out.println("Nodes added: "+node.getId());
             }
             for (Edge edge : com.getEdgeSet()) {
-                //try {
+                
                 timGraph.addEdge(edge.getId(), edge.getSourceNode().getId(), edge.getTargetNode().getId());
 
-                // timGraph.addEdge(edge.getId(), (Node)
-                // edge.getSourceNode(), (Node) edge.getTargetNode(),
-                // edge.isDirected());
-                //} catch (Exception ex) {
-                //    ex.printStackTrace();
-                //}
-                // System.out.println(Integer.parseInt(splitContent[0])+ " "+
-                // Integer.parseInt(splitContent[1]));
             }
-//            System.out.println("timGraphCount:" + timGraph.getNodeCount());
-//            System.out.println("getEdgeCount():" + timGraph.getEdgeCount());
-
         }
         System.out.println("Hello");
         this.timGraph.addAttribute("ui.quality");
         this.timGraph.addAttribute("ui.antialias");
         this.timGraph.addAttribute("ui.stylesheet", "url('style.css')");
-        //this.timGraph.display();
 
     }
 

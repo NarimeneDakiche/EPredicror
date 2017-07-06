@@ -6,8 +6,7 @@
 package Prediction;
 
 /**
- * User: lbhat <laksh85@gmail.com>
- * Date: 12/16/13 Time: 8:37 PM
+ * @author programcreek
  */
 public enum WekaClassificationAlgorithms {
 

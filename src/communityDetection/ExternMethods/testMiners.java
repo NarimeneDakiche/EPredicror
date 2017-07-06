@@ -8,6 +8,9 @@ package communityDetection.ExternMethods;
 /**
  *
  * @author HADJER
+ * 
+ * This file contains the headers of most of the methods implemented in this package 
+ * so that other developper can see an example on how to call methods in this package
  */
 public class testMiners {
     public static void main(String[] args) throws Exception {

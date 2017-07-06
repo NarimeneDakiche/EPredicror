@@ -17,7 +17,6 @@ import weka.attributeSelection.BestFirst;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.GreedyStepwise;
 import weka.attributeSelection.WrapperSubsetEval;
-//import weka.classifiers.Classifier;
 import weka.classifiers.*;
 import weka.classifiers.meta.AttributeSelectedClassifier;
 import weka.core.Instances;
@@ -30,9 +29,13 @@ import weka.filters.Filter;
  */
 public class AttributeSelector {
     
-    //public static void select
+    /**Selection method Filter the train Data**/
     
     /**Filtering Method
+     * train data
+     * Search Method
+     * Evaluation Method
+     * returns new .arff filename
      * @param datad**/
     protected static String useFilter(String fichierEntrainement, String searchMethod, String evalMethod) throws Exception {
         
@@ -91,7 +94,7 @@ public class AttributeSelector {
         filter.setSearch(search);
         filter.setInputFormat(data);
         Instances newData = Filter.useFilter(data, filter);
-        //System.out.println(newData);
+
         //Write into Arff File
             String filePath = "./LibPrediction/";
             String newFichierEntrainement=filePath+getfileName(fichierEntrainement)+"-Filtred.arff";
@@ -101,6 +104,15 @@ public class AttributeSelector {
             saver.writeBatch();
         return newFichierEntrainement;
     }
+    /**Selection method : Wrapper**/
+    
+    /**
+     * train data
+     * Classifier/Classifier options
+     * Search Method
+     * Evaluation Method
+     * returns the Evaluation Report of the model
+     **/
     
     public static EvaluationReport useClassifier(String fichierEntrainement, String wekaClassifier,String[] options,
             String searchMethod, String evalMethod) {
@@ -164,10 +176,10 @@ public class AttributeSelector {
         }catch(Exception e){
             e.printStackTrace();
         }
-        //System.out.println(evaluation.toSummaryString());
+        //Retourner les résultats d'évaluation de Weka
         return (new EvaluationReport(evaluation,data.numAttributes() - 1));
     }
-    
+    /**Get the filename out of a file path**/
     public static String getfileName(String string) {
         Path p = Paths.get(string);
         String fileName = p.getFileName().toString();

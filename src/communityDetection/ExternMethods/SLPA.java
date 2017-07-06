@@ -30,6 +30,11 @@ import org.graphstream.graph.implementations.SingleGraph;
  *
  * @author HADJER
  *
+ *  * 
+ * This class executes the .jar of the community detection method SLPA in the tool GANXiSw. 
+ * The method is not ours, it belongs to its developper
+ * For further information, please refer to the application help file
+ * 
  * Overlapping by default (-ov 0 : to get non overlapping communities)
  *
  * By default, GANXiSw is set for overlapping community detection. It runs once

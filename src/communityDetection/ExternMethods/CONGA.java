@@ -23,6 +23,10 @@ import org.graphstream.graph.implementations.SingleGraph;
 /**
  *
  * @author HADJER
+  * 
+ * This class executes the .jar of the community detection method CONGA. 
+ * The method is not ours, it belongs to its developper
+ * For further information, please refer to the application help file
  */
 public class CONGA extends CommunityMiner {
 
