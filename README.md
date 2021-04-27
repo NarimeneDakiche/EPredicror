@@ -28,9 +28,7 @@ View the [EPredictor User Guide](https://esi.dz).
 
 ## Contact Us
 
-Blog: [http://lmcs.esi.dz](http://biezhi.me)
-
-Mail: lmcs@esi.dz
+Mail: an_dakiche@esi.dz
 
 ## License
 
